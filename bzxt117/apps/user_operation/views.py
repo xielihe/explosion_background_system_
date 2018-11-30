@@ -50,21 +50,21 @@ class userMessageViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.
     # 用户查看一条信息时，该消息置为已读，但不会同时赋予该条物证的权限，而是点击允许授权才会授权
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        # 判断是否为空值用is None
-        # 如果发送者（请求者）是普通用户，而接受者（被请求者）是管理员或者超级管理员，才会去创建权限
-        if instance.sendUser.role == 3 and instance.receiveUser.role <= 2:
-            # 如果消息中的炸药id和爆炸装置id都不为空才会创建一条权限机制
-            if (instance.exploEviId is not None) or (instance.devEviId is not None):
-            # ifinstance.exploEviId!= NULL)and (instance.devEviId == NULL)):
-            # 第一次读的时候，即此时hasRead = False，这时候才去创建权限记录。
-                if instance.hasRead == False:
-                    # 可能重复哦
-                    allow_Update = allowUpdate()
-                    allow_Update.entitled = instance.sendUser
-                    allow_Update.authorized = instance.receiveUser
-                    allow_Update.exploEviId = instance.exploEviId
-                    allow_Update.devEviId = instance.devEviId
-                    allow_Update.save()
+        # # 判断是否为空值用is None
+        # # 如果发送者（请求者）是普通用户，而接受者（被请求者）是管理员或者超级管理员，才会去创建权限
+        # if instance.sendUser.role == 3 and instance.receiveUser.role <= 2:
+        #     # 如果消息中的炸药id和爆炸装置id都不为空才会创建一条权限机制
+        #     if (instance.exploEviId is not None) or (instance.devEviId is not None):
+        #     # ifinstance.exploEviId!= NULL)and (instance.devEviId == NULL)):
+        #     # 第一次读的时候，即此时hasRead = False，这时候才去创建权限记录。
+        #         if instance.hasRead == False:
+        #             # 可能重复哦
+        #             allow_Update = allowUpdate()
+        #             allow_Update.entitled = instance.sendUser
+        #             allow_Update.authorized = instance.receiveUser
+        #             allow_Update.exploEviId = instance.exploEviId
+        #             allow_Update.devEviId = instance.devEviId
+        #             allow_Update.save()
         instance.hasRead = True
         instance.save()
         serializer = self.get_serializer(instance)

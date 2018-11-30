@@ -43,23 +43,40 @@ class exploEviViewset(viewsets.ModelViewSet):
     queryset = exploEvi.objects.all()
     #queryset = exploSample.objects.filter(sname="样本3")
     serializer_class = exploEviSerializer
-    permission_classes = (IsAuthenticated,IsAdmin)
+    # permission_classes = (IsAuthenticated,IsAllowExploUpdate)
     pagination_class = MyPageNumberPagination
     filter_backends = (filters.SearchFilter, filters.OrderingFilter)
     search_fields = ("caseName","evidenceName","note")
     ordering_fields = ("id","inputDate")
+
+    def get_permissions(self):
+        if self.action == "delete" or "update" or "partial_update":
+        #     return [permissions.IsAuthenticated(),IsAdmin()]
+        # elif self.action == "update":
+            return [permissions.IsAuthenticated(),IsAllowExploUpdate()]
+        else:
+            return [permissions.IsAuthenticated(),]
 
 class exploEviFTIRViewset(viewsets.ModelViewSet):
 
     queryset = exploEviFTIR.objects.all()
     #queryset = exploSample.objects.filter(sname="样本3")
     # serializer_class = exploSampleFTIRSerializer
-    permission_classes = (IsAuthenticated,IsAdmin)
+    # permission_classes = (IsAuthenticated,IsAllowExploUpdate)
     pagination_class = MyPageNumberPagination
     def get_serializer_class(self):
         if self.action == "list" or self.action == "retrieve":
             return exploEviFTIRDetailSerializer
         return exploEviFTIRSerializer
+
+    def get_permissions(self):
+        if self.action == "delete" or "update" or "partial_update":
+        #     return [permissions.IsAuthenticated(),IsAdmin()]
+        # elif self.action == "update":
+            return [permissions.IsAuthenticated(),IsAllowExploUpdate()]
+        else:
+            return [permissions.IsAuthenticated(),]
+
 class exploEviFTIRTestFileViewset(viewsets.ModelViewSet):
     pagination_class = MyPageNumberPagination
     queryset = exploEviFTIRTestFile.objects.all()
@@ -101,11 +118,20 @@ class exploEviRamanViewset(viewsets.ModelViewSet):
     queryset = exploEviRaman.objects.all()
     #queryset = exploSample.objects.filter(sname="样本3")
     # serializer_class = exploEviRamanSerializer
-    permission_classes = (IsAuthenticated,IsAdmin)
+    # permission_classes = (IsAuthenticated,IsAdmin)
     def get_serializer_class(self):
         if self.action == "list" or self.action == "retrieve":
             return exploEviRamanDetailSerializer
         return exploEviRamanSerializer
+
+    def get_permissions(self):
+        if self.action == "delete" or "update" or "partial_update":
+        #     return [permissions.IsAuthenticated(),IsAdmin()]
+        # elif self.action == "update":
+            return [permissions.IsAuthenticated(),IsAllowExploUpdate()]
+        else:
+            return [permissions.IsAuthenticated(),]
+
 class exploEviRamanTestFileViewset(viewsets.ModelViewSet):
     pagination_class = MyPageNumberPagination
     queryset = exploEviRamanTestFile.objects.all()
@@ -141,11 +167,20 @@ class exploEviXRDViewset(viewsets.ModelViewSet):
     queryset = exploEviXRD.objects.all()
     #queryset = exploSample.objects.filter(sname="样本3")
     # serializer_class = exploEviXRDSerializer
-    permission_classes = (IsAuthenticated,IsAdmin)
+    # permission_classes = (IsAuthenticated,IsAdmin)
     def get_serializer_class(self):
         if self.action == "list" or self.action == "retrieve":
             return exploEviXRDDetailSerializer
         return exploEviXRDSerializer
+
+    def get_permissions(self):
+        if self.action == "delete" or "update" or "partial_update":
+        #     return [permissions.IsAuthenticated(),IsAdmin()]
+        # elif self.action == "update":
+            return [permissions.IsAuthenticated(),IsAllowExploUpdate()]
+        else:
+            return [permissions.IsAuthenticated(),]
+
 class exploEviXRDTestFileViewset(viewsets.ModelViewSet):
     pagination_class = MyPageNumberPagination
     queryset = exploEviXRDTestFile.objects.all()
@@ -183,11 +218,20 @@ class exploEviXRFViewset(viewsets.ModelViewSet):
     queryset = exploEviXRF.objects.all()
     #queryset = exploSample.objects.filter(sname="样本3")
     # serializer_class = exploEviXRFSerializer
-    permission_classes = (IsAuthenticated,IsAdmin)
+    # permission_classes = (IsAuthenticated,IsAdmin)
     def get_serializer_class(self):
         if self.action == "list" or self.action == "retrieve":
             return exploEviXRFDetailSerializer
         return exploEviXRFSerializer
+
+    def get_permissions(self):
+        if self.action == "delete" or "update" or "partial_update":
+        #     return [permissions.IsAuthenticated(),IsAdmin()]
+        # elif self.action == "update":
+            return [permissions.IsAuthenticated(),IsAllowExploUpdate()]
+        else:
+            return [permissions.IsAuthenticated(),]
+
 class exploEviXRFTestFileViewset(viewsets.ModelViewSet):
     pagination_class = MyPageNumberPagination
     queryset = exploEviXRFTestFile.objects.all()
@@ -223,11 +267,20 @@ class exploEviGCMSViewset(viewsets.ModelViewSet):
     queryset = exploEviGCMS.objects.all()
     #queryset = exploSample.objects.filter(sname="样本3")
     # serializer_class = exploEviGCMSSerializer
-    permission_classes = (IsAuthenticated,IsAdmin)
+    # permission_classes = (IsAuthenticated,IsAdmin)
     def get_serializer_class(self):
         if self.action == "list" or self.action == "retrieve":
             return exploEviGCMSDetailSerializer
         return exploEviGCMSSerializer
+
+    def get_permissions(self):
+        if self.action == "delete" or "update" or "partial_update":
+        #     return [permissions.IsAuthenticated(),IsAdmin()]
+        # elif self.action == "update":
+            return [permissions.IsAuthenticated(),IsAllowExploUpdate()]
+        else:
+            return [permissions.IsAuthenticated(),]
+
 class exploEviGCMSTestFileViewset(viewsets.ModelViewSet):
     pagination_class = MyPageNumberPagination
     queryset = exploEviGCMSTestFile.objects.all()
@@ -262,21 +315,38 @@ class devEviViewset(viewsets.ModelViewSet):
     queryset = devEvi.objects.all()
     #queryset = exploSample.objects.filter(sname="样本3")
     serializer_class = devEviSerializer
-    permission_classes = (IsAuthenticated,IsAdmin)
+    # permission_classes = (IsAuthenticated,IsAdmin)
     filter_backends = (filters.SearchFilter, filters.OrderingFilter)
     search_fields = ("caseName","evidenceName","note","Factory","Model","Logo","Color","Material","Shape","thickness")
     ordering_fields = ("id","inputDate")
+
+    def get_permissions(self):
+        if self.action == "delete" or "update" or "partial_update":
+        #     return [permissions.IsAuthenticated(),IsAdmin()]
+        # elif self.action == "update":
+            return [permissions.IsAuthenticated(),IsAllowExploUpdate()]
+        else:
+            return [permissions.IsAuthenticated(),]
 
 class devEviFTIRViewset(viewsets.ModelViewSet):
     queryset = devEviFTIR.objects.all()
     #queryset = exploSample.objects.filter(sname="样本3")
     pagination_class = MyPageNumberPagination
     # serializer_class = devEviFTIRSerializer
-    permission_classes = (IsAuthenticated,IsAdmin)
+    # permission_classes = (IsAuthenticated,IsAdmin)
     def get_serializer_class(self):
         if self.action == "list" or self.action == "retrieve":
             return devEviFTIRDetailSerializer
         return devEviFTIRSerializer
+
+    def get_permissions(self):
+        if self.action == "delete" or "update" or "partial_update":
+        #     return [permissions.IsAuthenticated(),IsAdmin()]
+        # elif self.action == "update":
+            return [permissions.IsAuthenticated(),IsAllowExploUpdate()]
+        else:
+            return [permissions.IsAuthenticated(),]
+
 class devEviFTIRTestFileViewset(viewsets.ModelViewSet):
     queryset = devEviFTIRTestFile.objects.all()
     #queryset = exploSample.objects.filter(sname="样本3")
@@ -310,12 +380,21 @@ class devEviRamanViewset(viewsets.ModelViewSet):
     queryset = devEviRaman.objects.all()
     #queryset = exploSample.objects.filter(sname="样本3")
     # serializer_class = devEviRamanSerializer
-    permission_classes = (IsAuthenticated,IsAdmin)
+    # permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
     def get_serializer_class(self):
         if self.action == "list" or self.action == "retrieve":
             return devEviRamanDetailSerializer
         return devEviRamanSerializer
+
+    def get_permissions(self):
+        if self.action == "delete" or "update" or "partial_update":
+        #     return [permissions.IsAuthenticated(),IsAdmin()]
+        # elif self.action == "update":
+            return [permissions.IsAuthenticated(),IsAllowExploUpdate()]
+        else:
+            return [permissions.IsAuthenticated(),]
+
 class devEviRamanTestFileViewset(viewsets.ModelViewSet):
     queryset = devEviRamanTestFile.objects.all()
     pagination_class = MyPageNumberPagination
@@ -350,11 +429,20 @@ class devEviXRFViewset(viewsets.ModelViewSet):
     pagination_class = MyPageNumberPagination
     #queryset = exploSample.objects.filter(sname="样本3")
     # serializer_class = devEviXRFSerializer
-    permission_classes = (IsAuthenticated,IsAdmin)
+    # permission_classes = (IsAuthenticated,IsAdmin)
     def get_serializer_class(self):
         if self.action == "list" or self.action == "retrieve":
             return devEviXRFDetailSerializer
         return devEviXRFSerializer
+
+    def get_permissions(self):
+        if self.action == "delete" or "update" or "partial_update":
+        #     return [permissions.IsAuthenticated(),IsAdmin()]
+        # elif self.action == "update":
+            return [permissions.IsAuthenticated(),IsAllowExploUpdate()]
+        else:
+            return [permissions.IsAuthenticated(),]
+
 class devEviXRFTestFileViewset(viewsets.ModelViewSet):
     queryset = devEviXRFTestFile.objects.all()
     pagination_class = MyPageNumberPagination
@@ -385,10 +473,18 @@ class devEviXRFTestFileViewset(viewsets.ModelViewSet):
         instance.delete()
 
 class devShapeEviViewset(viewsets.ModelViewSet):
-    permission_classes = (IsAuthenticated, IsOwnerOrReadOnly)
+    # permission_classes = (IsAuthenticated, IsOwnerOrReadOnly)
     queryset = devShapeEvi.objects.all()
     serializer_class = devShapeEviSerializer
     pagination_class = MyPageNumberPagination
+
+    def get_permissions(self):
+        if self.action == "delete" or "update" or "partial_update":
+        #     return [permissions.IsAuthenticated(),IsAdmin()]
+        # elif self.action == "update":
+            return [permissions.IsAuthenticated(),IsAllowExploUpdate()]
+        else:
+            return [permissions.IsAuthenticated(),]
 
     def perform_create(self, serializer):
         evi = serializer.save()

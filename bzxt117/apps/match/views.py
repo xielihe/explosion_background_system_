@@ -115,11 +115,10 @@ class startMatch(APIView):
         return pg.get_paginated_response(ser.data)  # 返回上一页或者下一页
 
 
-class exploMatchFTIRViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin,
-                     mixins.DestroyModelMixin, viewsets.GenericViewSet):
+class exploMatchFTIRViewset(viewsets.ModelViewSet):
     """
     """
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
  #   authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
 #    lookup_field = "goods_id"
@@ -132,11 +131,10 @@ class exploMatchFTIRViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mixi
     def get_serializer_class(self):
         return exploMatchFTIRSerializer
 
-class exploMatchRamanViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin,
-                     mixins.DestroyModelMixin, viewsets.GenericViewSet):
+class exploMatchRamanViewset(viewsets.ModelViewSet):
     """
     """
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ("Score",)
@@ -149,11 +147,10 @@ class exploMatchRamanViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mix
     def get_serializer_class(self):
         return exploMatchRamanSerializer
 
-class exploMatchXRDViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin,
-                     mixins.DestroyModelMixin, viewsets.GenericViewSet):
+class exploMatchXRDViewset(viewsets.ModelViewSet):
     """
     """
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ("Score",)
@@ -166,11 +163,10 @@ class exploMatchXRDViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mixin
     def get_serializer_class(self):
         return exploMatchXRDSerializer
 
-class exploMatchXRFViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin,
-                     mixins.DestroyModelMixin, viewsets.GenericViewSet):
+class exploMatchXRFViewset(viewsets.ModelViewSet):
     """
     """
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ("averScore",)
@@ -183,11 +179,10 @@ class exploMatchXRFViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mixin
     def get_serializer_class(self):
         return exploMatchXRFSerializer
 
-class exploMatchGCMSViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin,
-                     mixins.DestroyModelMixin, viewsets.GenericViewSet):
+class exploMatchGCMSViewset(viewsets.ModelViewSet):
     """
     """
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ("Score",)
@@ -203,7 +198,7 @@ class exploMatchGCMSViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mixi
 class exploSynMatchViewset(viewsets.ModelViewSet):
     """
     """
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ("Score",)
@@ -225,7 +220,7 @@ class exploSynMatchViewset(viewsets.ModelViewSet):
 class exploReportMatchViewset(viewsets.ModelViewSet):
     """
     """
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ("Score",)
@@ -238,11 +233,10 @@ class exploReportMatchViewset(viewsets.ModelViewSet):
     def get_serializer_class(self):
         return exploReportMatchSerializer
 
-class devMatchFTIRViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin,
-                     mixins.DestroyModelMixin, viewsets.GenericViewSet):
+class devMatchFTIRViewset(viewsets.ModelViewSet):
     """
     """
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ("Score",)
@@ -255,11 +249,10 @@ class devMatchFTIRViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mixins
     def get_serializer_class(self):
         return devMatchFTIRSerializer
 
-class devMatchRamanViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin,
-                     mixins.DestroyModelMixin, viewsets.GenericViewSet):
+class devMatchRamanViewset(viewsets.ModelViewSet):
     """
     """
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated,IsAdmin )
     pagination_class = MyPageNumberPagination
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ("Score",)
@@ -272,11 +265,10 @@ class devMatchRamanViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mixin
     def get_serializer_class(self):
         return devMatchRamanSerializer
 
-class devMatchXRFViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin,
-                     mixins.DestroyModelMixin, viewsets.GenericViewSet):
+class devMatchXRFViewset(viewsets.ModelViewSet):
     """
     """
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated,IsAdmin )
     pagination_class = MyPageNumberPagination
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ("averScore",)
@@ -292,7 +284,7 @@ class devMatchXRFViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.
 class devCompMatchViewset(viewsets.ModelViewSet):
     """
     """
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated,IsAdmin )
     pagination_class = MyPageNumberPagination
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ("Score",)
@@ -314,7 +306,7 @@ class devCompMatchViewset(viewsets.ModelViewSet):
 class devShapeMatchViewset(viewsets.ModelViewSet):
  #   authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
 #    lookup_field = "goods_id"
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ("matchDegree",)
@@ -330,7 +322,7 @@ class devShapeMatchViewset(viewsets.ModelViewSet):
 class devSynMatchViewset(viewsets.ModelViewSet):
     """
     """
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
     filter_backends = (filters.OrderingFilter,)
     ordering_fields = ("ScoreComp","ScoreShape")
