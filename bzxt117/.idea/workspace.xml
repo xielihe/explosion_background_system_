@@ -1,0 +1,1099 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="74c82722-91c2-4c0b-ac8a-24bc5aefb058" name="Default" comment="" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DjangoConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)">
+    <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
+      <file leaf-file-name="serializers.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/apps/match/serializers.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="201">
+              <caret line="220" column="6" lean-forward="true" selection-start-line="220" selection-start-column="6" selection-end-line="220" selection-end-column="6" />
+              <folding>
+                <element signature="e#0#38#0" expanded="true" />
+                <element signature="e#8332#8618#0" />
+                <element signature="e#8686#11595#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="serializers.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/apps/sample/serializers.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="7590">
+              <caret line="516" column="26" lean-forward="true" selection-start-line="516" selection-start-column="26" selection-end-line="516" selection-end-column="26" />
+              <folding>
+                <element signature="e#24#62#0" expanded="true" />
+                <element signature="e#450#718#0" />
+                <element signature="e#3731#4052#0" />
+                <element signature="e#7104#7429#0" />
+                <element signature="e#10020#10321#0" />
+                <element signature="e#10393#10710#0" />
+                <element signature="e#10785#11872#0" />
+                <element signature="e#13421#14093#0" />
+                <element signature="e#14165#14483#0" />
+                <element signature="e#13840#14780#0" />
+                <element signature="e#16520#16765#0" />
+                <element signature="e#16838#17185#0" />
+                <element signature="e#5989#6228#0" />
+                <element signature="e#6294#6537#0" />
+                <element signature="e#16969#17334#0" />
+                <element signature="e#18797#19103#0" />
+                <element signature="e#19178#19509#0" />
+                <element signature="e#19588#19954#0" />
+                <element signature="e#20031#21372#0" />
+                <element signature="e#20542#21372#0" />
+                <element signature="e#21442#21749#0" />
+                <element signature="e#21825#22160#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/apps/match/views.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1074">
+              <caret line="329" column="6" selection-start-line="329" selection-start-column="6" selection-end-line="329" selection-end-column="17" />
+              <folding>
+                <element signature="e#0#35#0" expanded="true" />
+                <element signature="e#1034#2713#0" />
+                <element signature="e#2746#4386#0" />
+                <element signature="e#5078#5406#0" />
+                <element signature="e#5587#5911#0" />
+                <element signature="e#6092#6416#0" />
+                <element signature="e#6598#6924#0" />
+                <element signature="e#6981#7555#0" />
+                <element signature="e#7607#7929#0" />
+                <element signature="e#7786#8108#0" />
+                <element signature="e#8289#8613#0" />
+                <element signature="e#9168#9490#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/apps/user_operation/views.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="690">
+              <caret line="63" column="66" lean-forward="true" selection-start-line="63" selection-start-column="66" selection-end-line="63" selection-end-column="66" />
+              <folding>
+                <element signature="e#0#35#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/apps/sample/views.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="647">
+              <caret line="322" column="51" selection-start-line="322" selection-start-column="51" selection-end-line="322" selection-end-column="51" />
+              <folding>
+                <element signature="e#25#65#0" expanded="true" />
+                <element signature="e#2163#2552#0" />
+                <element signature="e#2620#3338#0" />
+                <element signature="e#3859#4575#0" />
+                <element signature="e#4636#5023#0" />
+                <element signature="e#4897#5608#0" />
+                <element signature="e#5855#6242#0" />
+                <element signature="e#6306#7018#0" />
+                <element signature="e#7076#7463#0" />
+                <element signature="e#7532#8244#0" />
+                <element signature="e#8740#8970#0" />
+                <element signature="e#9026#9264#0" />
+                <element signature="e#8800#9193#0" />
+                <element signature="e#9265#9985#0" />
+                <element signature="e#10060#10459#0" />
+                <element signature="e#10524#11247#0" />
+                <element signature="e#11317#11714#0" />
+                <element signature="e#11777#12510#0" />
+                <element signature="e#7643#10945#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="serializers.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/apps/user_operation/serializers.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="493">
+              <caret line="28" column="25" lean-forward="true" selection-start-line="28" selection-start-column="25" selection-end-line="28" selection-end-column="25" />
+              <folding>
+                <element signature="e#24#33#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/apps/match/models.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="241">
+              <caret line="172" column="6" selection-start-line="172" selection-start-column="6" selection-end-line="172" selection-end-column="6" />
+              <folding>
+                <element signature="e#0#28#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="urls.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/bzxt117/urls.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="23">
+              <caret line="98" selection-start-line="98" selection-end-line="98" />
+              <folding>
+                <element signature="e#642#682#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/apps/evi/views.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="65">
+              <caret line="49" column="40" selection-start-line="49" selection-start-column="39" selection-end-line="49" selection-end-column="40" />
+              <folding>
+                <element signature="e#25#65#0" expanded="true" />
+                <element signature="e#1393#1773#0" />
+                <element signature="e#1837#3223#0" />
+                <element signature="e#3281#3662#0" />
+                <element signature="e#3727#4914#0" />
+                <element signature="e#4969#5342#0" />
+                <element signature="e#5405#6645#0" />
+                <element signature="e#6701#7074#0" />
+                <element signature="e#7136#8321#0" />
+                <element signature="e#8378#8755#0" />
+                <element signature="e#8819#9999#0" />
+                <element signature="e#10049#10456#0" />
+                <element signature="e#11111#11526#0" />
+                <element signature="e#10940#12089#0" />
+                <element signature="e#12144#12517#0" />
+                <element signature="e#12579#13734#0" />
+                <element signature="e#13787#14152#0" />
+                <element signature="e#14212#15355#0" />
+                <element signature="e#15410#20204#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/apps/basic/views.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-713">
+              <caret line="23" column="30" selection-start-line="23" selection-start-column="30" selection-end-line="23" selection-end-column="30" />
+              <folding>
+                <element signature="e#0#35#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>Foreign</find>
+      <find>type</find>
+      <find>exploEviId</find>
+      <find>devEviId</find>
+      <find>ForeignKey</find>
+      <find>mobile</find>
+      <find>UserDetailSerializer</find>
+      <find>FTIR</find>
+      <find>L</find>
+      <find>csrf</find>
+      <find>GCMSAverFil</find>
+      <find>DEVEVIFTIRT</find>
+      <find>GCMSAverFile</find>
+      <find>CMSAverFile</find>
+      <find>txtHandledURL</find>
+      <find>checkHandle</find>
+      <find>chech</find>
+    </findStrings>
+    <replaceStrings>
+      <replace>check</replace>
+    </replaceStrings>
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/apps/user_operation/apps.py" />
+        <option value="$PROJECT_DIR$/apps/sample/apps.py" />
+        <option value="$PROJECT_DIR$/apps/match/apps.py" />
+        <option value="$PROJECT_DIR$/apps/evi/apps.py" />
+        <option value="$PROJECT_DIR$/apps/basic/apps.py" />
+        <option value="$PROJECT_DIR$/bzxt117/settings.py" />
+        <option value="$PROJECT_DIR$/apps/utils/PCB.py" />
+        <option value="$PROJECT_DIR$/apps/utils/permissions.py" />
+        <option value="$PROJECT_DIR$/apps/basic/models.py" />
+        <option value="$PROJECT_DIR$/apps/sample/models.py" />
+        <option value="$PROJECT_DIR$/apps/evi/models.py" />
+        <option value="$PROJECT_DIR$/apps/basic/serializers.py" />
+        <option value="$PROJECT_DIR$/apps/user_operation/serializers.py" />
+        <option value="$PROJECT_DIR$/apps/user_operation/models.py" />
+        <option value="$PROJECT_DIR$/apps/match/models.py" />
+        <option value="$PROJECT_DIR$/apps/basic/filters.py" />
+        <option value="$PROJECT_DIR$/apps/evi/serializers.py" />
+        <option value="$PROJECT_DIR$/apps/sample/serializers.py" />
+        <option value="$PROJECT_DIR$/apps/evi/views.py" />
+        <option value="$PROJECT_DIR$/apps/basic/views.py" />
+        <option value="$PROJECT_DIR$/apps/sample/views.py" />
+        <option value="$PROJECT_DIR$/apps/user_operation/views.py" />
+        <option value="$PROJECT_DIR$/apps/match/views.py" />
+        <option value="$PROJECT_DIR$/bzxt117/urls.py" />
+        <option value="$PROJECT_DIR$/apps/match/serializers.py" />
+      </list>
+    </option>
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
+  <component name="NodePackageJsonFileManager">
+    <packageJsonPaths />
+  </component>
+  <component name="ProjectFrameBounds" extendedState="7">
+    <option name="x" value="-4" />
+    <option name="width" value="1918" />
+    <option name="height" value="1035" />
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="bzxt117" type="b2602c69:ProjectViewProjectNode" />
+              <item name="bzxt117" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="bzxt117" type="b2602c69:ProjectViewProjectNode" />
+              <item name="bzxt117" type="462c0819:PsiDirectoryNode" />
+              <item name="apps" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="bzxt117" type="b2602c69:ProjectViewProjectNode" />
+              <item name="bzxt117" type="462c0819:PsiDirectoryNode" />
+              <item name="apps" type="462c0819:PsiDirectoryNode" />
+              <item name="basic" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="bzxt117" type="b2602c69:ProjectViewProjectNode" />
+              <item name="bzxt117" type="462c0819:PsiDirectoryNode" />
+              <item name="apps" type="462c0819:PsiDirectoryNode" />
+              <item name="evi" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="bzxt117" type="b2602c69:ProjectViewProjectNode" />
+              <item name="bzxt117" type="462c0819:PsiDirectoryNode" />
+              <item name="apps" type="462c0819:PsiDirectoryNode" />
+              <item name="match" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="bzxt117" type="b2602c69:ProjectViewProjectNode" />
+              <item name="bzxt117" type="462c0819:PsiDirectoryNode" />
+              <item name="apps" type="462c0819:PsiDirectoryNode" />
+              <item name="sample" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="bzxt117" type="b2602c69:ProjectViewProjectNode" />
+              <item name="bzxt117" type="462c0819:PsiDirectoryNode" />
+              <item name="apps" type="462c0819:PsiDirectoryNode" />
+              <item name="sample" type="462c0819:PsiDirectoryNode" />
+              <item name="migrations" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="bzxt117" type="b2602c69:ProjectViewProjectNode" />
+              <item name="bzxt117" type="462c0819:PsiDirectoryNode" />
+              <item name="bzxt117" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="F:/t1nkuy" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="F:\bzxt117\apps" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="F:\bzxt117\apps" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="bzxt117" type="Python.DjangoServer" factoryName="Django server">
+      <module name="bzxt117" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+        <env name="DJANGO_SETTINGS_MODULE" value="bzxt117.settings" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="launchJavascriptDebuger" value="false" />
+      <option name="port" value="8000" />
+      <option name="host" value="" />
+      <option name="additionalOptions" value="" />
+      <option name="browserUrl" value="" />
+      <option name="runTestServer" value="false" />
+      <option name="runNoReload" value="false" />
+      <option name="useCustomRunCommand" value="false" />
+      <option name="customRunCommand" value="" />
+    </configuration>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="74c82722-91c2-4c0b-ac8a-24bc5aefb058" name="Default" comment="" />
+      <created>1542419829271</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1542419829271</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-9" y="-9" width="1938" height="1050" extended-state="7" />
+    <editor active="true" />
+    <layout>
+      <window_info anchor="bottom" id="TODO" order="13" weight="0.040586244" />
+      <window_info anchor="bottom" id="manage.py@bzxt117" order="1" weight="0.28410372" />
+      <window_info anchor="bottom" id="Event Log" order="3" side_tool="true" />
+      <window_info anchor="bottom" id="Database Changes" order="2" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Version Control" order="5" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Python Console" order="6" />
+      <window_info anchor="bottom" id="Run" order="9" weight="0.30777904" />
+      <window_info anchor="bottom" id="Terminal" order="4" />
+      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.13304721" />
+      <window_info anchor="bottom" id="Docker" order="0" show_stripe_button="false" />
+      <window_info anchor="right" id="Database" order="2" />
+      <window_info anchor="bottom" id="Find" order="8" />
+      <window_info anchor="right" id="SciView" order="0" />
+      <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="0" side_tool="true" />
+      <window_info anchor="bottom" id="Debug" order="10" weight="0.11353211" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="12" weight="0.4" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="1" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="3" weight="0.25" />
+      <window_info anchor="bottom" id="Message" order="7" />
+      <window_info anchor="bottom" id="Cvs" order="11" weight="0.25" />
+    </layout>
+    <layout-to-restore>
+      <window_info anchor="right" id="Ant Build" order="3" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="4" weight="0.25" />
+      <window_info content_ui="combo" id="Project" order="1" weight="0.5305794" />
+      <window_info anchor="bottom" id="Docker" order="0" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Run" order="9" visible="true" weight="0.0" />
+      <window_info anchor="bottom" id="manage.py@bzxt117" order="1" weight="0.28410372" />
+      <window_info anchor="bottom" id="Cvs" order="11" weight="0.25" />
+      <window_info anchor="right" id="SciView" order="0" />
+      <window_info id="Structure" order="2" side_tool="true" weight="0.25" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="1" type="SLIDING" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="13" />
+      <window_info anchor="bottom" id="Database Changes" order="2" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Find" order="8" />
+      <window_info anchor="bottom" id="Debug" order="10" weight="0.11353211" />
+      <window_info anchor="right" id="Database" order="2" />
+      <window_info anchor="bottom" id="Terminal" order="4" />
+      <window_info anchor="bottom" id="Event Log" order="3" side_tool="true" />
+      <window_info anchor="bottom" id="Inspection" order="12" weight="0.4" />
+      <window_info anchor="bottom" id="Version Control" order="5" show_stripe_button="false" />
+      <window_info id="Favorites" order="0" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="7" />
+      <window_info anchor="bottom" id="Python Console" order="6" />
+    </layout-to-restore>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/apps/utils/PCB.py</url>
+          <line>24</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/apps/utils/PCB.py</url>
+          <line>28</line>
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/apps/evi/views.py</url>
+          <line>81</line>
+          <option name="timeStamp" value="18" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/apps/match/views.py</url>
+          <line>65</line>
+          <option name="timeStamp" value="60" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/apps/match/views.py</url>
+          <line>46</line>
+          <option name="timeStamp" value="61" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/apps/match/views.py</url>
+          <line>47</line>
+          <option name="timeStamp" value="62" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/apps/match/views.py</url>
+          <line>49</line>
+          <option name="timeStamp" value="63" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/apps/match/views.py</url>
+          <line>51</line>
+          <option name="timeStamp" value="64" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/apps/match/views.py</url>
+          <line>53</line>
+          <option name="timeStamp" value="65" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/apps/basic/serializers.py</url>
+          <line>68</line>
+          <option name="timeStamp" value="66" />
+        </line-breakpoint>
+      </breakpoints>
+      <option name="time" value="122" />
+    </breakpoint-manager>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/apps/match/serializers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1196">
+          <caret line="57" selection-start-line="57" selection-end-line="57" />
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/basic/serializers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="207">
+          <caret line="9" column="6" selection-start-line="9" selection-start-column="6" selection-end-line="9" selection-end-column="6" />
+          <folding>
+            <element signature="e#24#33#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/sample/serializers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="230">
+          <caret line="10" column="27" selection-start-line="10" selection-start-column="6" selection-end-line="10" selection-end-column="27" />
+          <folding>
+            <element signature="e#24#62#0" expanded="true" />
+            <element signature="e#450#718#0" />
+            <element signature="e#3731#4052#0" />
+            <element signature="e#7104#7429#0" />
+            <element signature="e#10020#10321#0" />
+            <element signature="e#10393#10710#0" />
+            <element signature="e#10785#11872#0" />
+            <element signature="e#13421#14093#0" />
+            <element signature="e#14165#14483#0" />
+            <element signature="e#13840#14780#0" />
+            <element signature="e#16520#16765#0" />
+            <element signature="e#16838#17185#0" />
+            <element signature="e#5989#6228#0" />
+            <element signature="e#6294#6537#0" />
+            <element signature="e#16969#17334#0" />
+            <element signature="e#18797#19103#0" />
+            <element signature="e#19178#19509#0" />
+            <element signature="e#19588#19954#0" />
+            <element signature="e#20031#21372#0" />
+            <element signature="e#20542#21372#0" />
+            <element signature="e#21442#21749#0" />
+            <element signature="e#21825#22160#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bzxt117/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1403">
+          <caret line="62" column="27" selection-start-line="62" selection-start-column="23" selection-end-line="62" selection-end-column="27" />
+          <folding>
+            <element signature="e#309#318#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/user_operation/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1219">
+          <caret line="73" column="51" selection-start-line="73" selection-start-column="51" selection-end-line="73" selection-end-column="51" />
+          <folding>
+            <element signature="e#0#35#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/sample/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="322">
+          <caret line="28" column="21" selection-start-line="28" selection-start-column="21" selection-end-line="28" selection-end-column="21" />
+          <folding>
+            <element signature="e#25#65#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/evi/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="644">
+          <caret line="45" column="33" lean-forward="true" selection-start-line="45" selection-start-column="33" selection-end-line="45" selection-end-column="33" />
+          <folding>
+            <element signature="e#25#65#0" expanded="true" />
+            <element signature="e#1393#1773#0" />
+            <element signature="e#1837#3223#0" />
+            <element signature="e#3281#3662#0" />
+            <element signature="e#3727#4914#0" />
+            <element signature="e#4969#5342#0" />
+            <element signature="e#5405#6645#0" />
+            <element signature="e#6701#7074#0" />
+            <element signature="e#7136#8321#0" />
+            <element signature="e#8378#8755#0" />
+            <element signature="e#8819#9999#0" />
+            <element signature="e#10049#10456#0" />
+            <element signature="e#11111#11526#0" />
+            <element signature="e#10940#12089#0" />
+            <element signature="e#12144#12517#0" />
+            <element signature="e#12579#13734#0" />
+            <element signature="e#13787#14152#0" />
+            <element signature="e#14212#15355#0" />
+            <element signature="e#15410#20204#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bzxt117/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2530">
+          <caret line="125" column="34" selection-start-line="125" selection-start-column="34" selection-end-line="125" selection-end-column="34" />
+          <folding>
+            <element signature="e#642#682#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/match/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1863">
+          <caret line="85" column="6" selection-start-line="85" selection-start-column="6" selection-end-line="85" selection-end-column="6" />
+          <folding>
+            <element signature="e#0#28#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/match/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="736">
+          <caret line="32" column="14" selection-start-line="32" selection-start-column="14" selection-end-line="32" selection-end-column="14" />
+          <folding>
+            <element signature="e#0#35#0" expanded="true" />
+            <element signature="e#1034#2713#0" />
+            <element signature="e#2746#4386#0" />
+            <element signature="e#5078#5406#0" />
+            <element signature="e#5587#5911#0" />
+            <element signature="e#6092#6416#0" />
+            <element signature="e#6598#6924#0" />
+            <element signature="e#6981#7555#0" />
+            <element signature="e#7607#7929#0" />
+            <element signature="e#7786#8108#0" />
+            <element signature="e#8289#8613#0" />
+            <element signature="e#9168#9490#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/evi/apps.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="92">
+          <caret line="4" column="12" selection-start-line="4" selection-start-column="12" selection-end-line="4" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/match/apps.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="92">
+          <caret line="4" column="12" selection-start-line="4" selection-start-column="12" selection-end-line="4" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Envs/bzxt431/Lib/site-packages/django/db/models/base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-46">
+          <caret line="7" column="28" lean-forward="true" selection-start-line="7" selection-start-column="28" selection-end-line="7" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/user_operation/apps.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="115">
+          <caret line="5" selection-start-line="5" selection-end-line="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/sample/apps.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="92">
+          <caret line="4" column="12" selection-start-line="4" selection-start-column="12" selection-end-line="4" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Envs/bzxt431/Lib/site-packages/django/views/decorators/csrf.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="294">
+          <caret line="57" selection-start-line="57" selection-end-line="57" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Envs/bzxt431/Lib/site-packages/django/core/handlers/exception.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="167">
+          <caret line="40" selection-start-line="40" selection-end-line="40" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/utils/PCB.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="391">
+          <caret line="17" column="21" selection-start-line="17" selection-start-column="21" selection-end-line="17" selection-end-column="21" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Envs/bzxt431/Lib/site-packages/django/db/models/fields/related.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="431">
+          <caret line="800" column="29" selection-start-line="800" selection-start-column="29" selection-end-line="800" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Envs/bzxt431/Lib/site-packages/rest_framework/permissions.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="23" column="8" selection-start-line="23" selection-start-column="8" selection-end-line="23" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Envs/bzxt431/Lib/site-packages/django/core/handlers/base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="848">
+          <caret line="184" selection-start-line="184" selection-end-line="184" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Envs/bzxt431/Lib/site-packages/rest_framework/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="400">
+          <caret line="479" selection-start-line="479" selection-end-line="479" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bzxt117/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1403">
+          <caret line="62" column="27" selection-start-line="62" selection-start-column="23" selection-end-line="62" selection-end-column="27" />
+          <folding>
+            <element signature="e#309#318#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/basic/apps.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="115">
+          <caret line="5" selection-start-line="5" selection-end-line="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/basic/tests.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/user_operation/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="372">
+          <caret line="36" column="80" selection-start-line="36" selection-start-column="80" selection-end-line="36" selection-end-column="80" />
+          <folding>
+            <element signature="e#0#28#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Envs/bzxt431/Lib/site-packages/rest_framework/generics.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="212">
+          <caret line="110" selection-start-line="110" selection-end-line="110" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Envs/bzxt431/Lib/site-packages/rest_framework/serializers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="259">
+          <caret line="208" selection-start-line="208" selection-end-line="208" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Envs/bzxt431/Lib/site-packages/rest_framework/viewsets.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="374">
+          <caret line="177" column="33" selection-start-line="177" selection-start-column="33" selection-end-line="177" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Envs/bzxt431/Lib/site-packages/rest_framework/mixins.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="460">
+          <caret line="24" selection-start-line="24" selection-end-line="25" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/basic/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="46">
+          <caret line="5" column="17" lean-forward="true" selection-start-line="5" selection-start-column="6" selection-end-line="5" selection-end-column="17" />
+          <folding>
+            <element signature="e#0#28#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/basic/filters.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="184">
+          <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
+          <folding>
+            <element signature="e#46#67#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/evi/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="325" column="6" selection-start-line="325" selection-start-column="6" selection-end-line="325" selection-end-column="6" />
+          <folding>
+            <element signature="e#25#54#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/basic/serializers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="23">
+          <caret line="38" column="32" lean-forward="true" selection-start-line="38" selection-start-column="32" selection-end-line="38" selection-end-column="32" />
+          <folding>
+            <element signature="e#24#33#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/utils/XRDhandle.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="322">
+          <caret line="80" column="24" selection-start-line="80" selection-start-column="24" selection-end-line="80" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/utils/permissions.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="161">
+          <caret line="7" column="6" selection-start-line="7" selection-start-column="6" selection-end-line="7" selection-end-column="6" />
+          <folding>
+            <element signature="e#15#53#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/evi/serializers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="202">
+          <caret line="431" selection-start-line="431" selection-end-line="513" selection-end-column="100" />
+          <folding>
+            <element signature="e#24#62#0" expanded="true" />
+            <element signature="e#4098#5001#0" />
+            <element signature="e#5073#6303#0" />
+            <element signature="e#7201#8102#0" />
+            <element signature="e#8172#9560#0" />
+            <element signature="e#9623#10027#0" />
+            <element signature="e#10096#10478#0" />
+            <element signature="e#10550#11622#0" />
+            <element signature="e#11692#13036#0" />
+            <element signature="e#13099#13768#0" />
+            <element signature="e#13837#14140#0" />
+            <element signature="e#14522#15444#0" />
+            <element signature="e#15515#17045#0" />
+            <element signature="e#17305#17547#0" />
+            <element signature="e#17116#17448#0" />
+            <element signature="e#17507#17743#0" />
+            <element signature="e#17910#18797#0" />
+            <element signature="e#18875#20637#0" />
+            <element signature="e#17806#18046#0" />
+            <element signature="e#20998#21370#0" />
+            <element signature="e#24453#24753#0" />
+            <element signature="e#24822#25884#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/sample/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="260">
+          <caret line="330" column="6" selection-start-line="330" selection-start-column="6" selection-end-line="330" selection-end-column="6" />
+          <folding>
+            <element signature="e#25#54#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/sample/serializers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="7590">
+          <caret line="516" column="26" lean-forward="true" selection-start-line="516" selection-start-column="26" selection-end-line="516" selection-end-column="26" />
+          <folding>
+            <element signature="e#24#62#0" expanded="true" />
+            <element signature="e#450#718#0" />
+            <element signature="e#3731#4052#0" />
+            <element signature="e#7104#7429#0" />
+            <element signature="e#10020#10321#0" />
+            <element signature="e#10393#10710#0" />
+            <element signature="e#10785#11872#0" />
+            <element signature="e#13421#14093#0" />
+            <element signature="e#14165#14483#0" />
+            <element signature="e#13840#14780#0" />
+            <element signature="e#16520#16765#0" />
+            <element signature="e#16838#17185#0" />
+            <element signature="e#5989#6228#0" />
+            <element signature="e#6294#6537#0" />
+            <element signature="e#16969#17334#0" />
+            <element signature="e#18797#19103#0" />
+            <element signature="e#19178#19509#0" />
+            <element signature="e#19588#19954#0" />
+            <element signature="e#20031#21372#0" />
+            <element signature="e#20542#21372#0" />
+            <element signature="e#21442#21749#0" />
+            <element signature="e#21825#22160#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/user_operation/serializers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="493">
+          <caret line="28" column="25" lean-forward="true" selection-start-line="28" selection-start-column="25" selection-end-line="28" selection-end-column="25" />
+          <folding>
+            <element signature="e#24#33#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/basic/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-713">
+          <caret line="23" column="30" selection-start-line="23" selection-start-column="30" selection-end-line="23" selection-end-column="30" />
+          <folding>
+            <element signature="e#0#35#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/sample/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="647">
+          <caret line="322" column="51" selection-start-line="322" selection-start-column="51" selection-end-line="322" selection-end-column="51" />
+          <folding>
+            <element signature="e#25#65#0" expanded="true" />
+            <element signature="e#2163#2552#0" />
+            <element signature="e#2620#3338#0" />
+            <element signature="e#3859#4575#0" />
+            <element signature="e#4636#5023#0" />
+            <element signature="e#4897#5608#0" />
+            <element signature="e#5855#6242#0" />
+            <element signature="e#6306#7018#0" />
+            <element signature="e#7076#7463#0" />
+            <element signature="e#7532#8244#0" />
+            <element signature="e#8740#8970#0" />
+            <element signature="e#9026#9264#0" />
+            <element signature="e#8800#9193#0" />
+            <element signature="e#9265#9985#0" />
+            <element signature="e#10060#10459#0" />
+            <element signature="e#10524#11247#0" />
+            <element signature="e#11317#11714#0" />
+            <element signature="e#11777#12510#0" />
+            <element signature="e#7643#10945#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/evi/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="65">
+          <caret line="49" column="40" selection-start-line="49" selection-start-column="39" selection-end-line="49" selection-end-column="40" />
+          <folding>
+            <element signature="e#25#65#0" expanded="true" />
+            <element signature="e#1393#1773#0" />
+            <element signature="e#1837#3223#0" />
+            <element signature="e#3281#3662#0" />
+            <element signature="e#3727#4914#0" />
+            <element signature="e#4969#5342#0" />
+            <element signature="e#5405#6645#0" />
+            <element signature="e#6701#7074#0" />
+            <element signature="e#7136#8321#0" />
+            <element signature="e#8378#8755#0" />
+            <element signature="e#8819#9999#0" />
+            <element signature="e#10049#10456#0" />
+            <element signature="e#11111#11526#0" />
+            <element signature="e#10940#12089#0" />
+            <element signature="e#12144#12517#0" />
+            <element signature="e#12579#13734#0" />
+            <element signature="e#13787#14152#0" />
+            <element signature="e#14212#15355#0" />
+            <element signature="e#15410#20204#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/user_operation/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="690">
+          <caret line="63" column="66" lean-forward="true" selection-start-line="63" selection-start-column="66" selection-end-line="63" selection-end-column="66" />
+          <folding>
+            <element signature="e#0#35#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bzxt117/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="23">
+          <caret line="98" selection-start-line="98" selection-end-line="98" />
+          <folding>
+            <element signature="e#642#682#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/match/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1074">
+          <caret line="329" column="6" selection-start-line="329" selection-start-column="6" selection-end-line="329" selection-end-column="17" />
+          <folding>
+            <element signature="e#0#35#0" expanded="true" />
+            <element signature="e#1034#2713#0" />
+            <element signature="e#2746#4386#0" />
+            <element signature="e#5078#5406#0" />
+            <element signature="e#5587#5911#0" />
+            <element signature="e#6092#6416#0" />
+            <element signature="e#6598#6924#0" />
+            <element signature="e#6981#7555#0" />
+            <element signature="e#7607#7929#0" />
+            <element signature="e#7786#8108#0" />
+            <element signature="e#8289#8613#0" />
+            <element signature="e#9168#9490#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/match/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="241">
+          <caret line="172" column="6" selection-start-line="172" selection-start-column="6" selection-end-line="172" selection-end-column="6" />
+          <folding>
+            <element signature="e#0#28#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apps/match/serializers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="201">
+          <caret line="220" column="6" lean-forward="true" selection-start-line="220" selection-start-column="6" selection-end-line="220" selection-end-column="6" />
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
+            <element signature="e#8332#8618#0" />
+            <element signature="e#8686#11595#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>
