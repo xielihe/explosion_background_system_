@@ -65,8 +65,10 @@ class userMessageViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.
         #             allow_Update.exploEviId = instance.exploEviId
         #             allow_Update.devEviId = instance.devEviId
         #             allow_Update.save()
-        instance.hasRead = True
-        instance.save()
+        if instance.receiveUser == request.user:
+            instance.hasRead = True
+            instance.save()
+
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 

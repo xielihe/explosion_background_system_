@@ -37,7 +37,7 @@ class wordSelect(APIView):
         Shape = request.POST["Shape"]
         Material = request.POST["Material"]
         thickness = request.POST["thickness"]
-        keyWord = request.POST["keyWord"]
+        keyWords = request.POST["keyWords"]
         devEviId = int(request.POST["devEviId"])
         # 待语义匹配的物证对象
         devEviSelect = devEvi.objects.get(id = devEviId)
@@ -53,9 +53,12 @@ class wordSelect(APIView):
             sampleQuery = sampleQuery.filter(Material = devEviSelect.Material)
         if thickness == 'True':
             sampleQuery = sampleQuery.filter(thickness = devEviSelect.thickness)
+        keyWordList = keyWords.split()
+        sampleQueryRES = sampleQuery
+        for keyWord in keyWordList:
+            sampleQueryRES = sampleQueryRES.filter(Q(Origin__icontains=keyWord)|Q(Factory__icontains=keyWord)|Q(Model__icontains=keyWord)
+                                             |Q(Logo__icontains=keyWord)|Q(function__icontains=keyWord)|Q(note__icontains=keyWord))
 
-        sampleQueryRES = sampleQuery.filter(Q(Origin__icontains=keyWord)|Q(Factory__icontains=keyWord)|Q(Model__icontains=keyWord)
-                                         |Q(Logo__icontains=keyWord)|Q(function__icontains=keyWord)|Q(note__icontains=keyWord))
         #在数据库中获取分页数据
         pager_roles = pg.paginate_queryset(queryset=sampleQueryRES, request=request,view=self)
         #对分页数据进行序列化

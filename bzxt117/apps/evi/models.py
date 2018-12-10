@@ -151,13 +151,7 @@ class exploEviXRFTestFile(models.Model):
     exploEviId = models.IntegerField(null=True, blank=True, verbose_name=u"所涉及的炸药物证")
     excelURL = models.FileField(max_length=300, upload_to="file/exploEviXRFTestFile/", null=True, blank=True,
                               verbose_name="录入excel文档路径")
-    miningList = models.CharField(max_length=300,null=True,blank=True,verbose_name='Mining元素列表')
-    pnpList = models.CharField(max_length=300, null=True, blank=True, verbose_name='Plastics Non PVC元素列表')
-    ppList = models.CharField(max_length=300, null=True, blank=True, verbose_name='Plastics PVC元素列表')
-    gmList = models.CharField(max_length=300, null=True, blank=True, verbose_name='General Metals元素列表')
-    soilList = models.CharField(max_length=300, null=True, blank=True, verbose_name='Soil元素列表')
-    tagList = models.CharField(max_length=300, null=True, blank=True, verbose_name='TestAll Geo元素列表')
-
+    handledURL = models.FileField(max_length=300, null=True, blank=True, verbose_name="有效元素列表")
     class Meta:
         verbose_name = "炸药及原材料物证XRF检测实验文件表"
         verbose_name_plural = verbose_name
@@ -179,6 +173,18 @@ class exploEviGCMS(models.Model):
     def __str__(self):
         return "%s,GCMS" %(self.exploEvi.evidenceName,)
 
+class exploEviGCMSFile(models.Model):
+    """
+    炸药及原材料物证GC-MS检测文件表
+    """
+    exploEviGCMS = models.ForeignKey(exploEviGCMS, verbose_name=u"对应的GC-MS检测",related_name="exploEviGCMSFile")
+    exploEviId = models.IntegerField(null=True, blank=True, verbose_name=u"所涉及的炸药物证")
+    txtHandledURL = models.FileField(max_length=300, null=True, blank=True, verbose_name="处理过的TXT文档路径")
+
+    class Meta:
+        verbose_name = "炸药及原材料物证GC-MS检测文件表"
+        verbose_name_plural = verbose_name
+
 class exploEviGCMSTestFile(models.Model):
     """
     炸药及原材料物证GC-MS检测实验文件表
@@ -188,8 +194,6 @@ class exploEviGCMSTestFile(models.Model):
     type =models.CharField(max_length=20,default="TIC",verbose_name="类型（TIC。。。）")
     txtURL = models.FileField(max_length=300, upload_to="file/exploEviGCMSTestFile/", null=True, blank=True,
                               verbose_name="录入TXT文档路径")
-    txtHandledURL = models.FileField(max_length=300, null=True, blank=True, verbose_name="处理过的TXT文档路径")
-
     class Meta:
         verbose_name = "炸药及原材料物证GC-MS检测实验文件表"
         verbose_name_plural = verbose_name
@@ -200,10 +204,18 @@ class devEvi(models.Model):
     """
     爆炸装置物证基本信息表
     """
+    EVI_TYPE = (
+        (1, "外壳"),
+        (2, "零件"),
+        (3, "电路板"),
+        (4,"Logo"),
+    )
     evidenceName = models.CharField(max_length=30, verbose_name="物证名称")
     caseName = models.CharField(max_length=30, verbose_name="案件名称")
     user = models.ForeignKey(userProfile, verbose_name=u"处理人员")
     inputDate = models.DateTimeField(default=datetime.now, verbose_name=u"录入日期")
+    eviType = models.IntegerField(choices=EVI_TYPE, default=3, verbose_name="物证类型（1-4，外壳，零件，电路板，Logo）",
+                                  help_text="物证类型（1-4，外壳，零件，电路板，Logo）")
     picUrl = models.ImageField(max_length=300, upload_to="image/devSample/", null=True, blank=True, verbose_name="组件外观图像路径")
     Factory =models.CharField(max_length=100, null=True, blank=True,verbose_name="物证厂家")
     Model =models.CharField(max_length=30, null=True, blank=True,verbose_name="物证型号")
@@ -312,13 +324,7 @@ class devEviXRFTestFile(models.Model):
     devEviId = models.IntegerField(null=True, blank=True, verbose_name=u"所涉及的炸药物证")
     excelURL = models.FileField(max_length=300, upload_to="file/devEviXRFTestFile/", null=True, blank=True,
                               verbose_name="录入excel文档路径")
-    miningList = models.CharField(max_length=300,null=True,blank=True,verbose_name='Mining元素列表')
-    pnpList = models.CharField(max_length=300, null=True, blank=True, verbose_name='Plastics Non PVC元素列表')
-    ppList = models.CharField(max_length=300, null=True, blank=True, verbose_name='Plastics PVC元素列表')
-    gmList = models.CharField(max_length=300, null=True, blank=True, verbose_name='General Metals元素列表')
-    soilList = models.CharField(max_length=300, null=True, blank=True, verbose_name='Soil元素列表')
-    tagList = models.CharField(max_length=300, null=True, blank=True, verbose_name='TestAll Geo元素列表')
-
+    handledURL = models.FileField(max_length=300, null=True, blank=True, verbose_name="有效元素列表")
     class Meta:
         verbose_name = "爆炸装置物证XRF检测实验文件表"
         verbose_name_plural = verbose_name
@@ -369,12 +375,6 @@ class PCBImgEvi(models.Model):
     """
     爆炸装置物证电路板图像表
     """
-    EVI_TYPE = (
-        (1, "外壳"),
-        (2, "零件"),
-        (3, "电路板"),
-        (4,"Logo"),
-    )
     SIDE_TYPE = (
         (1, "正面"),
         (2, "反面"),
@@ -383,8 +383,6 @@ class PCBImgEvi(models.Model):
     devEvi =models.ForeignKey(devEvi,verbose_name="所属物证",related_name="PCBImgEvi")
     user = models.ForeignKey(userProfile, verbose_name=u"处理人员")
     inputDate = models.DateTimeField(default=datetime.now, verbose_name=u"录入日期")
-    eviType = models.IntegerField(choices=EVI_TYPE, default=3, verbose_name="物证类型（1-4，外壳，零件，电路板，Logo）",
-                                  help_text="物证类型（1-4，外壳，零件，电路板，Logo）")
     sampleSide = models.IntegerField(choices=SIDE_TYPE, default=1, verbose_name="电路板是哪个面（1-2；1为正面）", help_text="电路板是哪个面（1-2；1为正面）")
     rectCoordi=models.CharField(max_length=50,null=True, blank=True, verbose_name="矩形框坐标（4个）")
     fgCoordi = models.CharField(max_length=300, null=True, blank=True, verbose_name="前景颜色点坐标")
@@ -412,12 +410,6 @@ class oPartImgEvi(models.Model):
     """
     爆炸装置物证其它零件图像（也包括组件外壳）表
     """
-    EVI_TYPE = (
-        (1, "外壳"),
-        (2, "零件"),
-        (3, "电路板"),
-        (4,"Logo"),
-    )
     SIDE_TYPE = (
         (1, "正面"),
         (2, "反面"),
@@ -429,8 +421,6 @@ class oPartImgEvi(models.Model):
     devEvi =models.ForeignKey(devEvi,verbose_name="所属物证",related_name="oPartImgEvi")
     user = models.ForeignKey(userProfile, verbose_name=u"处理人员")
     inputDate = models.DateTimeField(default=datetime.now, verbose_name=u"录入日期")
-    eviType = models.IntegerField(choices=EVI_TYPE, default=1, verbose_name="物证类型（1-4，外壳，零件，电路板，Logo）",
-                                  help_text="物证类型（1-4，外壳，零件，电路板，Logo）")
     eviSide = models.IntegerField(choices=SIDE_TYPE, default=1, verbose_name="物证是哪个面（1-6；1为正面，2为反面）", help_text="物证是哪个面（1-6；1为正面，2为反面）")
     rectCoordi=models.CharField(max_length=50,null=True, blank=True, verbose_name="矩形框坐标（4个）")
     fgCoordi = models.CharField(max_length=300, null=True, blank=True, verbose_name="前景颜色点坐标")
@@ -457,16 +447,9 @@ class logoImgEvi(models.Model):
     """
     爆炸装置物证商标Logo图像表
     """
-    EVI_TYPE = (
-        (1, "外壳"),
-        (2, "零件"),
-        (3, "电路板"),
-        (4,"Logo"),
-    )
     devEvi =models.ForeignKey(devEvi,verbose_name="所属物证",related_name="logoImgEvi")
     user = models.ForeignKey(userProfile, verbose_name=u"处理人员")
     inputDate = models.DateTimeField(default=datetime.now, verbose_name=u"录入日期")
-    eviType = models.IntegerField(choices=EVI_TYPE, default=4, verbose_name="零件类型（1-4，外壳，零件，电路板，Logo）", help_text="零件类型（1-4，外壳，零件，电路板，Logo）")
     rectCoordi=models.CharField(max_length=50,null=True, blank=True, verbose_name="矩形框坐标（4个）")
     fgCoordi = models.CharField(max_length=300, null=True, blank=True, verbose_name="前景颜色点坐标")
     bgCoordi=models.CharField(max_length=300,null=True, blank=True, verbose_name="背景颜色点坐标")

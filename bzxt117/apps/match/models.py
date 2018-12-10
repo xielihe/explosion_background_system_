@@ -25,6 +25,7 @@ class exploMatchFTIR(models.Model):
         #     ]
         # }的错误，来自于数据库
         unique_together = ("exploSampleFTIRTestFile", "exploEviFTIRTestFile")
+        ordering = ['Score']
 
 
 class exploMatchRaman(models.Model):
@@ -39,6 +40,7 @@ class exploMatchRaman(models.Model):
         verbose_name = "炸药及原材料物证Raman匹配结果表"
         verbose_name_plural = verbose_name
         unique_together = ("exploSampleRamanTestFile", "exploEviRamanTestFile")
+        ordering = ['Score']
 
 class exploMatchXRD(models.Model):
     """
@@ -52,6 +54,7 @@ class exploMatchXRD(models.Model):
         verbose_name = " 炸药及原材料物证XRD匹配结果表"
         verbose_name_plural = verbose_name
         unique_together = ("exploSampleXRDTestFile", "exploEviXRDTestFile")
+        ordering = ['Score']
 
 
 
@@ -61,34 +64,30 @@ class exploMatchXRF(models.Model):
     """
     exploSampleXRFTestFile = models.ForeignKey(exploSampleXRFTestFile,verbose_name=u"对应的样本XRF文件记录",on_delete=models.CASCADE)
     exploEviXRFTestFile = models.ForeignKey(exploEviXRFTestFile, verbose_name=u"对应的物证XRF文件记录",on_delete=models.CASCADE)
-    miningScore = models.FloatField(default=0.0, verbose_name="Mining相似分")
-    pnpScore = models.FloatField(default=0.0, verbose_name="Plastics Non PVC相似分")
-    ppScore = models.FloatField(default=0.0, verbose_name="Plastics PVC相似分")
-    gmScore = models.FloatField(default=0.0, verbose_name="General Metals相似分")
-    soilScore = models.FloatField(default=0.0, verbose_name="Soil相似分")
-    tagScore = models.FloatField(default=0.0, verbose_name="TestAll Geo相似分")
     averScore = models.FloatField(default=0.0, verbose_name="平均相似分")
 
     class Meta:
         verbose_name = "炸药及原材料物证XRF匹配结果表"
         verbose_name_plural = verbose_name
         unique_together = ("exploSampleXRFTestFile", "exploEviXRFTestFile")
+        ordering = ['averScore']
 
 
 class exploMatchGCMS(models.Model):
     """
     炸药及原材料物证GC-MS匹配结果表
     """
-    exploSampleGCMSTestFile = models.ForeignKey(exploSampleGCMSTestFile,verbose_name=u"对应的样本GC-MS文件记录"
+    exploSampleGCMSFile = models.ForeignKey(exploSampleGCMSFile,verbose_name=u"对应的样本GC-MS文件记录"
                                         , related_name="exploMatchGCMS", on_delete=models.CASCADE)
-    exploEviGCMSTestFile = models.ForeignKey(exploEviGCMSTestFile, verbose_name=u"对应的物证GC-MS文件记录",
+    exploEviGCMSFile = models.ForeignKey(exploEviGCMSFile, verbose_name=u"对应的物证GC-MS文件记录",
                                      related_name="exploMatchGCMS", on_delete=models.CASCADE)
     Score = models.FloatField(default=0.0, verbose_name="相似分")
 
     class Meta:
         verbose_name = "炸药及原材料物证GC-MS匹配结果表"
         verbose_name_plural = verbose_name
-        unique_together = ("exploSampleGCMSTestFile", "exploEviGCMSTestFile")
+        unique_together = ("exploSampleGCMSFile", "exploEviGCMSFile")
+        ordering = ['Score']
 
 
 class exploSynMatch(models.Model):
@@ -113,6 +112,7 @@ class exploSynMatch(models.Model):
     class Meta:
         verbose_name = "炸药及原材料物证综合匹配结果表"
         verbose_name_plural = verbose_name
+        ordering = ['Score']
 
 class exploReportMatch(models.Model):
     """
@@ -153,6 +153,7 @@ class devMatchFTIR(models.Model):
         verbose_name = "爆炸装置物证FTIR匹配结果表"
         verbose_name_plural = verbose_name
         unique_together = ("devPartSampleFTIRTestFile", "devEviFTIRTestFile")
+        ordering = ['Score']
 
 
 class devMatchRaman(models.Model):
@@ -169,6 +170,7 @@ class devMatchRaman(models.Model):
         verbose_name = "爆炸装置物证Raman匹配结果表"
         verbose_name_plural = verbose_name
         unique_together = ("devPartRamanTestFile", "devEviRamanTestFile")
+        ordering = ['Score']
 
 class devMatchXRF(models.Model):
     """
@@ -178,18 +180,13 @@ class devMatchXRF(models.Model):
                                         , related_name="devMatchXRF", on_delete=models.CASCADE)
     devEviXRFTestFile = models.ForeignKey(devEviXRFTestFile, verbose_name=u"对应的物证XRF文件记录",
                                      related_name="devMatchXRF", on_delete=models.CASCADE)
-    miningScore = models.FloatField(default=0.0, verbose_name="Mining相似分")
-    pnpScore = models.FloatField(default=0.0, verbose_name="Plastics Non PVC相似分")
-    ppScore = models.FloatField(default=0.0, verbose_name="Plastics PVC相似分")
-    gmScore = models.FloatField(default=0.0, verbose_name="General Metals相似分")
-    soilScore = models.FloatField(default=0.0, verbose_name="Soil相似分")
-    tagScore = models.FloatField(default=0.0, verbose_name="TestAll Geo相似分")
     averScore = models.FloatField(default=0.0, verbose_name="平均相似分")
 
     class Meta:
         verbose_name = "爆炸装置物证XRF匹配结果表"
         verbose_name_plural = verbose_name
         unique_together = ("devPartSampleXRFTestFile", "devEviXRFTestFile")
+        ordering = ['averScore']
 
 
 class devCompMatch(models.Model):
@@ -214,6 +211,7 @@ class devCompMatch(models.Model):
     class Meta:
         verbose_name = "爆炸装置物证成分综合匹配结果表"
         verbose_name_plural = verbose_name
+        ordering = ['Score']
 
 class devShapeMatch(models.Model):
     """
@@ -239,6 +237,7 @@ class devShapeMatch(models.Model):
     class Meta:
         verbose_name = "爆炸装置案件物证形态匹配结果表"
         verbose_name_plural = verbose_name
+        ordering = ['matchDegree']
 
 
 class PCBImgMatch(models.Model):
@@ -264,6 +263,7 @@ class PCBImgMatch(models.Model):
     class Meta:
         verbose_name = "爆炸装置物证电路板匹配结果表"
         verbose_name_plural = verbose_name
+        ordering = ['Score']
 
 class oPartImgMatch(models.Model):
     """
@@ -289,6 +289,7 @@ class oPartImgMatch(models.Model):
     class Meta:
         verbose_name = " 爆炸装置物证其它零件图像（也包括组件外壳）匹配结果表"
         verbose_name_plural = verbose_name
+        ordering = ['Score']
 
 class logoImgMatch(models.Model):
     """
@@ -314,6 +315,7 @@ class logoImgMatch(models.Model):
     class Meta:
         verbose_name = "爆炸装置物证商标图像匹配结果表"
         verbose_name_plural = verbose_name
+        ordering = ['Score']
 
 class devSynMatch(models.Model):
     """

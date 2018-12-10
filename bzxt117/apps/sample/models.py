@@ -144,13 +144,7 @@ class exploSampleXRFTestFile(models.Model):
     exploSampleXRF = models.ForeignKey(exploSampleXRF, verbose_name=u"对应的XRF检测",related_name="exploSampleXRFTestFile")
     excelURL = models.FileField(max_length=300, upload_to="file/exploSampleXRFTestFile/", null=True, blank=True,
                               verbose_name="录入excel文档路径")
-    miningList = models.CharField(max_length=300,null=True,blank=True,verbose_name='Mining元素列表')
-    pnpList = models.CharField(max_length=300, null=True, blank=True, verbose_name='Plastics Non PVC元素列表')
-    ppList = models.CharField(max_length=300, null=True, blank=True, verbose_name='Plastics PVC元素列表')
-    gmList = models.CharField(max_length=300, null=True, blank=True, verbose_name='General Metals元素列表')
-    soilList = models.CharField(max_length=300, null=True, blank=True, verbose_name='Soil元素列表')
-    tagList = models.CharField(max_length=300, null=True, blank=True, verbose_name='TestAll Geo元素列表')
-
+    handledURL = models.FileField(max_length=300,null=True, blank=True,verbose_name="有效元素列表")
     class Meta:
         verbose_name = "炸药及原材料样本XRF检测实验文件表"
         verbose_name_plural = verbose_name
@@ -172,6 +166,17 @@ class exploSampleGCMS(models.Model):
     def __str__(self):
         return "%s,GCMS" %(self.exploSample.sname,)
 
+class exploSampleGCMSFile(models.Model):
+    """
+    炸药及原材料样本GC-MS检测文件表
+    """
+    exploSampleGCMS = models.ForeignKey(exploSampleGCMS, verbose_name=u"对应的GC-MS检测",related_name="exploSampleGCMSFile")
+    txtHandledURL = models.FileField(max_length=300, null=True, blank=True, verbose_name="处理过的TXT文档路径")
+
+    class Meta:
+        verbose_name = "炸药及原材料样本GC-MS检测文件表 "
+        verbose_name_plural = verbose_name
+
 class exploSampleGCMSTestFile(models.Model):
     """
     炸药及原材料样本GC-MS检测实验文件表
@@ -180,7 +185,6 @@ class exploSampleGCMSTestFile(models.Model):
     type =models.CharField(max_length=20,default="TIC",verbose_name="类型（TIC。。。）")
     txtURL = models.FileField(max_length=300, upload_to="file/exploSampleGCMSTestFile/", null=True, blank=True,
                               verbose_name="录入TXT文档路径")
-    txtHandledURL = models.FileField(max_length=300, null=True, blank=True, verbose_name="处理过的TXT文档路径")
 
     class Meta:
         verbose_name = "炸药及原材料样本GC-MS检测实验文件表 "
@@ -222,11 +226,18 @@ class devPartSample(models.Model):
     """
     爆炸装置关键组件的零件（包括电路板）样本基本信息表
     """
+    SAMPLE_TYPE = (
+        (1, "外壳"),
+        (2, "零件"),
+        (3, "电路板"),
+        (4,"Logo"),
+    )
     sname = models.CharField(max_length=30, verbose_name="零件名称")
     devSample = models.ForeignKey(devSample, verbose_name=u"所属组件", related_name="devPartSample",
                                       )#on_delete=models.CASCADE
     user = models.ForeignKey(userProfile, verbose_name=u"处理人员")
     inputDate = models.DateTimeField(default=datetime.now, verbose_name=u"录入日期")
+    sampleType = models.IntegerField(choices=SAMPLE_TYPE, default=4, verbose_name="零件类型（1-4，外壳，零件，电路板，Logo）", help_text="零件类型（1-4，外壳，零件，电路板，Logo）")
     Origin = models.CharField(max_length=100, null=True, blank=True, verbose_name="零件产地")
     Factory =models.CharField(max_length=100, null=True, blank=True,verbose_name="零件厂家")
     Model =models.CharField(max_length=30, null=True, blank=True,verbose_name="零件型号")
@@ -335,13 +346,7 @@ class devPartSampleXRFTestFile(models.Model):
     devPartSampleXRF = models.ForeignKey(devPartSampleXRF, verbose_name=u"对应的XRF检测",related_name="devPartSampleXRFTestFile")
     excelURL = models.FileField(max_length=300, upload_to="file/devPartSampleXRFTestFile/", null=True, blank=True,
                               verbose_name="录入excel文档路径")
-    miningList = models.CharField(max_length=300,null=True,blank=True,verbose_name='Mining元素列表')
-    pnpList = models.CharField(max_length=300, null=True, blank=True, verbose_name='Plastics Non PVC元素列表')
-    ppList = models.CharField(max_length=300, null=True, blank=True, verbose_name='Plastics PVC元素列表')
-    gmList = models.CharField(max_length=300, null=True, blank=True, verbose_name='General Metals元素列表')
-    soilList = models.CharField(max_length=300, null=True, blank=True, verbose_name='Soil元素列表')
-    tagList = models.CharField(max_length=300, null=True, blank=True, verbose_name='TestAll Geo元素列表')
-
+    handledURL = models.FileField(max_length=300, null=True, blank=True, verbose_name="有效元素列表")
     class Meta:
         verbose_name = "爆炸装置关键组件样本零件XRF检测实验文件表"
         verbose_name_plural = verbose_name
@@ -389,12 +394,6 @@ class PCBImgSample(models.Model):
     """
     爆炸装置关键组件样本电路板图像表
     """
-    SAMPLE_TYPE = (
-        (1, "外壳"),
-        (2, "零件"),
-        (3, "电路板"),
-        (4,"Logo"),
-    )
     SIDE_TYPE = (
         (1, "正面"),
         (2, "反面"),
@@ -402,7 +401,6 @@ class PCBImgSample(models.Model):
     devPartSample =models.ForeignKey(devPartSample,verbose_name="所属零件",related_name="PCBImgSample")
     user = models.ForeignKey(userProfile, verbose_name=u"处理人员")
     inputDate = models.DateTimeField(default=datetime.now, verbose_name=u"录入日期")
-    sampleType = models.IntegerField(choices=SAMPLE_TYPE, default=3, verbose_name="零件类型（1-4，外壳，零件，电路板，Logo）", help_text="零件类型（1-4，外壳，零件，电路板，Logo）")
     sampleSide = models.IntegerField(choices=SIDE_TYPE, default=1, verbose_name="电路板是哪个面（1-2；1为正面）", help_text="电路板是哪个面（1-2；1为正面）")
     rectCoordi=models.CharField(max_length=50,null=True, blank=True, verbose_name="矩形框坐标（4个）")
     fgCoordi = models.CharField(max_length=300, null=True, blank=True, verbose_name="前景颜色点坐标")
@@ -430,12 +428,6 @@ class oPartImgSample(models.Model):
     """
     爆炸装置关键组件样本其它零件图像（也包括组件外壳）表
     """
-    SAMPLE_TYPE = (
-        (1, "外壳"),
-        (2, "零件"),
-        (3, "电路板"),
-        (4,"Logo"),
-    )
     SIDE_TYPE = (
         (1, "正面"),
         (2, "反面"),
@@ -447,7 +439,6 @@ class oPartImgSample(models.Model):
     devPartSample =models.ForeignKey(devPartSample,verbose_name="所属零件",related_name="oPartImgSample")
     user = models.ForeignKey(userProfile, verbose_name=u"处理人员")
     inputDate = models.DateTimeField(default=datetime.now, verbose_name=u"录入日期")
-    sampleType = models.IntegerField(choices=SAMPLE_TYPE, default=1, verbose_name="零件类型（1-4，外壳，零件，电路板，Logo）", help_text="零件类型（1-4，外壳，零件，电路板，Logo）")
     sampleSide = models.IntegerField(choices=SIDE_TYPE, default=1, verbose_name="零件是哪个面（1-6；1为正面，2为反面）", help_text="零件是哪个面（1-6；1为正面，2为反面）")
     rectCoordi=models.CharField(max_length=50,null=True, blank=True, verbose_name="矩形框坐标（4个）")
     fgCoordi = models.CharField(max_length=300, null=True, blank=True, verbose_name="前景颜色点坐标")
@@ -474,16 +465,9 @@ class logoImgSample(models.Model):
     """
     爆炸装置关键组件样本商标Logo图像表
     """
-    SAMPLE_TYPE = (
-        (1, "外壳"),
-        (2, "零件"),
-        (3, "电路板"),
-        (4,"Logo"),
-    )
     devPartSample =models.ForeignKey(devPartSample,verbose_name="所属零件",related_name="logoImgSample")
     user = models.ForeignKey(userProfile, verbose_name=u"处理人员")
     inputDate = models.DateTimeField(default=datetime.now, verbose_name=u"录入日期")
-    sampleType = models.IntegerField(choices=SAMPLE_TYPE, default=4, verbose_name="零件类型（1-4，外壳，零件，电路板，Logo）", help_text="零件类型（1-4，外壳，零件，电路板，Logo）")
     rectCoordi=models.CharField(max_length=50,null=True, blank=True, verbose_name="矩形框坐标（4个）")
     fgCoordi = models.CharField(max_length=300, null=True, blank=True, verbose_name="前景颜色点坐标")
     bgCoordi=models.CharField(max_length=300,null=True, blank=True, verbose_name="背景颜色点坐标")

@@ -94,7 +94,7 @@ class methodDetectViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mixins
     """
  #   authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
 #    lookup_field = "goods_id"
-    permission_classes = (IsAuthenticated, IsAdmin)
+#     permission_classes = (IsAuthenticated, IsAdmin)
     pagination_class = MyPageNumberPagination
     def get_queryset(self):
         return methodDetect.objects.all()

@@ -13,7 +13,6 @@ from apps.sample.models import *
 from utils.permissions import IsAdmin
 from bzxt117.settings import MEDIA_ROOT
 from utils.PCB import *
-from utils.GCMS_handle import *
 from apps.evi.models import *
 from apps.match.models import *
 from apps.match.views import *
@@ -74,7 +73,7 @@ class exploSampleFTIRTestFileViewset(viewsets.ModelViewSet):
     queryset = exploSampleFTIRTestFile.objects.all()
     #queryset = exploSample.objects.filter(sname="样本3")
     # serializer_class = LsitExploSampleFTIRTestFileSerializer
-    permission_classes = (IsAuthenticated,IsAdmin)
+    # permission_classes = (IsAuthenticated,IsAdmin)
     parser_classes = (MultiPartParser, FileUploadParser,)
     pagination_class = MyPageNumberPagination
     def get_serializer_class(self):
@@ -85,9 +84,6 @@ class exploSampleFTIRTestFileViewset(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         # 综合表中的对应的值应该更新，减去这个文件对综合匹配结果的影响，同时都置为未匹配
         # 样本库的变化会导致报告表的结果不准确，因此报告表清零
-        reports = exploReportMatch.objects.all()
-        for report in reports:
-            report.delete()
         instance.delete()
 
 class exploSampleRamanViewset(viewsets.ModelViewSet):
@@ -117,9 +113,6 @@ class exploSampleRamanTestFileViewset(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         # 综合表中的对应的值应该更新，减去这个文件对综合匹配结果的影响，同时都置为未匹配
         # 样本库的变化会导致报告表的结果不准确，因此报告表清零
-        reports = exploReportMatch.objects.all()
-        for report in reports:
-            report.delete()
         instance.delete()
 
 class exploSampleXRDViewset(viewsets.ModelViewSet):
@@ -149,9 +142,6 @@ class exploSampleXRDTestFileViewset(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         # 综合表中的对应的值应该更新，减去这个文件对综合匹配结果的影响，同时都置为未匹配
         # 样本库的变化会导致报告表的结果不准确，因此报告表清零
-        reports = exploReportMatch.objects.all()
-        for report in reports:
-            report.delete()
         instance.delete()
 
 class exploSampleXRFViewset(viewsets.ModelViewSet):
@@ -181,9 +171,6 @@ class exploSampleXRFTestFileViewset(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         # 综合表中的对应的值应该更新，减去这个文件对综合匹配结果的影响，同时都置为未匹配
         # 样本库的变化会导致报告表的结果不准确，因此报告表清零
-        reports = exploReportMatch.objects.all()
-        for report in reports:
-            report.delete()
         instance.delete()
 
 class exploSampleGCMSViewset(viewsets.ModelViewSet):
@@ -201,7 +188,7 @@ class exploSampleGCMSTestFileViewset(viewsets.ModelViewSet):
     queryset = exploSampleGCMSTestFile.objects.all()
     #queryset = exploSample.objects.filter(sname="样本3")
     # serializer_class = exploSampleGCMSTestFileSerializer
-    permission_classes = (IsAuthenticated,IsAdmin)
+    # permission_classes = (IsAuthenticated,IsAdmin)
     parser_classes = (MultiPartParser, FileUploadParser,)
 
     def get_serializer_class(self):
@@ -211,10 +198,16 @@ class exploSampleGCMSTestFileViewset(viewsets.ModelViewSet):
 
     def perform_destroy(self, instance):
         # 综合表中的对应的值应该更新，减去这个文件对综合匹配结果的影响，同时都置为未匹配
-        # 样本库的变化会导致报告表的结果不准确，因此报告表清零
-        reports = exploReportMatch.objects.all()
-        for report in reports:
-            report.delete()
+        # 一定要最后删除TIC文件
+        if instance.type == "TIC":
+            filePath = os.path.join(MEDIA_ROOT, "file/exploSampleGCMSTestFile/%d_%d/" % (instance.exploSampleGCMS.exploSample.id, instance.id))
+            # dirPath = "file/exploSampleGCMSTestFile/%d_%d/" % (instance.exploSampleGCMS.exploSample.id, instance.id)
+            # for (root, dirs, files) in os.walk(filePath):
+            #     for file in files:
+            #         d = os.path.join(dirPath, file)
+            #         fileDel = exploSampleGCMSTestFile.objects.filter(txtURL = d)
+            #         fileDel.delete()
+            shutil.rmtree(filePath)
         instance.delete()
 
 class devSampleViewset(viewsets.ModelViewSet):

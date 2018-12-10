@@ -3,12 +3,16 @@ from rest_framework import serializers
 from rest_framework.parsers import MultiPartParser, FileUploadParser
 from rest_framework.validators import UniqueTogetherValidator
 from rest_framework.serializers import *
+import os,shutil
+import numpy as np
 
 from apps.evi.models import *
 from apps.basic.models import *
 from apps.basic.serializers import UserDetailSerializer
-from utils.XRDhandle import preprocess
 from apps.match.models import *
+from bzxt117.settings import MEDIA_ROOT
+
+
 
 class exploEviSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(
@@ -23,29 +27,22 @@ class exploEviSerializer(serializers.ModelSerializer):
 
 class exploEviFTIRTestFileSerializer(serializers.ModelSerializer):
     txtHandledURL = serializers.FileField(read_only=True, )
+    handledData = serializers.SerializerMethodField()
+    exploEviId = serializers.IntegerField(read_only= True)
+
+    def get_handledData(self, obj):
+        path = os.path.join(MEDIA_ROOT,str(obj.txtHandledURL))
+        data = np.load(path)
+        # print(type(data))
+        # print(data[0])
+
+        return data
     def __str__(self):
         return self.txtURL
 
-    def update(self, instance, validated_data):
-        raise_errors_on_nested_writes('update', self, validated_data)
-        info = model_meta.get_field_info(instance)
-        for attr, value in validated_data.items():
-            if attr in info.relations and info.relations[attr].to_many:
-                field = getattr(instance, attr)
-                field.set(value)
-            else:
-                setattr(instance, attr, value)
-
-        #对txt进行预处理，再平均
-        # exploEviFTIRTestFiles = exploEviFTIRTestFile.objects.filter(exploEviFTIR = instance.exploEviFTIR)
-        instance.txtHandledURL = "file/exploEviFTIRTestFile/GM1923-扫描247_hF4jw4W.txt" #假定成功标志
-        instance.save()
-        return instance
-
     class Meta:
         model = exploEviFTIRTestFile
-        fields = "__all__"
-
+        fields = ("id","exploEviFTIR","exploEviId","txtURL","handledData")
 class LsitExploEviFTIRTestFileSerializer(serializers.Serializer):
     # 用于接收多个文件
     FTIRs = serializers.ListField(
@@ -78,16 +75,12 @@ class LsitExploEviFTIRTestFileSerializer(serializers.Serializer):
             synMatchs = exploSynMatch.objects.filter(exploEvi_id= exploEviId)
             for synMatch in synMatchs:
                 synMatch.delete()
-            reportMatchs = exploReportMatch.objects.filter(exploEvi= exploEviId)
-            for reportMatch in reportMatchs:
-                reportMatch.delete()
 
             blog = exploEviFTIRTestFileSerializer(FTIR, context=self.context)
             FTIR1s.append(blog.data['txtURL'])
         return {
                 'return_FTIRs':FTIR1s,
                 'exploEviFTIR':exploEviFTIR}
-
 class exploEviFTIRSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(
         default=serializers.CurrentUserDefault()
@@ -109,28 +102,22 @@ class exploEviFTIRDetailSerializer(serializers.ModelSerializer):
 
 class exploEviRamanTestFileSerializer(serializers.ModelSerializer):
     txtHandledURL = serializers.FileField(read_only=True, )
+    handledData = serializers.SerializerMethodField()
+    exploEviId = serializers.IntegerField(read_only= True)
+
+    def get_handledData(self, obj):
+        path = os.path.join(MEDIA_ROOT,str(obj.txtHandledURL))
+        data = np.load(path)
+        # print(type(data))
+        # print(data[0])
+
+        return data
     def __str__(self):
         return self.txtURL
 
-    def update(self, instance, validated_data):
-        raise_errors_on_nested_writes('update', self, validated_data)
-        info = model_meta.get_field_info(instance)
-        for attr, value in validated_data.items():
-            if attr in info.relations and info.relations[attr].to_many:
-                field = getattr(instance, attr)
-                field.set(value)
-            else:
-                setattr(instance, attr, value)
-
-        # 对txt进行预处理，再平均
-        # exploEviFTIRTestFiles = exploEviFTIRTestFile.objects.filter(exploEviFTIR = instance.exploEviFTIR)
-        instance.txtHandledURL = "file/exploEviFTIRTestFile/GM1923-扫描247_hF4jw4W.txt"  # 假定成功标志
-        instance.save()
-        return instance
-
     class Meta:
         model = exploEviRamanTestFile
-        fields = "__all__"
+        fields = ("id","exploEviRaman","exploEviId","txtURL","handledData")
 class LsitExploEviRamanTestFileSerializer(serializers.Serializer):
     # 用于接收多个文件
     Ramans = serializers.ListField(
@@ -179,31 +166,24 @@ class exploEviRamanDetailSerializer(serializers.ModelSerializer):
         model = exploEviRaman
         fields = ("id","exploEvi","devDetect","methodDetect", "user","inputDate","exploEviRamanTestFile")
 
-
 class exploEviXRDTestFileSerializer(serializers.ModelSerializer):
     txtHandledURL = serializers.FileField(read_only=True, )
+    handledData = serializers.SerializerMethodField()
+    exploEviId = serializers.IntegerField(read_only= True)
+
+    def get_handledData(self, obj):
+        path = os.path.join(MEDIA_ROOT,str(obj.txtHandledURL))
+        data = np.load(path)
+        # print(type(data))
+        # print(data[0])
+
+        return data
     def __str__(self):
         return self.txtURL
 
-    def update(self, instance, validated_data):
-        raise_errors_on_nested_writes('update', self, validated_data)
-        info = model_meta.get_field_info(instance)
-        for attr, value in validated_data.items():
-            if attr in info.relations and info.relations[attr].to_many:
-                field = getattr(instance, attr)
-                field.set(value)
-            else:
-                setattr(instance, attr, value)
-
-        # 对txt进行预处理，再平均
-        # exploEviFTIRTestFiles = exploEviFTIRTestFile.objects.filter(exploEviFTIR = instance.exploEviFTIR)
-        instance.txtHandledURL = "file/exploEviFTIRTestFile/GM1923-扫描247_hF4jw4W.txt"  # 假定成功标志
-        instance.save()
-        return instance
-
     class Meta:
         model = exploEviXRDTestFile
-        fields = "__all__"
+        fields = ("id","exploEviXRD","exploEviId","txtURL","handledData")
 class LsitExploEviXRDTestFileSerializer(serializers.Serializer):
     # 用于接收多个文件
     XRDs = serializers.ListField(
@@ -257,34 +237,23 @@ class exploEviXRDDetailSerializer(serializers.ModelSerializer):
         fields = ("id", "exploEvi", "devDetect", "methodDetect", "user", "inputDate", "exploEviXRDTestFile")
 
 class exploEviXRFTestFileSerializer(serializers.ModelSerializer):
-    miningList = serializers.CharField(read_only=True,)
-    pnpList = serializers.CharField(read_only=True,)
-    ppList = serializers.CharField(read_only=True, )
-    gmList = serializers.CharField(read_only=True, )
-    soilList = serializers.CharField(read_only=True, )
-    tagList = serializers.CharField(read_only=True, )
+    handledURL = serializers.FileField(read_only=True, )
+    handledData = serializers.SerializerMethodField()
+    exploEviId = serializers.IntegerField(read_only= True)
 
+    def get_handledData(self, obj):
+        path = os.path.join(MEDIA_ROOT,str(obj.txtHandledURL))
+        data = np.load(path)
+        # print(type(data))
+        # print(data[0])
+
+        return data
     def __str__(self):
         return self.excelURL
 
-    def update(self, instance, validated_data):
-        raise_errors_on_nested_writes('update', self, validated_data)
-        info = model_meta.get_field_info(instance)
-        for attr, value in validated_data.items():
-            if attr in info.relations and info.relations[attr].to_many:
-                field = getattr(instance, attr)
-                field.set(value)
-            else:
-                setattr(instance, attr, value)
-
-        #对excel进行预处理，填入各有效值
-        # exploEviXRFTestFiles = exploEviXRFTestFile.objects.filter(exploEviXRF = instance.exploEviXRF)
-        instance.save()
-        return instance
-
     class Meta:
         model = exploEviXRFTestFile
-        fields = "__all__"
+        fields = ("id","exploEviXRF","exploEviId","excelURL","handledData")
 class LsitExploEviXRFTestFileSerializer(serializers.Serializer):
     # 用于接收多个文件
     XRFs = serializers.ListField(
@@ -321,12 +290,6 @@ class exploEviXRFSerializer(serializers.ModelSerializer):
         default=serializers.CurrentUserDefault()
     )
     inputDate = serializers.DateTimeField(read_only=True, format='%Y-%m-%d %H:%M')
-    miningList = serializers.CharField(read_only=True,)
-    pnpList = serializers.CharField(read_only=True,)
-    ppList = serializers.CharField(read_only=True, )
-    gmList = serializers.CharField(read_only=True, )
-    soilList = serializers.CharField(read_only=True, )
-    tagList = serializers.CharField(read_only=True, )
     class Meta:
         model = exploEviXRF
         fields = "__all__"
@@ -342,65 +305,72 @@ class exploEviXRFDetailSerializer(serializers.ModelSerializer):
         model = exploEviXRF
         fields = ("id","exploEvi","devDetect","methodDetect", "user","inputDate","exploEviXRFTestFile")
 
-
 class exploEviGCMSTestFileSerializer(serializers.ModelSerializer):
-    txtHandledURL = serializers.FileField(read_only=True, )
-
     def __str__(self):
         return "%s,%s" % (self.type,self.txtURL)
-
-    def update(self, instance, validated_data):
-        raise_errors_on_nested_writes('update', self, validated_data)
-        info = model_meta.get_field_info(instance)
-        for attr, value in validated_data.items():
-            if attr in info.relations and info.relations[attr].to_many:
-                field = getattr(instance, attr)
-                field.set(value)
-            else:
-                setattr(instance, attr, value)
-
-        #对txt进行预处理，再平均
-        # exploEviGCMSTestFiles = exploEviGCMSTestFile.objects.filter(exploEviGCMS = instance.exploEviGCMS)
-        instance.txtHandledURL = "file/exploEviGCMSTestFile/GM1923-扫描247_hF4jw4W.txt" #假定成功标志
-        instance.save()
-        return instance
-
     class Meta:
         model = exploEviGCMSTestFile
         fields = "__all__"
+class exploEviGCMSFileSerializer(serializers.ModelSerializer):
+    txtHandledURL = serializers.FileField(read_only=True, )
+    handledData = serializers.SerializerMethodField()
+    exploEviId = serializers.IntegerField(read_only= True)
+
+    def get_handledData(self, obj):
+        path = os.path.join(MEDIA_ROOT,str(obj.txtHandledURL))
+        data = np.load(path)
+        # print(type(data))
+        # print(data[0])
+
+        return data
+
+    class Meta:
+        model = exploEviGCMSFile
+        fields = ("id","exploEviGCMS","exploEviId","handledData")
 class LsitExploEviGCMSTestFileSerializer(serializers.Serializer):
     # 用于接收多个文件
     GCMSs = serializers.ListField(
         child=serializers.FileField(max_length=100000, allow_empty_file=False, use_url=True),
         write_only=True )
     #用于接收外键,GCMSTestFile的外键也是GCMS，AverFile只是用来取平均的
-    exploEviGCMS = serializers.PrimaryKeyRelatedField(required=True, queryset=exploEviGCMS.objects.all())
+    exploEviGCMS = serializers.PrimaryKeyRelatedField(required=True, queryset=exploEviGCMS.objects.all() ,write_only=True)
     # 保证Id只是我们内部维护的
     exploEviId = serializers.IntegerField(read_only=True,)
-    type = serializers.CharField(max_length=20,)
-    # 返回的多个文件列表
-    return_GCMSs = serializers.ListField(
-        child=serializers.CharField(max_length=10000,),
-        read_only=True )
+    # type = serializers.CharField(read_only= True,max_length=20,)
 
     def create(self, validated_data):
         GCMSs = validated_data.get('GCMSs')
         exploEviGCMS = validated_data.get('exploEviGCMS')
-        type = validated_data.get('type')
-        # 新建重复也不可以覆盖！！否则就和修改一样了啊
-        # exploEviGCMSTestFiles = exploEviGCMSTestFile.objects.filter(exploEviGCMS = exploEviGCMS)
-        # for exploEviGCMSTestFileUp in exploEviGCMSTestFiles:
-        #     exploEviGCMSTestFileUp.delete()
-        GCMS1s = []
+        # type = validated_data.get('type')
+        GCMS2s = []
+        # GCMS3s = []
+        filePath = ""
         for index, url in enumerate(GCMSs):
-            # 会自动填入exploEviId
-            GCMS = exploEviGCMSTestFile.objects.create(txtURL=url,type=type,exploEviGCMS = exploEviGCMS,exploEviId = exploEviGCMS.exploEvi_id)
-            blog = exploEviGCMSTestFileSerializer(GCMS, context=self.context)
-            GCMS1s.append(blog.data['txtURL'])
-        # 对上传的文档预处理取平均，再将取完平均的回填到exploEviGCMSAverFile
-        return {
-                'return_GCMSs':GCMS1s,
-                'exploEviGCMS':exploEviGCMS}
+            # 会自动填入exploSampleId
+            # 从url中知道type，如果是TIC的type，那么就创建一个以此id和样本id联合的文件夹用来存放这一批的文档，
+            # 先存下来，再移动
+            GCMS = exploEviGCMSTestFile.objects.create(txtURL=url,exploEviGCMS = exploEviGCMS,exploEviId = exploEviGCMS.exploEvi_id)
+            name = url.name
+            type = os.path.splitext(name)[0]
+            GCMS.type = type
+            GCMS.save()
+            if type == "TIC":
+                filePath = os.path.join(MEDIA_ROOT, "file/exploEviGCMSTestFile/%d_%d/" % (GCMS.exploEviId, GCMS.id))
+                os.makedirs(filePath)
+            GCMS2s.append(GCMS)
+        for GCMS2 in GCMS2s:
+            prePath = os.path.join(MEDIA_ROOT, str(GCMS2.txtURL))
+            name = os.path.basename(prePath)
+            newPath = os.path.join(filePath, name)
+            shutil.move(prePath, newPath)
+            GCMS2.txtURL = newPath
+            GCMS2.save()
+        # 预处理方法，给filePath即为所在的文件夹
+        #     blog = exploSampleGCMSFileSerializer(GCMS2, context=self.context)
+        #     GCMS3s.append(blog.data['handledData'])
+        # 处理完一批我就删掉？
+        # 对上传的文档预处理取平均，再将取完平均的回填到exploSampleGCMSAverFile
+        return {}
 class exploEviGCMSSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(
         default=serializers.CurrentUserDefault()
@@ -431,28 +401,22 @@ class devEviSerializer(serializers.ModelSerializer):
 
 class devEviFTIRTestFileSerializer(serializers.ModelSerializer):
     txtHandledURL = serializers.FileField(read_only=True, )
+    handledData = serializers.SerializerMethodField()
+    devEviId = serializers.IntegerField(read_only=True)
+
+    def get_handledData(self, obj):
+        path = os.path.join(MEDIA_ROOT, str(obj.txtHandledURL))
+        data = np.load(path)
+        # print(type(data))
+        # print(data[0])
+
+        return data
     def __str__(self):
         return self.txtURL
 
-    def update(self, instance, validated_data):
-        raise_errors_on_nested_writes('update', self, validated_data)
-        info = model_meta.get_field_info(instance)
-        for attr, value in validated_data.items():
-            if attr in info.relations and info.relations[attr].to_many:
-                field = getattr(instance, attr)
-                field.set(value)
-            else:
-                setattr(instance, attr, value)
-
-        #对txt进行预处理，再平均
-        # devEviFTIRTestFiles = devEviFTIRTestFile.objects.filter(devEviFTIR = instance.devEviFTIR)
-        instance.txtHandledURL = "file/devEviFTIRTestFile/GM1923-扫描247_hF4jw4W.txt" #假定成功标志
-        instance.save()
-        return instance
-
     class Meta:
         model = devEviFTIRTestFile
-        fields = "__all__"
+        fields = ("id","devEviFTIR","devEviId","txtURL","handledData")
 class LsitdevEviFTIRTestFileSerializer(serializers.Serializer):
     # 用于接收多个文件
     FTIRs = serializers.ListField(
@@ -515,28 +479,22 @@ class devEviFTIRDetailSerializer(serializers.ModelSerializer):
 
 class devEviRamanTestFileSerializer(serializers.ModelSerializer):
     txtHandledURL = serializers.FileField(read_only=True, )
+    handledData = serializers.SerializerMethodField()
+    devEviId = serializers.IntegerField(read_only=True)
+
+    def get_handledData(self, obj):
+        path = os.path.join(MEDIA_ROOT, str(obj.txtHandledURL))
+        data = np.load(path)
+        # print(type(data))
+        # print(data[0])
+
+        return data
     def __str__(self):
         return self.txtURL
 
-    def update(self, instance, validated_data):
-        raise_errors_on_nested_writes('update', self, validated_data)
-        info = model_meta.get_field_info(instance)
-        for attr, value in validated_data.items():
-            if attr in info.relations and info.relations[attr].to_many:
-                field = getattr(instance, attr)
-                field.set(value)
-            else:
-                setattr(instance, attr, value)
-
-        #对txt进行预处理，再平均
-        # devEviRamanTestFiles = devEviRamanTestFile.objects.filter(devEviRaman = instance.devEviRaman)
-        instance.txtHandledURL = "file/devEviRamanTestFile/GM1923-扫描247_hF4jw4W.txt" #假定成功标志
-        instance.save()
-        return instance
-
     class Meta:
         model = devEviRamanTestFile
-        fields = "__all__"
+        fields = ("id","devEviRaman","devEviId","txtURL","handledData")
 class LsitdevEviRamanTestFileSerializer(serializers.Serializer):
     # 用于接收多个文件
     Ramans = serializers.ListField(
@@ -598,34 +556,23 @@ class devEviRamanDetailSerializer(serializers.ModelSerializer):
         fields = ("id","devEvi","devDetect","methodDetect", "user","inputDate","devEviRamanTestFile")
 
 class devEviXRFTestFileSerializer(serializers.ModelSerializer):
-    miningList = serializers.CharField(read_only=True,)
-    pnpList = serializers.CharField(read_only=True,)
-    ppList = serializers.CharField(read_only=True, )
-    gmList = serializers.CharField(read_only=True, )
-    soilList = serializers.CharField(read_only=True, )
-    tagList = serializers.CharField(read_only=True, )
+    handledURL = serializers.FileField(read_only=True)
+    handledData = serializers.SerializerMethodField()
+    devEviId = serializers.IntegerField(read_only=True)
 
+    def get_handledData(self, obj):
+        path = os.path.join(MEDIA_ROOT, str(obj.handledURL))
+        data = np.load(path)
+        # print(type(data))
+        # print(data[0])
+
+        return data
     def __str__(self):
         return self.excelURL
 
-    def update(self, instance, validated_data):
-        raise_errors_on_nested_writes('update', self, validated_data)
-        info = model_meta.get_field_info(instance)
-        for attr, value in validated_data.items():
-            if attr in info.relations and info.relations[attr].to_many:
-                field = getattr(instance, attr)
-                field.set(value)
-            else:
-                setattr(instance, attr, value)
-
-        #对excel进行预处理，填入各有效值
-        # devEviXRFTestFiles = devEviXRFTestFile.objects.filter(devEviXRF = instance.devEviXRF)
-        instance.save()
-        return instance
-
     class Meta:
         model = devEviXRFTestFile
-        fields = "__all__"
+        fields = ("id","devEviXRF","devEviId","excelURL","handledData")
 class LsitdevEviXRFTestFileSerializer(serializers.Serializer):
     # 用于接收多个文件
     XRFs = serializers.ListField(
@@ -662,12 +609,6 @@ class devEviXRFSerializer(serializers.ModelSerializer):
         default=serializers.CurrentUserDefault()
     )
     inputDate = serializers.DateTimeField(read_only=True, format='%Y-%m-%d %H:%M')
-    miningList = serializers.CharField(read_only=True,)
-    pnpList = serializers.CharField(read_only=True,)
-    ppList = serializers.CharField(read_only=True, )
-    gmList = serializers.CharField(read_only=True, )
-    soilList = serializers.CharField(read_only=True, )
-    tagList = serializers.CharField(read_only=True, )
     class Meta:
         model = devEviXRF
         fields = "__all__"

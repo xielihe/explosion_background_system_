@@ -17,7 +17,6 @@ from apps.match.models import *
 from apps.utils.permissions import *
 from bzxt117.settings import MEDIA_ROOT
 from utils.PCB import *
-from utils.GCMS_handle import *
 from apps.match.views import MyPageNumberPagination
 
 
@@ -103,14 +102,12 @@ class exploEviFTIRTestFileViewset(viewsets.ModelViewSet):
         else:
             return [permissions.IsAuthenticated(),]
 
-    # 物证文件删除，由于外键关联，会自动删除关联的FTIR表的匹配信息，但综合表和报告表的也应该手动删除
+    # 物证文件删除，由于外键关联，会自动删除关联的FTIR表的匹配信息，但综合表应该更新记录
     def perform_destroy(self, instance):
-        synMatchs = exploSynMatch.objects.filter(exploEvi = instance.exploEviFTIR.exploEvi )
-        for synMatch in synMatchs:
-            synMatch.delete()
-        reportMatchs = exploReportMatch.objects.filter(exploEvi = instance.exploEviFTIR.exploEvi )
-        for reportMatch in reportMatchs:
-            reportMatch.delete()
+        # synMatchs = exploSynMatch.objects.filter(exploEvi = instance.exploEviFTIR.exploEvi )
+        # for synMatch in synMatchs:
+        #     synMatch.delete()
+# 综合表的匹配算法
         instance.delete()
 
 class exploEviRamanViewset(viewsets.ModelViewSet):
@@ -154,12 +151,10 @@ class exploEviRamanTestFileViewset(viewsets.ModelViewSet):
             return [permissions.IsAuthenticated(),]
 
     def perform_destroy(self, instance):
-        synMatchs = exploSynMatch.objects.filter(exploEvi = instance.exploEviRaman.exploEvi )
-        for synMatch in synMatchs:
-            synMatch.delete()
-        reportMatchs = exploReportMatch.objects.filter(exploEvi = instance.exploEviRaman.exploEvi )
-        for reportMatch in reportMatchs:
-            reportMatch.delete()
+        # synMatchs = exploSynMatch.objects.filter(exploEvi = instance.exploEviRaman.exploEvi )
+        # for synMatch in synMatchs:
+        #     synMatch.delete()
+ # 综合表的匹配算法
         instance.delete()
 
 class exploEviXRDViewset(viewsets.ModelViewSet):
@@ -205,12 +200,10 @@ class exploEviXRDTestFileViewset(viewsets.ModelViewSet):
 
     # 物证文件删除，由于外键关联，会自动删除关联的FTIR表的匹配信息，但综合表和报告表的也应该手动删除
     def perform_destroy(self, instance):
-        synMatchs = exploSynMatch.objects.filter(exploEvi = instance.exploEviXRD.exploEvi )
-        for synMatch in synMatchs:
-            synMatch.delete()
-        reportMatchs = exploReportMatch.objects.filter(exploEvi = instance.exploEviXRD.exploEvi )
-        for reportMatch in reportMatchs:
-            reportMatch.delete()
+        # synMatchs = exploSynMatch.objects.filter(exploEvi = instance.exploEviXRD.exploEvi )
+        # for synMatch in synMatchs:
+        #     synMatch.delete()
+# 综合表的匹配算法
         instance.delete()
 
 class exploEviXRFViewset(viewsets.ModelViewSet):
@@ -254,12 +247,10 @@ class exploEviXRFTestFileViewset(viewsets.ModelViewSet):
             return [permissions.IsAuthenticated(), ]
 
     def perform_destroy(self, instance):
-        synMatchs = exploSynMatch.objects.filter(exploEvi = instance.exploEviXRF.exploEvi )
-        for synMatch in synMatchs:
-            synMatch.delete()
-        reportMatchs = exploReportMatch.objects.filter(exploEvi = instance.exploEviXRF.exploEvi )
-        for reportMatch in reportMatchs:
-            reportMatch.delete()
+        # synMatchs = exploSynMatch.objects.filter(exploEvi = instance.exploEviXRF.exploEvi )
+        # for synMatch in synMatchs:
+        #     synMatch.delete()
+# 综合表的匹配算法
         instance.delete()
 
 class exploEviGCMSViewset(viewsets.ModelViewSet):
@@ -302,12 +293,10 @@ class exploEviGCMSTestFileViewset(viewsets.ModelViewSet):
             return [permissions.IsAuthenticated(),]
 
     def perform_destroy(self, instance):
-        synMatchs = exploSynMatch.objects.filter(exploEvi = instance.exploEviGCMS.exploEvi )
-        for synMatch in synMatchs:
-            synMatch.delete()
-        reportMatchs = exploReportMatch.objects.filter(exploEvi = instance.exploEviGCMS.exploEvi )
-        for reportMatch in reportMatchs:
-            reportMatch.delete()
+        # synMatchs = exploSynMatch.objects.filter(exploEvi = instance.exploEviGCMS.exploEvi )
+        # for synMatch in synMatchs:
+        #     synMatch.delete()
+# 综合表的匹配算法
         instance.delete()
 
 class devEviViewset(viewsets.ModelViewSet):
@@ -368,12 +357,13 @@ class devEviFTIRTestFileViewset(viewsets.ModelViewSet):
             return [permissions.IsAuthenticated(),]
 
     def perform_destroy(self, instance):
-        compMatchs = devCompMatch.objects.filter(devEvi=instance.devEviFTIR.devEvi_id)
-        for compMatch in compMatchs:
-            compMatch.delete()
-        synMatchs = devSynMatch.objects.filter(devEvi_id=instance.devEviFTIR.devEvi_id)
-        for synMatch in synMatchs:
-            synMatch.delete()
+        # compMatchs = devCompMatch.objects.filter(devEvi=instance.devEviFTIR.devEvi_id)
+        # for compMatch in compMatchs:
+        #     compMatch.delete()
+        # synMatchs = devSynMatch.objects.filter(devEvi_id=instance.devEviFTIR.devEvi_id)
+        # for synMatch in synMatchs:
+        #     synMatch.delete()
+# 综合表的匹配算法
         instance.delete()
 
 class devEviRamanViewset(viewsets.ModelViewSet):
@@ -416,12 +406,13 @@ class devEviRamanTestFileViewset(viewsets.ModelViewSet):
             return [permissions.IsAuthenticated(),]
 
     def perform_destroy(self, instance):
-        compMatchs = devCompMatch.objects.filter(devEvi=instance.devEviRaman.devEvi_id)
-        for compMatch in compMatchs:
-            compMatch.delete()
-        synMatchs = devSynMatch.objects.filter(devEvi_id=instance.devEviRaman.devEvi_id)
-        for synMatch in synMatchs:
-            synMatch.delete()
+        # compMatchs = devCompMatch.objects.filter(devEvi=instance.devEviRaman.devEvi_id)
+        # for compMatch in compMatchs:
+        #     compMatch.delete()
+        # synMatchs = devSynMatch.objects.filter(devEvi_id=instance.devEviRaman.devEvi_id)
+        # for synMatch in synMatchs:
+        #     synMatch.delete()
+# 综合表的匹配算法
         instance.delete()
 
 class devEviXRFViewset(viewsets.ModelViewSet):
@@ -464,12 +455,13 @@ class devEviXRFTestFileViewset(viewsets.ModelViewSet):
             return [permissions.IsAuthenticated(),]
 
     def perform_destroy(self, instance):
-        compMatchs = devCompMatch.objects.filter(devEvi=instance.devEviXRF.devEvi_id)
-        for compMatch in compMatchs:
-            compMatch.delete()
-        synMatchs = devSynMatch.objects.filter(devEvi_id=instance.devEviXRF.devEvi_id)
-        for synMatch in synMatchs:
-            synMatch.delete()
+        # compMatchs = devCompMatch.objects.filter(devEvi=instance.devEviXRF.devEvi_id)
+        # for compMatch in compMatchs:
+        #     compMatch.delete()
+        # synMatchs = devSynMatch.objects.filter(devEvi_id=instance.devEviXRF.devEvi_id)
+        # for synMatch in synMatchs:
+        #     synMatch.delete()
+# 综合表的匹配算法
         instance.delete()
 
 class devShapeEviViewset(viewsets.ModelViewSet):

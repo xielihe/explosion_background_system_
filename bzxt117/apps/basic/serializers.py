@@ -5,8 +5,11 @@ from datetime import datetime
 from datetime import timedelta
 from rest_framework.validators import UniqueValidator
 import docx
+import numpy as np
+import os
 
 from apps.basic.models import *
+from bzxt117.settings import MEDIA_ROOT
 
 class UserDetailSerializer(serializers.ModelSerializer):
     """
@@ -58,12 +61,22 @@ class UserRegSerializer(serializers.ModelSerializer):
         fields = ("id","name","username","password","phone","email","unit","department","posts","role","isDelete","picUrl","note")
 
 class methodDetectSerializer(serializers.ModelSerializer):
+    handledData = serializers.SerializerMethodField()
+
+    def get_handledData(self, obj):
+        path = os.path.join(MEDIA_ROOT, "GCMS.npy")
+        data = np.load(path).item()
+        # print(type(data))
+        # print(data[0])
+
+        return data
     class Meta:
         model = methodDetect
-        fields = "__all__"
+        fields = ("id","method","handledData")
 
 class methodDetectCreateSerializer(serializers.Serializer):
     fileDoc = serializers.FileField(write_only=True,)
+
 
     def create(self, validated_data):
         doc = validated_data['fileDoc']

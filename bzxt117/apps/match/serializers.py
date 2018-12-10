@@ -69,12 +69,12 @@ class exploMatchGCMSSerializer(serializers.ModelSerializer):
     exploSampleName = serializers.SerializerMethodField(read_only=True,)
 
     def get_exploSampleName(self, obj):
-        exploSampleName = obj.exploSampleGCMSTestFile.exploSampleGCMS.exploSample.sname
+        exploSampleName = obj.exploSampleGCMSFile.exploSampleGCMS.exploSample.sname
         return exploSampleName
     class Meta:
         model = exploMatchGCMS
         #返回id是为了方便删除
-        fields =("id","exploEviGCMSTestFile","exploSampleGCMSTestFile","Score","exploSampleName")
+        fields =("id","exploEviGCMSFile","exploSampleGCMSFile","Score","exploSampleName")
 
 class exploSynMatchDetailSerializer(serializers.ModelSerializer):
     exploEvi = exploEviSerializer()
@@ -124,9 +124,9 @@ class exploSynMatchSerializer(serializers.Serializer):
                     match.isCheck = 3
                     match.checkHandle = user
                     match.save()
-                #报告表中一定有记录，因为默认是存的最高得分的，这里核准只是根据优先级替换而已
+                #报告表中不一定有记录，有则找出来，没有则按照物证创建
                 # 只能按照物证找，因为样本不一定和核准的样本是一个样本
-                reportMatch = exploReportMatch.objects.get(exploEvi=instance.exploEvi)
+                reportMatch = exploReportMatch.objects.get_or_create(exploEvi=instance.exploEvi)
                 # 只有在没有专家核准的情况下才会用普通用户的核准结果去填报告表中的
                 # for reportMatch in reportMatchs:
                 if reportMatch.isExpertCheck == 1:
@@ -149,11 +149,13 @@ class exploSynMatchSerializer(serializers.Serializer):
                 for message in messages:
                     message.hasHandle = True
                     message.save()
-                reportMatch = exploReportMatch.objects.get(exploEvi=instance.exploEvi)
+                reportMatch = exploReportMatch.objects.get_or_create(exploEvi=instance.exploEvi)
                 reportMatch.exploSample = instance.exploSample
                 reportMatch.Score = instance.Score
                 reportMatch.isExpertCheck = 2
                 reportMatch.expertHandle = user
+                reportMatch.isCheck = 1
+                reportMatch.checkHandle = None
                 reportMatch.save()
         instance.save()
         return instance
@@ -247,7 +249,7 @@ class devShapeMatchSerializer(serializers.Serializer):
                     match.save()
                 #报告表中一定有记录，因为默认是存的最高得分的，这里核准只是根据优先级替换而已
                 # 只能按照物证找，因为样本不一定和核准的样本是一个样本
-                reportMatch = devSynMatch.objects.get(devEviShape=instance.devShapeEvi)
+                reportMatch = devSynMatch.objects.get_or_create(devEviShape=instance.devShapeEvi)
                 # 只有在没有专家核准的情况下才会用普通用户的核准结果去填报告表中的
                 # for reportMatch in reportMatchs:
                 if reportMatch.isExpertCheckShape== 1:
@@ -271,12 +273,14 @@ class devShapeMatchSerializer(serializers.Serializer):
                 for message in messages:
                     message.hasHandle = True
                     message.save()
-                reportMatch = devSynMatch.objects.get(devEviShape=instance.devShapeEvi.devEvi)
+                reportMatch = devSynMatch.objects.get_or_create(devEviShape=instance.devShapeEvi.devEvi)
                 reportMatch.devPartSampleShape = instance.devShapeSample.devPartSample
                 reportMatch.ScoreShape = instance.matchScore
                 reportMatch.similarRect = instance.matchSampleCoordi
                 reportMatch.isExpertCheckShape = 2
                 reportMatch.expertHandleShape = user
+                reportMatch.isCheckShape = 1
+                reportMatch.checkHandleShape = None
                 reportMatch.save()
         instance.save()
         return instance
@@ -329,7 +333,7 @@ class devCompMatchSerializer(serializers.Serializer):
                     match.save()
                 #报告表中一定有记录，因为默认是存的最高得分的，这里核准只是根据优先级替换而已
                 # 只能按照物证找，因为样本不一定和核准的样本是一个样本
-                reportMatch = devSynMatch.objects.get(devEviComp=instance.devEvi)
+                reportMatch = devSynMatch.objects.get_or_create(devEviComp=instance.devEvi)
                 # 只有在没有专家核准的情况下才会用普通用户的核准结果去填报告表中的
                 # for reportMatch in reportMatchs:
                 if reportMatch.isExpertCheckComp == 1:
@@ -352,11 +356,14 @@ class devCompMatchSerializer(serializers.Serializer):
                 for message in messages:
                     message.hasHandle = True
                     message.save()
-                reportMatch = devSynMatch.objects.get(devEviComp=instance.devEvi)
+                # 不管普通用户是否核准都将对应样本替换并将普通用户核准那里置为空
+                reportMatch = devSynMatch.objects.get_or_create(devEviComp=instance.devEvi)
                 reportMatch.devPartSampleComp = instance.devPartSample
                 reportMatch.ScoreComp = instance.Score
                 reportMatch.isExpertCheckComp = 2
                 reportMatch.expertHandleComp = user
+                reportMatch.isCheckComp = 1
+                reportMatch.checkHandleComp = None
                 reportMatch.save()
         instance.save()
         return instance
