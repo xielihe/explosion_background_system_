@@ -54,7 +54,7 @@ class exploEviFTIRTestFile(models.Model):
     exploEviId = models.IntegerField(null=True, blank=True, verbose_name=u"所涉及的炸药物证")
     txtURL = models.FileField(max_length=300, upload_to="file/exploEviFTIRTestFile/", null=True, blank=True,
                               verbose_name="录入TXT文档路径")
-    txtHandledURL = models.FileField(max_length=300, null=True, blank=True, verbose_name="处理过的TXT文档路径")
+    txtHandledURL = models.CharField(max_length=300, null=True, blank=True, verbose_name="处理过的TXT文档路径")
 
     class Meta:
         verbose_name = "炸药及原材料物证FTIR检测实验文件表"
@@ -86,7 +86,7 @@ class exploEviRamanTestFile(models.Model):
     exploEviId = models.IntegerField(null=True, blank=True, verbose_name=u"所涉及的炸药物证")
     txtURL = models.FileField(max_length=300, upload_to="file/exploEviRamanTestFile/", null=True, blank=True,
                               verbose_name="录入TXT文档路径")
-    txtHandledURL = models.FileField(max_length=300, null=True, blank=True, verbose_name="处理过的TXT文档路径")
+    txtHandledURL = models.CharField(max_length=300, null=True, blank=True, verbose_name="处理过的TXT文档路径")
 
     class Meta:
         verbose_name = "炸药及原材料物证Raman检测实验文件表"
@@ -119,7 +119,7 @@ class exploEviXRDTestFile(models.Model):
     exploEviId = models.IntegerField(null=True, blank=True, verbose_name=u"所涉及的炸药物证")
     txtURL = models.FileField(max_length=300, upload_to="file/exploEviXRDTestFile/", null=True, blank=True,
                               verbose_name="录入TXT文档路径")
-    txtHandledURL = models.FileField(max_length=300, null=True, blank=True, verbose_name="处理过的TXT文档路径")
+    txtHandledURL = models.CharField(max_length=300, null=True, blank=True, verbose_name="处理过的TXT文档路径")
 
     class Meta:
         verbose_name = "炸药及原材料物证XRD检测实验文件表"
@@ -151,7 +151,7 @@ class exploEviXRFTestFile(models.Model):
     exploEviId = models.IntegerField(null=True, blank=True, verbose_name=u"所涉及的炸药物证")
     excelURL = models.FileField(max_length=300, upload_to="file/exploEviXRFTestFile/", null=True, blank=True,
                               verbose_name="录入excel文档路径")
-    handledURL = models.FileField(max_length=300, null=True, blank=True, verbose_name="有效元素列表")
+    handledURL = models.CharField(max_length=300, null=True, blank=True, verbose_name="有效元素列表")
     class Meta:
         verbose_name = "炸药及原材料物证XRF检测实验文件表"
         verbose_name_plural = verbose_name
@@ -179,7 +179,7 @@ class exploEviGCMSFile(models.Model):
     """
     exploEviGCMS = models.ForeignKey(exploEviGCMS, verbose_name=u"对应的GC-MS检测",related_name="exploEviGCMSFile")
     exploEviId = models.IntegerField(null=True, blank=True, verbose_name=u"所涉及的炸药物证")
-    txtHandledURL = models.FileField(max_length=300, null=True, blank=True, verbose_name="处理过的TXT文档路径")
+    txtHandledURL = models.CharField(max_length=300, null=True, blank=True, verbose_name="处理过的TXT文档路径")
 
     class Meta:
         verbose_name = "炸药及原材料物证GC-MS检测文件表"
@@ -258,9 +258,9 @@ class devEviFTIRTestFile(models.Model):
     """
     devEviFTIR = models.ForeignKey(devEviFTIR, verbose_name=u"对应的FTIR检测",related_name="devEviFTIRTestFile")
     devEviId = models.IntegerField(null=True, blank=True, verbose_name=u"所涉及的炸药物证")
-    txtURL = models.FileField(max_length=300, upload_to="file/ddevEviFTIRTestFile/", null=True, blank=True,
+    txtURL = models.FileField(max_length=300, upload_to="file/devEviFTIRTestFile/", null=True, blank=True,
                               verbose_name="录入TXT文档路径")
-    txtHandledURL = models.FileField(max_length=300, null=True, blank=True, verbose_name="处理过的TXT文档路径")
+    txtHandledURL = models.CharField(max_length=300, null=True, blank=True, verbose_name="处理过的TXT文档路径")
 
     class Meta:
         verbose_name = "爆炸装置物证FTIR检测实验文件表"
@@ -292,7 +292,7 @@ class devEviRamanTestFile(models.Model):
     devEviId = models.IntegerField(null=True, blank=True, verbose_name=u"所涉及的炸药物证")
     txtURL = models.FileField(max_length=300, upload_to="file/devEviRamanTestFile/", null=True, blank=True,
                               verbose_name="录入TXT文档路径")
-    txtHandledURL = models.FileField(max_length=300, null=True, blank=True, verbose_name="处理过的TXT文档路径")
+    txtHandledURL = models.CharField(max_length=300, null=True, blank=True, verbose_name="处理过的TXT文档路径")
 
     class Meta:
         verbose_name = "爆炸装置物证Raman检测实验文件表"
@@ -324,7 +324,7 @@ class devEviXRFTestFile(models.Model):
     devEviId = models.IntegerField(null=True, blank=True, verbose_name=u"所涉及的炸药物证")
     excelURL = models.FileField(max_length=300, upload_to="file/devEviXRFTestFile/", null=True, blank=True,
                               verbose_name="录入excel文档路径")
-    handledURL = models.FileField(max_length=300, null=True, blank=True, verbose_name="有效元素列表")
+    handledURL = models.CharField(max_length=300, null=True, blank=True, verbose_name="有效元素列表")
     class Meta:
         verbose_name = "爆炸装置物证XRF检测实验文件表"
         verbose_name_plural = verbose_name

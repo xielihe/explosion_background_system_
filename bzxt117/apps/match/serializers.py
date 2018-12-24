@@ -62,8 +62,7 @@ class exploMatchXRFSerializer(serializers.ModelSerializer):
     class Meta:
         model = exploMatchXRF
         #返回id是为了方便删除
-        fields =("id","exploEviXRFTestFile","exploSampleXRFTestFile","miningScore",
-                 "pnpScore","ppScore","gmScore","soilScore","tagScore","averScore","exploSampleName")
+        fields =("id","exploEviXRFTestFile","exploSampleXRFTestFile","averScore","exploSampleName")
 
 class exploMatchGCMSSerializer(serializers.ModelSerializer):
     exploSampleName = serializers.SerializerMethodField(read_only=True,)
@@ -205,8 +204,7 @@ class devMatchXRFSerializer(serializers.ModelSerializer):
     class Meta:
         model = devMatchXRF
         #返回id是为了方便删除
-        fields =("id","devEviXRFTestFile","devPartSampleXRFTestFile","miningScore",
-                 "pnpScore","ppScore","gmScore","soilScore","tagScore","averScore","devSampleName")
+        fields =("id","devEviXRFTestFile","devPartSampleXRFTestFile","averScore","devSampleName")
 
 
 class devShapeMatchDetailSerializer(serializers.ModelSerializer):

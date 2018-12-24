@@ -41,7 +41,7 @@ class exploEviViewset(viewsets.ModelViewSet):
     """
     queryset = exploEvi.objects.all()
     #queryset = exploSample.objects.filter(sname="样本3")
-    serializer_class = exploEviSerializer
+    # serializer_class = exploEviSerializer
     # permission_classes = (IsAuthenticated,IsAllowExploUpdate)
     pagination_class = MyPageNumberPagination
     filter_backends = (filters.SearchFilter, filters.OrderingFilter)
@@ -56,6 +56,12 @@ class exploEviViewset(viewsets.ModelViewSet):
         else:
             return [permissions.IsAuthenticated(),]
 
+    def get_serializer_class(self):
+        if  self.action == "retrieve":
+            # self.action == "list" or
+            return exploEviDetailSerializer
+        return exploEviSerializer
+
 class exploEviFTIRViewset(viewsets.ModelViewSet):
 
     queryset = exploEviFTIR.objects.all()
@@ -64,7 +70,8 @@ class exploEviFTIRViewset(viewsets.ModelViewSet):
     # permission_classes = (IsAuthenticated,IsAllowExploUpdate)
     pagination_class = MyPageNumberPagination
     def get_serializer_class(self):
-        if self.action == "list" or self.action == "retrieve":
+        if  self.action == "retrieve":
+            # self.action == "list" or
             return exploEviFTIRDetailSerializer
         return exploEviFTIRSerializer
 
@@ -117,7 +124,8 @@ class exploEviRamanViewset(viewsets.ModelViewSet):
     # serializer_class = exploEviRamanSerializer
     # permission_classes = (IsAuthenticated,IsAdmin)
     def get_serializer_class(self):
-        if self.action == "list" or self.action == "retrieve":
+        if self.action == "retrieve":
+            # self.action == "list" or
             return exploEviRamanDetailSerializer
         return exploEviRamanSerializer
 
@@ -164,7 +172,8 @@ class exploEviXRDViewset(viewsets.ModelViewSet):
     # serializer_class = exploEviXRDSerializer
     # permission_classes = (IsAuthenticated,IsAdmin)
     def get_serializer_class(self):
-        if self.action == "list" or self.action == "retrieve":
+        if self.action == "retrieve":
+            # self.action == "list" or
             return exploEviXRDDetailSerializer
         return exploEviXRDSerializer
 
@@ -213,7 +222,8 @@ class exploEviXRFViewset(viewsets.ModelViewSet):
     # serializer_class = exploEviXRFSerializer
     # permission_classes = (IsAuthenticated,IsAdmin)
     def get_serializer_class(self):
-        if self.action == "list" or self.action == "retrieve":
+        if self.action == "retrieve":
+            # self.action == "list" or
             return exploEviXRFDetailSerializer
         return exploEviXRFSerializer
 
@@ -260,9 +270,29 @@ class exploEviGCMSViewset(viewsets.ModelViewSet):
     # serializer_class = exploEviGCMSSerializer
     # permission_classes = (IsAuthenticated,IsAdmin)
     def get_serializer_class(self):
-        if self.action == "list" or self.action == "retrieve":
+        if self.action == "retrieve":
+            # self.action == "list" or
             return exploEviGCMSDetailSerializer
         return exploEviGCMSSerializer
+
+    def get_permissions(self):
+        if self.action == "delete" or "update" or "partial_update":
+        #     return [permissions.IsAuthenticated(),IsAdmin()]
+        # elif self.action == "update":
+            return [permissions.IsAuthenticated(),IsAllowExploUpdate()]
+        else:
+            return [permissions.IsAuthenticated(),]
+class exploEviGCMSFileViewset(viewsets.ModelViewSet):
+    pagination_class = MyPageNumberPagination
+    queryset = exploEviGCMSFile.objects.all()
+    #queryset = exploSample.objects.filter(sname="样本3")
+    # serializer_class = exploEviGCMSSerializer
+    # permission_classes = (IsAuthenticated,IsAdmin)
+    def get_serializer_class(self):
+        # if self.action == "retrieve":
+        #     # self.action == "list" or
+        #     return exploEviGCMSDetailSerializer
+        return exploEviGCMSFileSerializer
 
     def get_permissions(self):
         if self.action == "delete" or "update" or "partial_update":
@@ -303,11 +333,17 @@ class devEviViewset(viewsets.ModelViewSet):
     pagination_class = MyPageNumberPagination
     queryset = devEvi.objects.all()
     #queryset = exploSample.objects.filter(sname="样本3")
-    serializer_class = devEviSerializer
+    # serializer_class = devEviSerializer
     # permission_classes = (IsAuthenticated,IsAdmin)
     filter_backends = (filters.SearchFilter, filters.OrderingFilter)
     search_fields = ("caseName","evidenceName","note","Factory","Model","Logo","Color","Material","Shape","thickness")
     ordering_fields = ("id","inputDate")
+
+    def get_serializer_class(self):
+        if self.action == "retrieve":
+            #  self.action == "list" or
+            return devEviDetailSerializer
+        return devEviSerializer
 
     def get_permissions(self):
         if self.action == "delete" or "update" or "partial_update":
@@ -324,7 +360,8 @@ class devEviFTIRViewset(viewsets.ModelViewSet):
     # serializer_class = devEviFTIRSerializer
     # permission_classes = (IsAuthenticated,IsAdmin)
     def get_serializer_class(self):
-        if self.action == "list" or self.action == "retrieve":
+        if self.action == "retrieve":
+            #  self.action == "list" or
             return devEviFTIRDetailSerializer
         return devEviFTIRSerializer
 
@@ -373,7 +410,8 @@ class devEviRamanViewset(viewsets.ModelViewSet):
     # permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
     def get_serializer_class(self):
-        if self.action == "list" or self.action == "retrieve":
+        if self.action == "retrieve":
+            # self.action == "list" or
             return devEviRamanDetailSerializer
         return devEviRamanSerializer
 
@@ -422,7 +460,8 @@ class devEviXRFViewset(viewsets.ModelViewSet):
     # serializer_class = devEviXRFSerializer
     # permission_classes = (IsAuthenticated,IsAdmin)
     def get_serializer_class(self):
-        if self.action == "list" or self.action == "retrieve":
+        if self.action == "retrieve":
+            # self.action == "list" or
             return devEviXRFDetailSerializer
         return devEviXRFSerializer
 

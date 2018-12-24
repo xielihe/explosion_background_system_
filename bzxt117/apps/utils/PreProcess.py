@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
-
-
 import os
 import math
 import numpy as np
@@ -13,14 +7,32 @@ from scipy.sparse.linalg import spsolve
 import xlrd
 import csv 
 
-#该模块为谱图预处理模块
-#输入参数：检测方法file_type，文件路径file，处理后文件存储位置out_folder，
-#               如果是GCMS，file为文件夹路径，且还需输入该样本名称sample_name和burning_degree
-#示例输入：preProcess('GCMS', '2#万煤油83.txt', './handled/GCMS_handled', '2#万煤油')
-#错误检测：若输入的检测方法有误则报错
-#输出：处理后的文件路径
+'''
+*********************************************************************
+文件名称: PreProcess.py
+所属系统名称: 爆炸系统
+功能: 对各种检测模式下上传的样本进行预处理
+引入函数方式：from modules.PreProcess import preProcess
+基本思想: 利用相关系数以及直方图比对等思想来计算各谱图之间的相似度
+执行条件: 文件格式传入无误
+输入参数: file_type -- 检测方法（‘GCMS’，‘XRD’，‘XRF’，‘FTIR’，‘RAMAN’）
+         sample_id -- 样本id
+         sampleFile_id -- 样本文件id
+         file -- 文件路径 
+返回值: [ 错误代码, file_out ]       错误代码：0 —— 成功，其他数值 —— 失败 
+                                   file_out -- 处理后的文件存储路径
+说明:无
+设计者 : 易籽彤
+日期: 20181220
 
-def preProcess(file_type, file, out_folder, sample_name='', burning_degree=''):
+修改日期：20181222
+修改内容：加入XRF类型TestAll   (待定)
+修改人：易籽彤
+*********************************************************************
+'''
+
+#主函数
+def preProcess(file_type, sample_id, sampleFile_id, file):
        
     #去除基线
     def baseline_als(y, lam, p, niter=10):    #计算基线
@@ -66,59 +78,7 @@ def preProcess(file_type, file, out_folder, sample_name='', burning_degree=''):
         xnew = np.linspace(xbegin, xend, num=(xend-xbegin+1), endpoint=True)   
         return xnew, f(xnew)
     
-        #读取特征离子色谱图csv
-    def ReadFeatureFile(infile): 
-        GCMS_file = open(infile, encoding='gbk')
-        lines = csv.reader(GCMS_file)
 
-        feature_list = {}
-        cur_feature = []
-        data_flag = False
-
-        for line in lines:
-            if '离子' in line[0]:
-                data_flag = True
-                if cur_feature:
-                    cur_feature = np.array(cur_feature)
-                    cur_feature = np.array(cur_feature)
-                    data_x = cur_feature[:,0]
-                    data_y = cur_feature[:,1]
-                    feature_list[feature_id] = [data_x,data_y]
-                cur_feature = []
-                index_b = line[0].index('离子')
-                index_e = line[0].index('(')      
-                feature_id = line[0][index_b+2:index_e-1]
-                feature_id = str(int(float(feature_id)))   #去掉后面的小数点
-                continue
-            if data_flag: 
-                line = [float(x) for x in line]
-                cur_feature.append(line)
-
-        GCMS_file.close()
-        return feature_list
-
-    #读取总离子色谱图csv
-    def ReadTICFile(infile):    
-        GCMS_file = open(infile, encoding='gbk')
-
-        data_flag = False
-        TIC = []
-
-        lines = csv.reader(GCMS_file)
-        for line in lines:
-            if 'TIC' in line[0]: 
-                data_flag = True
-                continue
-            if data_flag:
-                line = [float(x) for x in line if x]
-                TIC.append(line)
-
-        TIC = np.array(TIC)
-        TIC_x = TIC[:,0]
-        TIC_y = TIC[:,1]
-        TIC = {'TIC':[TIC_x, TIC_y]}
-        GCMS_file.close()
-        return TIC
 
     #----------XRD预处理------------
     def xrdPreProcess(file):
@@ -149,13 +109,13 @@ def preProcess(file_type, file, out_folder, sample_name='', burning_degree=''):
             cur_data = data
 
             model = cur_data[0]
-            effective_element = []
+            effective_element = {}
             element = cur_data[1::2]
             error = cur_data[2::2]
 
             for i in range(0,len(element)):
                 if element[i]!='<LOD' and element[i]>3*error[i]:
-                    effective_element.append([element_name[i],element[i]])
+                    effective_element[element_name[i]] = element[i]
             return model, effective_element
 
 
@@ -176,7 +136,7 @@ def preProcess(file_type, file, out_folder, sample_name='', burning_degree=''):
         record = [0]
         while j < len(data_inneed):    
             cur_type = data_inneed[j][0]
-            if (cur_type.find('Metal')!=-1) or (cur_type.find('Plastics')!=-1) or (cur_type.find('Soil')!=-1) or (cur_type.find('Mining')!=-1):
+            if (cur_type.find('Metal')!=-1) or (cur_type.find('Plastics')!=-1) or (cur_type.find('Soil')!=-1) or (cur_type.find('Mining')!=-1) or (cur_type.find('TestAll')!=-1):
                 record.append(j)
             j = j+4
         data_final = data_inneed[record,:]
@@ -268,27 +228,83 @@ def preProcess(file_type, file, out_folder, sample_name='', burning_degree=''):
         data_x, data_y = interpolation(data_x, data_y_nobaseline, xbegin, xend)
         return [data_x,data_y]
 
+    #----------GCMS预处理----------------
+    def gcmsPreProcess(data_folder):
+        result_dict = {}
+        file_list = os.listdir(data_folder)
+        for file in file_list:
+            if os.path.splitext(file)[1]:
+                file_name = os.path.splitext(file)[0]
+                cur_file = os.path.join(data_folder, file)
+                try:
+                    data = np.loadtxt(cur_file, skiprows=2)
+                    data_x = data[:,0]
+                    data_y = data[:,1]
+                except ValueError as e:       #如果文件中有‘正无穷大’， 则改变读取文件的方式，处理方式：忽略该点
+                    if str(e).find('正无穷大'):
+                        data_x = []
+                        data_y = []
+                        f = open(cur_file,'rb')
+                        line = f.readline()
+                        line = f.readline()
+                        line = f.readline()
+                        while line:
+                            line_tmp = bytes.decode(line)
+                            line_tmp = line_tmp.split('\t')
+                            data_x.append(float(line_tmp[0]))
+                            if line_tmp[1].find('正无穷大') != -1:        
+                                pass
+                                data_y.append(0)
+                            else:
+                                pass
+                                data_y.append(float(line_tmp[1]))
+                            line = f.readline()
+                        data_x = np.array(data_x)  
+                        data_y = np.array(data_y)
+                    else:
+                        print('文件内容的格式有误')
 
-    file_name = os.path.splitext(os.path.split(file)[1])[0]
-    file_out = out_folder + '/' +file_name + '.npy'
+                if file_name.find('TIC') != -1:
+                    max_index = np.argwhere(data_y == np.max(data_y))
+                    result_dict['RetentionTime'] = max_index
+                elif file_name.find('MS') != -1:
+                    data_y = data_y.tolist()
+                    #平滑
+                    data_smooth = Gaussian_smooth(data_y)
+                    #去基线
+                    baseline = baseline_als(data_smooth, 100000, 0.06)
+                    data_y_nobaseline = np.maximum(0,data_smooth-baseline)
+                    result_dict[file_name] = [data_x, data_y_nobaseline]
+        return result_dict   
+    
+
+    out_folder = os.path.split(file)[0]+'/handled'
+    file_out = out_folder + '/' + str(sample_id) + '-' + str(sampleFile_id)+ '.npy'
     
     
     if file_type == 'FTIR':
         handledResult = ftirPreProcess(file)
         np.save(file_out, handledResult)
-        return file_out
+        return ['0', file_out]
     elif file_type =='RAMAN':
         handledResult = ramanPreProcess(file)
         np.save(file_out, handledResult)
-        return file_out
+        return ['0', file_out]
     elif file_type == 'XRD':
         handledResult = xrdPreProcess(file)
         np.save(file_out, handledResult)
-        return file_out
+        return ['0', file_out]
     elif file_type == 'XRF':
         handledResult = xrfPreProcess(file)
         np.save(file_out, handledResult)
-        return file_out
+        return ['0', file_out]
+    elif file_type == 'GCMS':
+        out_folder = os.path.split(file)[0]
+        out_folder = os.path.split(out_folder)[0] + '/handled'
+        file_out = out_folder + '/' + str(sample_id) + '-' + str(sampleFile_id) + '.npy'
+        handledResult = gcmsPreProcess(file)
+        np.save(file_out, handledResult)
+        return ['0', file_out]
 
         
     return (print("您输入的数据检测方法有误"))

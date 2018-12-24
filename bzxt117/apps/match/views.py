@@ -18,6 +18,8 @@ from utils.permissions import *
 from apps.match.models import *
 from apps.evi.models import *
 from apps.sample.serializers import *
+from utils.CalculateSim import CalculateSimilarity
+from utils.ComScore import ComScore
 
 class MyPageNumberPagination(PageNumberPagination):
     # 指定这一页有多少个
@@ -74,48 +76,422 @@ class wordSelect(APIView):
         # }, status=status.HTTP_201_CREATED)
 
 class startMatch(APIView):
+    # 1：exploMatchFTIR，2：exploMatchRaman，3：exploMatchXRD，4：exploMatchXRF，5：exploMatchGCMS，
+    # 6：devMatchFTIR，7:devMatchRaman,8:devMatchXRF,9:PCBImgMatch,10:oPartImgMatch,11:logoImgMatch
+    # 12:devShapeMatch
     # get方法是请求在url中的参数的，而post是请求在request中的参数的
     def post(self,request):
         # 此时type等都是str类型哦
         type = int(request.POST["type"])
-        eviId = int(request.POST["eviId"])
+        eviFileId = int(request.POST["eviFileId"])
         # 没法直接用type当成类去做filter
         # result = type.objects.all()
         # python没有switch case
-
         #创建分页对象
         pg = MyPageNumberPagination()
+        resultDict = {}
+
+        # Create your tests here.
+        def gci(filepath, fileList):
+            # 遍历filepath下所有文件，包括子目录
+            files = os.listdir(filepath)
+            for fi in files:
+                fi_d = os.path.join(filepath, fi)
+                fileList.append(fi_d)
+
+        # 生成综合匹配的各自匹配的结果列表
+        # type = 1/2,对应炸药和爆炸装置，id即为物证的id，comDict是那个列表
+        def comDict(type, eviId, comDictDict):
+            if type == 1:
+                FTIRs = []
+                RAMANs = []
+                XRDs = []
+                XRFs = []
+                GCMSs = []
+
+                comListFTIR = []
+                comListRAMAN = []
+                comListXRD = []
+                comListXRF = []
+                comListGCMS = []
+
+                FTIRs = exploMatchFTIR.objects.filter(exploEviFTIRTestFile__exploEviId=eviId)
+                for FTIR in FTIRs:
+                    idScoreList = []
+                    idScoreList.append(FTIR.exploSampleFTIRTestFile.exploSampleFTIR.exploSample_id)
+                    idScoreList.append(FTIR.Score)
+                    comListFTIR.append(idScoreList)
+                comDictDict["FTIR"] = comListFTIR
+
+                RAMANs = exploMatchRaman.objects.filter(exploEviRamanTestFile__exploEviId=eviId)
+                for RAMAN in RAMANs:
+                    idScoreList = []
+                    idScoreList.append(RAMAN.exploSampleRamanTestFile.exploSampleRaman.exploSample_id)
+                    idScoreList.append(RAMAN.Score)
+                    comListRAMAN.append(idScoreList)
+                comDictDict["RAMAN"] = comListRAMAN
+
+                XRDs = exploMatchXRD.objects.filter(exploEviXRDTestFile__exploEviId=eviId)
+                for XRD in XRDs:
+                    idScoreList = []
+                    idScoreList.append(XRD.exploSampleXRDTestFile.exploSampleXRD.exploSample_id)
+                    idScoreList.append(XRD.Score)
+                    comListXRD.append(idScoreList)
+                comDictDict["XRD"] = comListXRD
+
+                XRFs = exploMatchXRF.objects.filter(exploEviXRFTestFile__exploEviId=eviId)
+                for XRF in XRFs:
+                    idScoreList = []
+                    idScoreList.append(XRF.exploSampleXRFTestFile.exploSampleXRF.exploSample_id)
+                    idScoreList.append(XRF.averScore)
+                    comListXRF.append(idScoreList)
+                comDictDict["XRF"] = comListXRF
+
+                GCMSs = exploMatchGCMS.objects.filter(exploEviGCMSFile__exploEviId=eviId)
+                for GCMS in GCMSs:
+                    idScoreList = []
+                    idScoreList.append(GCMS.exploSampleGCMSFile.exploSampleGCMS.exploSample_id)
+                    idScoreList.append(GCMS.Score)
+                    comListGCMS.append(idScoreList)
+                comDictDict["GCMS"] = comListGCMS
+            elif type == 2:
+                FTIRs = []
+                RAMANs = []
+                XRFs = []
+
+                comListFTIR = []
+                comListRAMAN = []
+                comListXRF = []
+
+                FTIRs = devMatchFTIR.objects.filter(devEviFTIRTestFile__devEviId=eviId)
+                for FTIR in FTIRs:
+                    idScoreList = []
+                    idScoreList.append(FTIR.devPartSampleFTIRTestFile.devPartSampleFTIR.devPartSample_id)
+                    idScoreList.append(FTIR.Score)
+                    comListFTIR.append(idScoreList)
+                comDictDict["FTIR"] = comListFTIR
+
+                RAMANs = devMatchRaman.objects.filter(devEviRamanTestFile__devEviId=eviId)
+                for RAMAN in RAMANs:
+                    idScoreList = []
+                    idScoreList.append(RAMAN.devPartRamanTestFile.devPartSampleRaman.devPartSample_id)
+                    idScoreList.append(RAMAN.Score)
+                    comListRAMAN.append(idScoreList)
+                comDictDict["RAMAN"] = comListRAMAN
+
+                XRFs = devMatchXRF.objects.filter(devEviXRFTestFile__devEviId=eviId)
+                for XRF in XRFs:
+                    idScoreList = []
+                    idScoreList.append(XRF.devPartSampleXRFTestFile.devPartSampleXRF.devPartSample_id)
+                    idScoreList.append(XRF.averScore)
+                    comListXRF.append(idScoreList)
+                comDictDict["XRF"] = comListXRF
 
         if type == 1:
-            # 如果物证更新后再次要求匹配或者是重复请求，先删除，在做匹配
-            results = exploMatchFTIR.objects.filter(exploEviFTIR_id = eviId)
-            for result in results:
-                result.delete()
-            #调用FTIR的匹配函数,传入参数为物证id，注意要同时维护综合表：
-            # 不管是先全删除还是直接存入匹配数据，都是全部做完再操作综合表：全删，重做综合表
-                # # exploSyn_Match不能重名exploSynMatch！！
-                # exploSyn_Match = exploSynMatch()
-                # exploSyn_Match.exploEvi_id = eviId
-                # exploSyn_Match.exploSample_id = 1
-                # exploSyn_Match.Score = 100
-                # # 外键空值的时候可以赋值为None,代表数据库中的NULL，且序列化的时候也不会出问题的~
-                # exploSyn_Match.checkHandle = None
-                # exploSyn_Match.expertHandle_id = 2
-                # exploSyn_Match.save()
-        elif type ==2:
-        #     exploMatchRaman
-            pass
+            sampleList = []
+            score_dict = {}
+            score_dictSim = {}
+            result_dict = {}
+            querysetList = []
+            #     输入参数: file_type - - 检测方法（‘GCMS’，‘XRD’，‘XRF’，‘FTIR’，‘RAMAN’）
+            #     evi_sample_dir - - 物证样本路径（更新时为常见样本路径）
+            #     common_database - - 标准样本数据库的路径列表，List类型
+            #     score_dict - - 空字典，以存储结果
+            # 输出参数: score_dict
+            # 返回值: 0 —— 成功，其他数值 —— 失败
+            gci(os.path.join(MEDIA_ROOT, "file/exploSampleFTIRTestFile/handled"), sampleList)
+            eviFile = exploEviFTIRTestFile.objects.get(id=eviFileId)
 
-        #修改得分，同时核准置为False，核准人员为None
+            # 容错
+            result = CalculateSimilarity('FTIR', os.path.join(MEDIA_ROOT, str(eviFile.txtHandledURL)), sampleList,
+                                         score_dict)
+            for id, score in score_dict.items():
+                match = exploMatchFTIR.objects.get_or_create(exploEviFTIRTestFile_id=eviFileId, exploSampleFTIRTestFile_id=id)
+                matchObj = match[0]
+                matchObj.Score = score
+                matchObj.save()
+                querysetList.append(matchObj)
+
+            # # #     输入参数: result - - 得分字典
+            # # #     格式如
+            # # #     {FTIR: [[id, score], [id, score], ...],
+            # # #      XRD: [[id, score], [id, score], ...],
+            # # #      XRF: [[id, score], [id, score], ...], ...
+            # # #      }
+            # # # 输出参数: score_dict
+            # # # 返回值: 0 —— 成功，其他数值 —— 失败
+            comDict(1, eviFile.exploEviId, score_dictSim)
+
+            result = ComScore(score_dictSim, result_dict)
+            resultDict = result_dict
+            for id, score in result_dict.items():
+                match = exploSynMatch.objects.get_or_create(exploEvi_id=eviFile.exploEviId, exploSample_id=id)
+                matchObj = match[0]
+                matchObj.Score = score
+                matchObj.save()
+            pager_roles = pg.paginate_queryset(queryset=querysetList, request=request,view=self)
+            ser = exploMatchFTIRSerializer(instance=pager_roles, many=True)
+            return pg.get_paginated_response(ser.data)  # 返回上一页或者下一页
+        #     returnResult = comDict(result, score_dictSim)
+        #     # # 如果物证更新后再次要求匹配或者是重复请求，先删除，在做匹配
+        #     # results = exploMatchFTIR.objects.filter(exploEviFTIRTestFile_id = eviFileId)
+        #     # for result in results:
+        #     #     result.delete()
+        #     #调用FTIR的匹配函数,传入参数为物证id，注意要同时维护综合表：
+        #     # 不管是先全删除还是直接存入匹配数据，都是全部做完再操作综合表：全删，重做综合表
+        #         # # exploSyn_Match不能重名exploSynMatch！！
+        #         # exploSyn_Match = exploSynMatch()
+        #         # exploSyn_Match.exploEvi_id = eviId
+        #         # exploSyn_Match.exploSample_id = 1
+        #         # exploSyn_Match.Score = 100
+        #         # # 外键空值的时候可以赋值为None,代表数据库中的NULL，且序列化的时候也不会出问题的~
+        #         # exploSyn_Match.checkHandle = None
+        #         # exploSyn_Match.expertHandle_id = 2
+        #         # exploSyn_Match.save()
+        elif type == 2:
+            #     exploMatchRaman
+            sampleList = []
+            score_dict = {}
+            score_dictSim = {}
+            result_dict = {}
+            querysetList = []
+
+            gci(os.path.join(MEDIA_ROOT, "file/exploSampleRamanTestFile/handled"), sampleList)
+            eviFile = exploEviRamanTestFile.objects.get(id=eviFileId)
+
+            result = CalculateSimilarity('RAMAN', os.path.join(MEDIA_ROOT, str(eviFile.txtHandledURL)), sampleList,
+                                         score_dict)
+            for id, score in score_dict.items():
+                match = exploMatchRaman.objects.get_or_create(exploEviRamanTestFile_id=eviFileId,
+                                                              exploSampleRamanTestFile_id=id)
+                matchObj = match[0]
+                matchObj.Score = score
+                matchObj.save()
+                querysetList.append(matchObj)
+
+            comDict(1, eviFile.exploEviId, score_dictSim)
+
+            result = ComScore(score_dictSim, result_dict)
+            resultDict = result_dict
+            for id, score in result_dict.items():
+                match = exploSynMatch.objects.get_or_create(exploEvi_id=eviFile.exploEviId, exploSample_id=id)
+                matchObj = match[0]
+                matchObj.Score = score
+                matchObj.save()
+            pager_roles = pg.paginate_queryset(queryset=querysetList, request=request,view=self)
+            ser = exploMatchRamanSerializer(instance=pager_roles, many=True)
+            return pg.get_paginated_response(ser.data)  # 返回上一页或者下一页
+        elif type == 3:
+            # exploMatchXRD
+            sampleList = []
+            score_dict = {}
+            score_dictSim = {}
+            result_dict = {}
+            querysetList = []
+
+            gci(os.path.join(MEDIA_ROOT, "file/exploSampleXRDTestFile/handled"), sampleList)
+            eviFile = exploEviXRDTestFile.objects.get(id=eviFileId)
+
+            result = CalculateSimilarity('XRD', os.path.join(MEDIA_ROOT, str(eviFile.txtHandledURL)), sampleList,
+                                         score_dict)
+            for id, score in score_dict.items():
+                match = exploMatchXRD.objects.get_or_create(exploEviXRDTestFile_id=eviFileId,
+                                                            exploSampleXRDTestFile_id=id)
+                matchObj = match[0]
+                matchObj.Score = score
+                matchObj.save()
+                querysetList.append(matchObj)
+
+            comDict(1, eviFile.exploEviId, score_dictSim)
+
+            result = ComScore(score_dictSim, result_dict)
+            resultDict = result_dict
+            for id, score in result_dict.items():
+                match = exploSynMatch.objects.get_or_create(exploEvi_id=eviFile.exploEviId, exploSample_id=id)
+                matchObj = match[0]
+                matchObj.Score = score
+                matchObj.save()
+            pager_roles = pg.paginate_queryset(queryset=querysetList, request=request,view=self)
+            ser = exploMatchXRDSerializer(instance=pager_roles, many=True)
+            return pg.get_paginated_response(ser.data)  # 返回上一页或者下一页
+        elif type == 4:
+            # exploMatchXRF
+            sampleList = []
+            score_dict = {}
+            score_dictSim = {}
+            result_dict = {}
+            querysetList = []
+
+            gci(os.path.join(MEDIA_ROOT, "file/exploSampleXRFTestFile/handled"), sampleList)
+            eviFile = exploEviXRFTestFile.objects.get(id=eviFileId)
+
+            result = CalculateSimilarity('XRF', os.path.join(MEDIA_ROOT, str(eviFile.handledURL)), sampleList,
+                                         score_dict)
+            for id, score in score_dict.items():
+                match = exploMatchXRF.objects.get_or_create(exploEviXRFTestFile_id=eviFileId,
+                                                            exploSampleXRFTestFile_id=id)
+                matchObj = match[0]
+                matchObj.averScore = score
+                matchObj.save()
+                querysetList.append(matchObj)
+
+            comDict(1, eviFile.exploEviId, score_dictSim)
+
+            result = ComScore(score_dictSim, result_dict)
+            resultDict = result_dict
+            for id, score in result_dict.items():
+                match = exploSynMatch.objects.get_or_create(exploEvi_id=eviFile.exploEviId, exploSample_id=id)
+                matchObj = match[0]
+                matchObj.Score = score
+                matchObj.save()
+            pager_roles = pg.paginate_queryset(queryset=querysetList, request=request,view=self)
+            ser = exploMatchXRFSerializer(instance=pager_roles, many=True)
+            return pg.get_paginated_response(ser.data)  # 返回上一页或者下一页
+        elif type == 5:
+            # exploMatchGCMS
+            sampleList = []
+            score_dict = {}
+            score_dictSim = {}
+            result_dict = {}
+            querysetList = []
+
+            gci(os.path.join(MEDIA_ROOT, "file/exploSampleGCMSTestFile/handled"), sampleList)
+            eviFile = exploEviGCMSFile.objects.get(id=eviFileId)
+
+            result = CalculateSimilarity('GCMS', os.path.join(MEDIA_ROOT, str(eviFile.txtHandledURL)), sampleList,
+                                         score_dict)
+            for id, score in score_dict.items():
+                match = exploMatchGCMS.objects.get_or_create(exploEviGCMSFile_id=eviFileId,
+                                                             exploSampleGCMSFile_id=id)
+                matchObj = match[0]
+                matchObj.Score = score['score']
+                matchObj.msName = score['evi_MS']
+                matchObj.save()
+                querysetList.append(matchObj)
+
+            comDict(1, eviFile.exploEviId, score_dictSim)
+
+
+            result = ComScore(score_dictSim, result_dict)
+            resultDict = result_dict
+            for id, score in result_dict.items():
+                match = exploSynMatch.objects.get_or_create(exploEvi_id=eviFile.exploEviId, exploSample_id=id)
+                matchObj = match[0]
+                matchObj.Score = score
+                matchObj.save()
+            pager_roles = pg.paginate_queryset(queryset=querysetList, request=request,view=self)
+            ser = exploMatchGCMSSerializer(instance=pager_roles, many=True)
+            return pg.get_paginated_response(ser.data)  # 返回上一页或者下一页
+        elif type == 6:
+            # devMatchFTIR
+            sampleList = []
+            score_dict = {}
+            score_dictSim = {}
+            result_dict = {}
+            querysetList = []
+
+            gci(os.path.join(MEDIA_ROOT, "file/devPartSampleFTIRTestFile/handled"), sampleList)
+            eviFile = devEviFTIRTestFile.objects.get(id=eviFileId)
+
+            result = CalculateSimilarity('FTIR', os.path.join(MEDIA_ROOT, str(eviFile.txtHandledURL)), sampleList,
+                                         score_dict)
+            for id, score in score_dict.items():
+                match = devMatchFTIR.objects.get_or_create(devEviFTIRTestFile_id=eviFileId,
+                                                           devPartSampleFTIRTestFile_id=id)
+                matchObj = match[0]
+                matchObj.Score = score
+                matchObj.save()
+                querysetList.append(matchObj)
+
+            comDict(2, eviFile.devEviFTIR.devEvi_id, score_dictSim)
+            result =  ComScore(score_dictSim, result_dict)
+            resultDict = result_dict
+            for id, score in result_dict.items():
+                match = devCompMatch.objects.get_or_create(devEvi_id=eviFile.devEviId, devPartSample_id=id)
+                matchObj = match[0]
+                matchObj.Score = score
+                matchObj.save()
+            pager_roles = pg.paginate_queryset(queryset=querysetList, request=request,view=self)
+            ser = devMatchFTIRSerializer(instance=pager_roles, many=True)
+            return pg.get_paginated_response(ser.data)  # 返回上一页或者下一页
+        elif type == 7:
+            # devMatchRaman
+            sampleList = []
+            score_dict = {}
+            score_dictSim = {}
+            result_dict = {}
+            querysetList = []
+
+            gci(os.path.join(MEDIA_ROOT, "file/devPartRamanTestFile/handled"), sampleList)
+            eviFile = devEviRamanTestFile.objects.get(id=eviFileId)
+
+            result = CalculateSimilarity('RAMAN', os.path.join(MEDIA_ROOT, str(eviFile.txtHandledURL)), sampleList,
+                                         score_dict)
+            for id, score in score_dict.items():
+                match = devMatchRaman.objects.get_or_create(devEviRamanTestFile_id=eviFileId,
+                                                            devPartRamanTestFile_id=id)
+                matchObj = match[0]
+                matchObj.Score = score
+                matchObj.save()
+                querysetList.append(matchObj)
+
+            comDict(2, eviFile.devEviRaman.devEvi_id, score_dictSim)
+            result =  ComScore(score_dictSim, result_dict)
+            resultDict = result_dict
+            for id, score in result_dict.items():
+                match = devCompMatch.objects.get_or_create(devEvi_id=eviFile.devEviId, devPartSample_id=id)
+                matchObj = match[0]
+                matchObj.Score = score
+                matchObj.save()
+            pager_roles = pg.paginate_queryset(queryset=querysetList, request=request,view=self)
+            ser = devMatchRamanSerializer(instance=pager_roles, many=True)
+            return pg.get_paginated_response(ser.data)  # 返回上一页或者下一页
+        elif type == 8:
+            # devMatchXRF,
+            sampleList = []
+            score_dict = {}
+            score_dictSim = {}
+            result_dict = {}
+            querysetList = []
+
+            gci(os.path.join(MEDIA_ROOT, "file/devPartSampleXRFTestFile/handled"), sampleList)
+            eviFile = devEviXRFTestFile.objects.get(id=eviFileId)
+
+            result = CalculateSimilarity('XRF', os.path.join(MEDIA_ROOT, str(eviFile.handledURL)), sampleList,
+                                         score_dict)
+            for id, score in score_dict.items():
+                match = devMatchXRF.objects.get_or_create(devEviXRFTestFile_id=eviFileId,
+                                                          devPartSampleXRFTestFile_id=id)
+                matchObj = match[0]
+                matchObj.averScore = score
+                matchObj.save()
+                querysetList.append(matchObj)
+
+            comDict(2, eviFile.devEviXRF.devEvi_id, score_dictSim)
+            result =  ComScore(score_dictSim, result_dict)
+            resultDict = result_dict
+            for id, score in result_dict.items():
+                match = devCompMatch.objects.get_or_create(devEvi_id=eviFile.devEviId, devPartSample_id=id)
+                matchObj = match[0]
+                matchObj.Score = score
+                matchObj.save()
+            pager_roles = pg.paginate_queryset(queryset=querysetList, request=request,view=self)
+            ser = devMatchXRFSerializer(instance=pager_roles, many=True)
+            return pg.get_paginated_response(ser.data)  # 返回上一页或者下一页
+        else:
+            return  Response("fail")
+
+    #修改得分，同时核准置为False，核准人员为None
         # 会返回201的response，且因为Response是rest_framework的，因此只能最低使用APIView
         #在数据库中获取分页数据
         # 应该每个类型返回依次，因为涉及到queryset和serializer，
-        pager_roles = pg.paginate_queryset(queryset=results, request=request,view=self)
-        #对分页数据进行序列化
-        # 应该对应的是要返回数据的match的serializer
-        ser = exploMatchFTIRSerializer(instance=pager_roles, many=True)
+        # pager_roles = pg.paginate_queryset(queryset=resultDict, request=request,view=self)
+        # #对分页数据进行序列化
+        # # 应该对应的是要返回数据的match的serializer
+        # ser = exploMatchFTIRSerializer(instance=pager_roles, many=True)
 
-        return pg.get_paginated_response(ser.data)  # 返回上一页或者下一页
+        # return pg.get_paginated_response(ser.data)  # 返回上一页或者下一页
+        # return  Response("success")
 
 
 class exploMatchFTIRViewset(viewsets.ModelViewSet):
@@ -212,7 +588,7 @@ class exploSynMatchViewset(viewsets.ModelViewSet):
         return exploSynMatch.objects.all()
 
     def get_serializer_class(self):
-        if self.action == "retrieve":
+        if self.action == "retrieve" or self.action == "list":
             return exploSynMatchDetailSerializer
         # partial_update和update不同方法！
         # 这里对应的是核准

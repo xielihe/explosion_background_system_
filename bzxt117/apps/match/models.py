@@ -81,6 +81,7 @@ class exploMatchGCMS(models.Model):
                                         , related_name="exploMatchGCMS", on_delete=models.CASCADE)
     exploEviGCMSFile = models.ForeignKey(exploEviGCMSFile, verbose_name=u"对应的物证GC-MS文件记录",
                                      related_name="exploMatchGCMS", on_delete=models.CASCADE)
+    msName = models.CharField(max_length=30,null=True, blank=True, verbose_name="匹配的MS文件名称")
     Score = models.FloatField(default=0.0, verbose_name="相似分")
 
     class Meta:

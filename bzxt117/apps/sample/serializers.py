@@ -11,6 +11,7 @@ from apps.basic.serializers import UserDetailSerializer
 from apps.match.models import *
 from apps.utils.PreProcess import *
 from bzxt117.settings import MEDIA_ROOT
+from utils.PreProcess import preProcess
 
 class exploSampleSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(
@@ -23,22 +24,18 @@ class exploSampleSerializer(serializers.ModelSerializer):
     class Meta:
         model = exploSample
         fields = "__all__"
-
 class exploSampleFTIRTestFileSerializer(serializers.ModelSerializer):
-    txtHandledURL = serializers.FileField(read_only=True, )
     handledData = serializers.SerializerMethodField()
 
     def get_handledData(self, obj):
-        path = os.path.join(MEDIA_ROOT,str(obj.txtHandledURL))
-        data = np.load(path)
+        path = obj.txtHandledURL
+        if os.path.exists(path) == True:
+            data = np.load(path)
         # print(type(data))
         # print(data[0])
-
-        return data
-
+            return data
     def __str__(self):
         return self.txtURL
-
     class Meta:
         model = exploSampleFTIRTestFile
         fields = ("id","exploSampleFTIR","txtURL","handledData")
@@ -46,35 +43,27 @@ class LsitExploSampleFTIRTestFileSerializer(serializers.Serializer):
     FTIRs = serializers.ListField(
         child=serializers.FileField(max_length=100000, allow_empty_file=False, use_url=True),
         write_only=True )
-
-    exploSampleFTIR = serializers.PrimaryKeyRelatedField(required=True, queryset=exploSampleFTIR.objects.all())
-
-    return_FTIRs = serializers.ListField(
-        child=serializers.CharField(max_length=10000,),
-        read_only=True )
+    exploSampleFTIR = serializers.PrimaryKeyRelatedField(required=True,write_only=True, queryset=exploSampleFTIR.objects.all())
+    #
+    # return_FTIRs = serializers.ListField(
+    #     child=serializers.CharField(max_length=10000,),
+    #     read_only=True )
 
     # 增添和更新都必须是多文件，且这个更新和其他更新不同，更新会覆盖，但新建不会覆盖，每次新建上传完都会进行取平均，替换平均文件
     def create(self, validated_data):
         FTIRs = validated_data.get('FTIRs')
         exploSampleFTIR = validated_data.get('exploSampleFTIR')
-        FTIR1s = []
+        result = []
         for index, url in enumerate(FTIRs):
             FTIR = exploSampleFTIRTestFile.objects.create(txtURL=url,exploSampleFTIR = exploSampleFTIR)
-            handledURL = preProcess('FTIR',exploSampleFTIR,FTIR.id,os.path.join(MEDIA_ROOT,str(FTIR.txtURL)))
-            FTIR.txtHandledURL = handledURL
-            FTIR.save()
+            result =  preProcess('FTIR',exploSampleFTIR.id,FTIR.id,os.path.join(MEDIA_ROOT,str(FTIR.txtURL)))
+            if result[0] == '0' :
+                FTIR.txtHandledURL = result[1]
+                FTIR.save()
             # 文件预处理，更新FTIR匹配表和综合匹配表的结果
 
-
-            blog = exploSampleFTIRTestFileSerializer(FTIR, context=self.context)
-            FTIR1s.append(blog.data['handledURL'])
-
         # 对上传的文档预处理取平均，再将取完平均的回填
-
-
-        return {
-                'return_FTIRs':FTIR1s,
-                'exploSampleFTIR':exploSampleFTIR}
+        return {}
 class exploSampleFTIRSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(
         default=serializers.CurrentUserDefault()
@@ -94,13 +83,13 @@ class exploSampleFTIRDetailSerializer(serializers.ModelSerializer):
         fields = ("id","exploSample","devDetect","methodDetect", "user","inputDate","exploSampleFTIRTestFile")
 
 class exploSampleRamanTestFileSerializer(serializers.ModelSerializer):
-    txtHandledURL = serializers.FileField(read_only=True, )
     handledData = serializers.SerializerMethodField()
 
     def get_handledData(self, obj):
-        path = os.path.join(MEDIA_ROOT,str(obj.txtHandledURL))
-        data = np.load(path)
-        return data
+        path = obj.txtHandledURL
+        if os.path.exists(path) == True:
+            data = np.load(path)
+            return data
     def __str__(self):
         return self.txtURL
 
@@ -111,27 +100,21 @@ class LsitExploSampleRamanTestFileSerializer(serializers.Serializer):
     Ramans = serializers.ListField(
         child=serializers.FileField(max_length=100000, allow_empty_file=False, use_url=True),
         write_only=True )
-    exploSampleRaman = serializers.PrimaryKeyRelatedField(required=True, queryset=exploSampleRaman.objects.all())
-    return_Ramans = serializers.ListField(
-        child=serializers.CharField(max_length=10000,),
-        read_only=True )
+    exploSampleRaman = serializers.PrimaryKeyRelatedField(required=True, write_only=True, queryset=exploSampleRaman.objects.all())
+
     # 增添和更新都必须是多文件，且这个更新和其他更新不同，更新会覆盖，但新建不会覆盖，每次新建上传完都会进行取平均，替换平均文件
     def create(self, validated_data):
         Ramans = validated_data.get('Ramans')
         exploSampleRaman = validated_data.get('exploSampleRaman')
-        Raman1s = []
+        result = []
         for index, url in enumerate(Ramans):
             Raman = exploSampleRamanTestFile.objects.create(txtURL=url,exploSampleRaman = exploSampleRaman)
-            handledURL = preProcess('Raman',exploSampleRaman,Raman.id,url)
-            Raman.txtHandledURL = handledURL
-            Raman.save()
+            result =  preProcess('RAMAN',exploSampleRaman.id,Raman.id,os.path.join(MEDIA_ROOT,str(Raman.txtURL)))
+            if result[0] == '0' :
+                Raman.txtHandledURL = result[1]
+                Raman.save()
             # 文件预处理，更新Raman匹配表和综合匹配表的结果
-
-            blog = exploSampleRamanTestFileSerializer(Raman, context=self.context)
-            Raman1s.append(blog.data['txtURL'])
-        return {
-                'return_Ramans':Raman1s,
-                'exploSampleRaman':exploSampleRaman}
+        return {}
 class exploSampleRamanSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(
         default=serializers.CurrentUserDefault()
@@ -151,13 +134,13 @@ class exploSampleRamanDetailSerializer(serializers.ModelSerializer):
         fields = ("id","exploSample","devDetect","methodDetect", "user","inputDate","exploSampleRamanTestFile")
 
 class exploSampleXRDTestFileSerializer(serializers.ModelSerializer):
-    txtHandledURL = serializers.FileField(read_only=True, )
     handledData = serializers.SerializerMethodField()
 
     def get_handledData(self, obj):
-        path = os.path.join(MEDIA_ROOT,str(obj.txtHandledURL))
-        data = np.load(path)
-        return data
+        path = obj.txtHandledURL
+        if os.path.exists(path) == True:
+            data = np.load(path)
+            return data
     def __str__(self):
         return self.txtURL
 
@@ -168,27 +151,21 @@ class LsitExploSampleXRDTestFileSerializer(serializers.Serializer):
     XRDs = serializers.ListField(
         child=serializers.FileField(max_length=100000, allow_empty_file=False, use_url=True),
         write_only=True )
-    exploSampleXRD = serializers.PrimaryKeyRelatedField(required=True, queryset=exploSampleXRD.objects.all())
-    return_XRDs = serializers.ListField(
-        child=serializers.CharField(max_length=10000,),
-        read_only=True )
+    exploSampleXRD = serializers.PrimaryKeyRelatedField(required=True,write_only=True, queryset=exploSampleXRD.objects.all())
+
     # 增添和更新都必须是多文件，且这个更新和其他更新不同，更新会覆盖，但新建不会覆盖，每次新建上传完都会进行取平均，替换平均文件
     def create(self, validated_data):
         XRDs = validated_data.get('XRDs')
         exploSampleXRD = validated_data.get('exploSampleXRD')
-        XRD1s = []
+        result = []
         for index, url in enumerate(XRDs):
             XRD = exploSampleXRDTestFile.objects.create(txtURL=url,exploSampleXRD = exploSampleXRD)
-            handledURL = preProcess('XRD',exploSampleXRD,XRD.id,url)
-            XRD.txtHandledURL = handledURL
-            XRD.save()
+            result =  preProcess('XRD',exploSampleXRD.id,XRD.id,os.path.join(MEDIA_ROOT,str(XRD.txtURL)))
+            if result[0] == '0':
+                XRD.txtHandledURL = result[1]
+                XRD.save()
             # 文件预处理，更新XRD匹配表和综合匹配表的结果
-
-            blog = exploSampleXRDTestFileSerializer(XRD, context=self.context)
-            XRD1s.append(blog.data['txtURL'])
-        return {
-                'return_XRDs':XRD1s,
-                'exploSampleXRD':exploSampleXRD}
+        return {}
 class exploSampleXRDSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(
         default=serializers.CurrentUserDefault()
@@ -208,13 +185,13 @@ class exploSampleXRDDetailSerializer(serializers.ModelSerializer):
         fields = ("id","exploSample","devDetect","methodDetect", "user","inputDate","exploSampleXRDTestFile")
 
 class exploSampleXRFTestFileSerializer(serializers.ModelSerializer):
-    handledURL = serializers.FileField(read_only=True, )
     handledData = serializers.SerializerMethodField()
 
     def get_handledData(self, obj):
-        path = os.path.join(MEDIA_ROOT,str(obj.handledURL))
-        data = np.load(path)
-        return data
+        path = obj.handledURL
+        if os.path.exists(path) == True:
+            data = np.load(path)
+            return data
     def __str__(self):
         return self.excelURL
 
@@ -227,12 +204,7 @@ class LsitExploSampleXRFTestFileSerializer(serializers.Serializer):
         child=serializers.FileField(max_length=100000, allow_empty_file=False, use_url=True),
         write_only=True )
     #用于接收外键
-    exploSampleXRF = serializers.PrimaryKeyRelatedField(required=True, queryset=exploSampleXRF.objects.all())
-    # 返回的多个文件列表
-    return_XRFs = serializers.ListField(
-        child=serializers.CharField(max_length=10000,),
-        read_only=True )
-
+    exploSampleXRF = serializers.PrimaryKeyRelatedField(required=True, write_only=True,queryset=exploSampleXRF.objects.all())
     def create(self, validated_data):
         XRFs = validated_data.get('XRFs')
         exploSampleXRF = validated_data.get('exploSampleXRF')
@@ -240,20 +212,15 @@ class LsitExploSampleXRFTestFileSerializer(serializers.Serializer):
         # exploSampleXRFTestFiles = exploSampleXRFTestFile.objects.filter(exploSampleXRF = exploSampleXRF)
         # for exploSampleXRFTestFileUp in exploSampleXRFTestFiles:
         #     exploSampleXRFTestFileUp.delete()
-        XRF1s = []
+        result = []
         for index, url in enumerate(XRFs):
             # 会自动填入exploSampleId
             XRF = exploSampleXRFTestFile.objects.create(excelURL=url,exploSampleXRF = exploSampleXRF)
-            handledURL = preProcess('XRF',exploSampleXRF,XRF.id,url)
-            XRF.txtHandledURL = handledURL
-            XRF.save()
-
-            blog = exploSampleXRFTestFileSerializer(XRF, context=self.context)
-            XRF1s.append(blog.data['excelURL'])
-        # 对上传的文档预处理取平均，再将取完平均的回填
-        return {
-                'return_XRFs':XRF1s,
-                'exploSampleXRF':exploSampleXRF}
+            result = preProcess('XRF',exploSampleXRF.id,XRF.id,os.path.join(MEDIA_ROOT,str(XRF.excelURL)))
+            if result[0] == '0':
+                XRF.handledURL = result[1]
+                XRF.save()
+        return {}
 class exploSampleXRFSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(
         default=serializers.CurrentUserDefault()
@@ -282,13 +249,13 @@ class exploSampleGCMSTestFileSerializer(serializers.ModelSerializer):
         model = exploSampleGCMSTestFile
         fields = "__all__"
 class exploSampleGCMSFileSerializer(serializers.ModelSerializer):
-    txtHandledURL = serializers.FileField(read_only=True, )
     handledData = serializers.SerializerMethodField()
 
     def get_handledData(self, obj):
-        path = os.path.join(MEDIA_ROOT,str(obj.txtHandledURL))
-        data = np.load(path).item()
-        return data
+        path = obj.txtHandledURL
+        if os.path.exists(path) == True:
+            data = np.load(path).item()
+            return data
 
     class Meta:
         model = exploSampleGCMSFile
@@ -299,12 +266,7 @@ class LsitExploSampleGCMSTestFileSerializer(serializers.Serializer):
         child=serializers.FileField(max_length=100000, allow_empty_file=False, use_url=True),
         write_only=True )
     #用于接收外键,GCMSTestFile的外键也是GCMS，AverFile只是用来取平均的
-    exploSampleGCMS = serializers.PrimaryKeyRelatedField(required=True, queryset=exploSampleGCMS.objects.all(), write_only=True)
-    # type = serializers.CharField(max_length=20,)
-    # # 返回的多个文件列表
-    # return_GCMSs = serializers.ListField(
-    #     child=serializers.CharField(max_length=10000,),
-    #     read_only=True )
+    exploSampleGCMS = serializers.PrimaryKeyRelatedField(required=True, write_only=True,queryset=exploSampleGCMS.objects.all())
 
     def create(self, validated_data):
         GCMSs = validated_data.get('GCMSs')
@@ -318,6 +280,8 @@ class LsitExploSampleGCMSTestFileSerializer(serializers.Serializer):
         GCMS2s = []
         # GCMS3s = []
         filePath = ""
+        TICId = 0
+        result = []
         for index, url in enumerate(GCMSs):
             # 会自动填入exploSampleId
             # 从url中知道type，如果是TIC的type，那么就创建一个以此id和样本id联合的文件夹用来存放这一批的文档，
@@ -330,6 +294,7 @@ class LsitExploSampleGCMSTestFileSerializer(serializers.Serializer):
             if type == "TIC":
                 filePath = os.path.join(MEDIA_ROOT,"file/exploSampleGCMSTestFile/%d_%d/" % (exploSampleGCMS.exploSample_id,GCMS.id))
                 os.makedirs(filePath)
+                TICId = GCMS.id
             GCMS2s.append(GCMS)
         for GCMS2 in GCMS2s:
             prePath =os.path.join(MEDIA_ROOT,str(GCMS2.txtURL))
@@ -338,6 +303,14 @@ class LsitExploSampleGCMSTestFileSerializer(serializers.Serializer):
             shutil.move(prePath, newPath)
             GCMS2.txtURL = newPath
             GCMS2.save()
+        GCMSFile = exploSampleGCMSFile.objects.create(exploSampleGCMS = exploSampleGCMS)
+        result = preProcess('GCMS',exploSampleGCMS.id, GCMSFile.id, filePath)
+        if result[0] == '0':
+            GCMSFile.txtHandledURL = result[1]
+            GCMSFile.save()
+        # result = preProcess('GCMS', exploSampleGCMS.id, TICId, filePath)
+        # if result[0] == '0':
+        #     exploSampleGCMSFile.objects.create(exploSampleGCMS = exploSampleGCMS,txtHandledURL = result[1])
         # 预处理方法，给filePath即为所在的文件夹
         #     blog = exploSampleGCMSFileSerializer(GCMS2, context=self.context)
         #     GCMS3s.append(blog.data['handledData'])
@@ -362,6 +335,23 @@ class exploSampleGCMSDetailSerializer(serializers.ModelSerializer):
         model = exploSampleGCMS
         fields = ("id","exploSample","devDetect","methodDetect", "user","inputDate","exploSampleGCMSFile")
 
+class exploSampleDetailSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
+    inputDate = serializers.DateTimeField(read_only=True, format='%Y-%m-%d %H:%M')
+    exploSampleFTIR = exploSampleFTIRDetailSerializer(many= True)
+    exploSampleRaman = exploSampleRamanDetailSerializer(many= True)
+    exploSampleXRD = exploSampleXRDDetailSerializer(many= True)
+    exploSampleXRF = exploSampleXRFDetailSerializer(many= True)
+    exploSampleGCMS = exploSampleGCMSDetailSerializer(many=True)
+
+   # read_only前端写也写不进去！！！
+
+    class Meta:
+        model = exploSample
+        fields =("id",'sname','snameAbbr','user','inputDate','sampleOrigin','factory','picUrl','note',
+                 'exploSampleFTIR','exploSampleRaman','exploSampleXRD','exploSampleXRF','exploSampleGCMS')
 
 class devSampleSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(
@@ -381,18 +371,29 @@ class devPartSampleSerializer(serializers.ModelSerializer):
     class Meta:
         model = devPartSample
         fields = "__all__"
+class devSampleDetailSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
+    inputDate = serializers.DateTimeField(read_only=True, format='%Y-%m-%d %H:%M')
+    devPartSample = devPartSampleSerializer(many = True)
+
+    class Meta:
+        model = devSample
+        fields =("id",'sname','user', 'inputDate','Type','Origin','Factory','Model','Logo','function','picUrl','note','devPartSample')
+
 
 class devPartSampleFTIRTestFileSerializer(serializers.ModelSerializer):
-    txtHandledURL = serializers.FileField(read_only=True, )
     handledData = serializers.SerializerMethodField()
 
     def get_handledData(self, obj):
-        path = os.path.join(MEDIA_ROOT,str(obj.txtHandledURL))
-        data = np.load(path)
+        path =obj.txtHandledURL
+        if os.path.exists(path) == True:
+            data = np.load(path)
         # print(type(data))
         # print(data[0])
 
-        return data
+            return data
     def __str__(self):
         return self.txtURL
 
@@ -404,30 +405,22 @@ class LsitdevPartSampleFTIRTestFileSerializer(serializers.Serializer):
         child=serializers.FileField(max_length=100000, allow_empty_file=False, use_url=True),
         write_only=True )
 
-    devPartSampleFTIR = serializers.PrimaryKeyRelatedField(required=True, queryset=devPartSampleFTIR.objects.all())
-
-    return_FTIRs = serializers.ListField(
-        child=serializers.CharField(max_length=10000,),
-        read_only=True )
-
+    devPartSampleFTIR = serializers.PrimaryKeyRelatedField(required=True, write_only=True,queryset=devPartSampleFTIR.objects.all())
     # 增添和更新都必须是多文件，且这个更新和其他更新不同，更新会覆盖，但新建不会覆盖，每次新建上传完都会进行取平均，替换平均文件
     def create(self, validated_data):
         FTIRs = validated_data.get('FTIRs')
         devPartSampleFTIR = validated_data.get('devPartSampleFTIR')
-        FTIR1s = []
+        result = []
         for index, url in enumerate(FTIRs):
             devPartSampleId = devPartSampleFTIR.devPartSample_id
             FTIR = devPartSampleFTIRTestFile.objects.create(txtURL=url,devPartSampleFTIR = devPartSampleFTIR)
-            txtHandledURL = preProcess('FTIR',devPartSampleFTIR,FTIR.id,url)
-            FTIR.txtHandledURL = txtHandledURL
-            FTIR.save()
-            blog = devPartSampleFTIRTestFileSerializer(FTIR, context=self.context)
-            FTIR1s.append(blog.data['txtURL'])
+            result = preProcess('FTIR',devPartSampleFTIR.id,FTIR.id,os.path.join(MEDIA_ROOT,str(FTIR.txtURL)))
+            if result[0] == '0':
+                FTIR.txtHandledURL = result[1]
+                FTIR.save()
 
         # 对上传的文档预处理取平均，再将取完平均的回填
-        return {
-                'return_FTIRs':FTIR1s,
-                'devPartSampleFTIR':devPartSampleFTIR}
+        return {}
 class devPartSampleFTIRSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(
         default=serializers.CurrentUserDefault()
@@ -447,16 +440,16 @@ class devPartSampleFTIRDetailSerializer(serializers.ModelSerializer):
         fields = ("id","devPartSample","devDetect","methodDetect", "user","inputDate","devPartSampleFTIRTestFile")
 
 class devPartSampleRamanTestFileSerializer(serializers.ModelSerializer):
-    txtHandledURL = serializers.FileField(read_only=True, )
     handledData = serializers.SerializerMethodField()
 
     def get_handledData(self, obj):
-        path = os.path.join(MEDIA_ROOT,str(obj.txtHandledURL))
-        data = np.load(path)
+        path = obj.txtHandledURL
+        if os.path.exists(path) == True:
+            data = np.load(path)
         # print(type(data))
         # print(data[0])
 
-        return data
+            return data
     def __str__(self):
         return self.txtURL
 
@@ -467,30 +460,22 @@ class LsitdevPartSampleRamanTestFileSerializer(serializers.Serializer):
     Ramans = serializers.ListField(
         child=serializers.FileField(max_length=100000, allow_empty_file=False, use_url=True),
         write_only=True )
-    devPartSampleRaman = serializers.PrimaryKeyRelatedField(required=True, queryset=devPartSampleRaman.objects.all())
-    return_Ramans = serializers.ListField(
-        child=serializers.CharField(max_length=10000,),
-        read_only=True )
+    devPartSampleRaman = serializers.PrimaryKeyRelatedField(required=True, write_only=True,queryset=devPartSampleRaman.objects.all())
     # 增添和更新都必须是多文件，且这个更新和其他更新不同，更新会覆盖，但新建不会覆盖，每次新建上传完都会进行取平均，替换平均文件
     def create(self, validated_data):
         Ramans = validated_data.get('Ramans')
         devPartSampleRaman = validated_data.get('devPartSampleRaman')
-        Raman1s = []
+        result = []
         for index, url in enumerate(Ramans):
             devPartSampleId = devPartSampleRaman.devPartSample_id
             Raman = devPartRamanTestFile.objects.create(txtURL=url,devPartSampleRaman = devPartSampleRaman)
-            txtHandledURL = preProcess('Raman',devPartSampleRaman,Raman.id,url)
-            Raman.txtHandledURL = txtHandledURL
-            Raman.save()
+            result = preProcess('RAMAN',devPartSampleRaman.id,Raman.id,os.path.join(MEDIA_ROOT,str(Raman.txtURL)))
+            if result[0] == '0':
+                Raman.txtHandledURL = result[1]
+                Raman.save()
             # 文件预处理，更新Raman匹配表和综合匹配表的结果
 
-            blog = devPartSampleRamanTestFileSerializer(Raman, context=self.context)
-            Raman1s.append(blog.data['txtURL'])
-
-        # 对上传的文档预处理取平均，再将取完平均的回填
-        return {
-                'return_Ramans':Raman1s,
-                'devPartSampleRaman':devPartSampleRaman}
+        return {}
 class devPartSampleRamanSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(
         default=serializers.CurrentUserDefault()
@@ -510,16 +495,16 @@ class devPartSampleRamanDetailSerializer(serializers.ModelSerializer):
         fields = ("id","devPartSample","devDetect","methodDetect", "user","inputDate","devPartRamanTestFile")
 
 class devPartSampleXRFTestFileSerializer(serializers.ModelSerializer):
-    handledURL = serializers.FileField(read_only=True, )
     handledData = serializers.SerializerMethodField()
 
     def get_handledData(self, obj):
-        path = os.path.join(MEDIA_ROOT,str(obj.handledURL))
-        data = np.load(path)
+        path =obj.handledURL
+        if os.path.exists(path) == True:
+            data = np.load(path)
         # print(type(data))
         # print(data[0])
 
-        return data
+            return data
     def __str__(self):
         return self.excelURL
 
@@ -531,33 +516,23 @@ class LsitdevPartSampleXRFTestFileSerializer(serializers.Serializer):
         child=serializers.FileField(max_length=100000, allow_empty_file=False, use_url=True),
         write_only=True )
 
-    devPartSampleXRF = serializers.PrimaryKeyRelatedField(required=True, queryset=devPartSampleXRF.objects.all())
-
-    return_XRFs = serializers.ListField(
-        child=serializers.CharField(max_length=10000,),
-        read_only=True )
-
+    devPartSampleXRF = serializers.PrimaryKeyRelatedField(required=True, write_only=True ,queryset=devPartSampleXRF.objects.all())
     # 增添和更新都必须是多文件，且这个更新和其他更新不同，更新会覆盖，但新建不会覆盖，每次新建上传完都会进行取平均，替换平均文件
     def create(self, validated_data):
         XRFs = validated_data.get('XRFs')
         devPartSampleXRF = validated_data.get('devPartSampleXRF')
-        XRF1s = []
+        result = []
         for index, url in enumerate(XRFs):
             devPartSampleId = devPartSampleXRF.devPartSample_id
             XRF = devPartSampleXRFTestFile.objects.create(excelURL=url,devPartSampleXRF = devPartSampleXRF)
-            handledURL = preProcess('XRF',devPartSampleXRF,XRF.id,url)
-            XRF.handledURL = handledURL
-            XRF.save()
+            result = preProcess('XRF', devPartSampleXRF.id, XRF.id, os.path.join(MEDIA_ROOT, str(XRF.excelURL)))
+            if result[0] == '0':
+                XRF.handledURL = result[1]
+                XRF.save()
             # 文件预处理，更新XRF匹配表和综合匹配表的结果
             # 样本库更新报告都得变
 
-            blog = devPartSampleXRFTestFileSerializer(XRF, context=self.context)
-            XRF1s.append(blog.data['txtURL'])
-
-        # 对上传的文档预处理取平均，再将取完平均的回填
-        return {
-                'return_XRFs':XRF1s,
-                'devPartSampleXRF':devPartSampleXRF}
+        return {}
 class devPartSampleXRFSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(
         default=serializers.CurrentUserDefault()
@@ -592,3 +567,19 @@ class devShapeSampleSerializer(serializers.ModelSerializer):
     class Meta:
         model = devShapeSample
         fields = "__all__"
+
+class devPartSampleDetailSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
+    inputDate = serializers.DateTimeField(read_only=True, format='%Y-%m-%d %H:%M')
+    devPartSampleFTIR = devPartSampleFTIRDetailSerializer(many = True)
+    devPartSampleRaman = devPartSampleRamanDetailSerializer(many= True)
+    devPartSampleXRF = devPartSampleXRFDetailSerializer(many= True)
+    devShapeSample = devShapeSampleSerializer(many= True)
+
+    class Meta:
+        model = devPartSample
+        fields = ("id",'sname', 'devSample','user','inputDate','sampleType','Origin','Factory','Model','Logo'
+                  ,'function','Color','Material','Shape','thickness','picUrl','note','devPartSampleFTIR','devPartSampleRaman',
+                  'devPartSampleXRF','devShapeSample')

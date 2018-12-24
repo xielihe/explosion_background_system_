@@ -51,7 +51,7 @@ class exploSampleFTIRTestFile(models.Model):
     exploSampleFTIR = models.ForeignKey(exploSampleFTIR, verbose_name=u"对应的FTIR检测",related_name="exploSampleFTIRTestFile")
     txtURL = models.FileField(max_length=300, upload_to="file/exploSampleFTIRTestFile/", null=True, blank=True,
                               verbose_name="录入TXT文档路径")
-    txtHandledURL = models.FileField(max_length=300, null=True, blank=True, verbose_name="处理过的TXT文档路径")
+    txtHandledURL = models.CharField(max_length=300, null=True, blank=True, verbose_name="处理过的TXT文档路径")
 
     class Meta:
         verbose_name = "炸药及原材料样本FTIR检测表"
@@ -82,7 +82,7 @@ class exploSampleRamanTestFile(models.Model):
     exploSampleRaman = models.ForeignKey(exploSampleRaman, verbose_name=u"对应的Raman检测",related_name="exploSampleRamanTestFile")
     txtURL = models.FileField(max_length=300, upload_to="file/exploSampleRamanTestFile/", null=True, blank=True,
                               verbose_name="录入TXT文档路径")
-    txtHandledURL = models.FileField(max_length=300, null=True, blank=True, verbose_name="处理过的TXT文档路径")
+    txtHandledURL = models.CharField(max_length=300, null=True, blank=True, verbose_name="处理过的TXT文档路径")
 
     class Meta:
         verbose_name = "炸药及原材料样本Raman检测实验文件表 "
@@ -113,7 +113,7 @@ class exploSampleXRDTestFile(models.Model):
     exploSampleXRD = models.ForeignKey(exploSampleXRD, verbose_name=u"对应的XRD检测",related_name="exploSampleXRDTestFile")
     txtURL = models.FileField(max_length=300, upload_to="file/exploSampleXRDTestFile/", null=True, blank=True,
                               verbose_name="录入TXT文档路径")
-    txtHandledURL = models.FileField(max_length=300, null=True, blank=True, verbose_name="处理过的TXT文档路径")
+    txtHandledURL = models.CharField(max_length=300, null=True, blank=True, verbose_name="处理过的TXT文档路径")
 
     class Meta:
         verbose_name = "炸药及原材料样本XRD检测实验文件表 "
@@ -144,7 +144,7 @@ class exploSampleXRFTestFile(models.Model):
     exploSampleXRF = models.ForeignKey(exploSampleXRF, verbose_name=u"对应的XRF检测",related_name="exploSampleXRFTestFile")
     excelURL = models.FileField(max_length=300, upload_to="file/exploSampleXRFTestFile/", null=True, blank=True,
                               verbose_name="录入excel文档路径")
-    handledURL = models.FileField(max_length=300,null=True, blank=True,verbose_name="有效元素列表")
+    handledURL = models.CharField(max_length=300,null=True, blank=True,verbose_name="有效元素列表")
     class Meta:
         verbose_name = "炸药及原材料样本XRF检测实验文件表"
         verbose_name_plural = verbose_name
@@ -171,7 +171,7 @@ class exploSampleGCMSFile(models.Model):
     炸药及原材料样本GC-MS检测文件表
     """
     exploSampleGCMS = models.ForeignKey(exploSampleGCMS, verbose_name=u"对应的GC-MS检测",related_name="exploSampleGCMSFile")
-    txtHandledURL = models.FileField(max_length=300, null=True, blank=True, verbose_name="处理过的TXT文档路径")
+    txtHandledURL = models.CharField(max_length=300, null=True, blank=True, verbose_name="处理过的TXT文档路径")
 
     class Meta:
         verbose_name = "炸药及原材料样本GC-MS检测文件表 "
@@ -282,7 +282,7 @@ class devPartSampleFTIRTestFile(models.Model):
     devPartSampleFTIR = models.ForeignKey(devPartSampleFTIR, verbose_name=u"对应的FTIR检测",related_name="devPartSampleFTIRTestFile")
     txtURL = models.FileField(max_length=300, upload_to="file/devPartSampleFTIRTestFile/", null=True, blank=True,
                               verbose_name="录入TXT文档路径")
-    txtHandledURL = models.FileField(max_length=300, null=True, blank=True, verbose_name="处理过的TXT文档路径")
+    txtHandledURL = models.CharField(max_length=300, null=True, blank=True, verbose_name="处理过的TXT文档路径")
 
     class Meta:
         verbose_name = "爆炸装置关键组件样本零件FTIR检测实验文件表"
@@ -314,7 +314,7 @@ class devPartRamanTestFile(models.Model):
     devPartSampleRaman = models.ForeignKey(devPartSampleRaman, verbose_name=u"对应的Raman检测",related_name="devPartRamanTestFile")
     txtURL = models.FileField(max_length=300, upload_to="file/devPartRamanTestFile/", null=True, blank=True,
                               verbose_name="录入TXT文档路径")
-    txtHandledURL = models.FileField(max_length=300, null=True, blank=True, verbose_name="处理过的TXT文档路径")
+    txtHandledURL = models.CharField(max_length=300, null=True, blank=True, verbose_name="处理过的TXT文档路径")
 
     class Meta:
         verbose_name = "爆炸装置关键组件样本零件Raman检测实验文件表  "
@@ -346,7 +346,7 @@ class devPartSampleXRFTestFile(models.Model):
     devPartSampleXRF = models.ForeignKey(devPartSampleXRF, verbose_name=u"对应的XRF检测",related_name="devPartSampleXRFTestFile")
     excelURL = models.FileField(max_length=300, upload_to="file/devPartSampleXRFTestFile/", null=True, blank=True,
                               verbose_name="录入excel文档路径")
-    handledURL = models.FileField(max_length=300, null=True, blank=True, verbose_name="有效元素列表")
+    handledURL = models.CharField(max_length=300, null=True, blank=True, verbose_name="有效元素列表")
     class Meta:
         verbose_name = "爆炸装置关键组件样本零件XRF检测实验文件表"
         verbose_name_plural = verbose_name

@@ -52,10 +52,15 @@ class exploSampleViewset(viewsets.ModelViewSet):
     """
     queryset = exploSample.objects.all()
     #queryset = exploSample.objects.filter(sname="样本3")
-    serializer_class = exploSampleSerializer
+    # serializer_class = exploSampleSerializer
     pagination_class = MyPageNumberPagination
     # IsAuthenticated表示是否登录
     permission_classes = (IsAuthenticated,IsAdmin)
+    def get_serializer_class(self):
+        if self.action == "retrieve":
+            # self.action == "list" or
+            return exploSampleDetailSerializer
+        return exploSampleSerializer
 
 class exploSampleFTIRViewset(viewsets.ModelViewSet):
 
@@ -65,7 +70,8 @@ class exploSampleFTIRViewset(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
     def get_serializer_class(self):
-        if self.action == "list" or self.action == "retrieve":
+        if self.action == "retrieve":
+            # self.action == "list" or
             return exploSampleFTIRDetailSerializer
         return exploSampleFTIRSerializer
 class exploSampleFTIRTestFileViewset(viewsets.ModelViewSet):
@@ -94,7 +100,8 @@ class exploSampleRamanViewset(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
     def get_serializer_class(self):
-        if self.action == "list" or self.action == "retrieve":
+        if self.action == "retrieve":
+            #  self.action == "list" or
             return exploSampleRamanDetailSerializer
         return exploSampleRamanSerializer
 class exploSampleRamanTestFileViewset(viewsets.ModelViewSet):
@@ -123,7 +130,8 @@ class exploSampleXRDViewset(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
     def get_serializer_class(self):
-        if self.action == "list" or self.action == "retrieve":
+        if  self.action == "retrieve":
+            # self.action == "list" or
             return exploSampleXRDDetailSerializer
         return exploSampleXRDSerializer
 class exploSampleXRDTestFileViewset(viewsets.ModelViewSet):
@@ -152,7 +160,8 @@ class exploSampleXRFViewset(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
     def get_serializer_class(self):
-        if self.action == "list" or self.action == "retrieve":
+        if  self.action == "retrieve":
+            # self.action == "list" or
             return exploSampleXRFDetailSerializer
         return exploSampleXRFSerializer
 class exploSampleXRFTestFileViewset(viewsets.ModelViewSet):
@@ -180,9 +189,20 @@ class exploSampleGCMSViewset(viewsets.ModelViewSet):
     # serializer_class = exploSampleGCMSSerializer
     permission_classes = (IsAuthenticated,IsAdmin)
     def get_serializer_class(self):
-        if self.action == "list" or self.action == "retrieve":
+        if  self.action == "retrieve":
+            # self.action == "list" or
             return exploSampleGCMSDetailSerializer
         return exploSampleGCMSSerializer
+class exploSampleGCMSFileViewset(viewsets.ModelViewSet):
+
+    queryset = exploSampleGCMSFile.objects.all()
+    #queryset = exploSample.objects.filter(sname="样本3")
+    # serializer_class = exploSampleGCMSSerializer
+    permission_classes = (IsAuthenticated,IsAdmin)
+    def get_serializer_class(self):
+        # if self.action == "list" :
+        #     return exploSampleGCMSDetailSerializer
+        return exploSampleGCMSFileSerializer
 class exploSampleGCMSTestFileViewset(viewsets.ModelViewSet):
 
     queryset = exploSampleGCMSTestFile.objects.all()
@@ -213,15 +233,25 @@ class exploSampleGCMSTestFileViewset(viewsets.ModelViewSet):
 class devSampleViewset(viewsets.ModelViewSet):
     queryset = devSample.objects.all()
     #queryset = exploSample.objects.filter(sname="样本3")
-    serializer_class = devSampleSerializer
+    # serializer_class = devSampleSerializer
     permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
+    def get_serializer_class(self):
+        if  self.action == "retrieve":
+            # self.action == "list" or
+            return devSampleDetailSerializer
+        return devSampleSerializer
 class devPartSampleViewset(viewsets.ModelViewSet):
     queryset = devPartSample.objects.all()
     #queryset = exploSample.objects.filter(sname="样本3")
-    serializer_class = devPartSampleSerializer
+    # serializer_class = devPartSampleSerializer
     permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
+    def get_serializer_class(self):
+        if  self.action == "retrieve":
+            # self.action == "list" or
+            return devPartSampleDetailSerializer
+        return devPartSampleSerializer
 
 class devPartSampleFTIRViewset(viewsets.ModelViewSet):
     queryset = devPartSampleFTIR.objects.all()
@@ -230,7 +260,8 @@ class devPartSampleFTIRViewset(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
     def get_serializer_class(self):
-        if self.action == "list" or self.action == "retrieve":
+        if  self.action == "retrieve":
+            # self.action == "list" or
             return devPartSampleFTIRDetailSerializer
         return devPartSampleFTIRSerializer
 class devPartSampleFTIRTestFileViewset(viewsets.ModelViewSet):
@@ -260,7 +291,8 @@ class devPartSampleRamanViewset(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
     def get_serializer_class(self):
-        if self.action == "list" or self.action == "retrieve":
+        if self.action == "retrieve":
+            # self.action == "list" or
             return devPartSampleRamanDetailSerializer
         return devPartSampleRamanSerializer
 class devPartRamanTestFileViewset(viewsets.ModelViewSet):
@@ -290,7 +322,8 @@ class devPartSampleXRFViewset(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
     def get_serializer_class(self):
-        if self.action == "list" or self.action == "retrieve":
+        if self.action == "retrieve":
+            # self.action == "list" or
             return devPartSampleXRFDetailSerializer
         return devPartSampleXRFSerializer
 class devPartSampleXRFTestFileViewset(viewsets.ModelViewSet):
