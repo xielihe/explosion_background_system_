@@ -26,4 +26,15 @@ class userMessage(models.Model):
     def __str__(self):
         return self.title
 
+class userMessageFile(models.Model):
+    """
+    站内消息文件表
+    """
+    userMessage = models.ForeignKey(userMessage, verbose_name=u"对应的站内消息信息",related_name="userMessageFile")
+    txtURL = models.FileField(max_length=300, upload_to="file/userMessageFile/", null=True, blank=True,
+                              verbose_name="站内消息文件路径")
+
+    class Meta:
+        verbose_name = "站内消息文件表"
+        verbose_name_plural = verbose_name
 

@@ -453,7 +453,7 @@ class devPartSampleRamanTestFileSerializer(serializers.ModelSerializer):
         return self.txtURL
 
     class Meta:
-        model = devPartRamanTestFile
+        model = devPartSampleRamanTestFile
         fields = ("id","devPartSampleRaman","txtURL","handledData")
 class LsitdevPartSampleRamanTestFileSerializer(serializers.Serializer):
     Ramans = serializers.ListField(
@@ -467,7 +467,7 @@ class LsitdevPartSampleRamanTestFileSerializer(serializers.Serializer):
         result = []
         for index, url in enumerate(Ramans):
             devPartSampleId = devPartSampleRaman.devPartSample_id
-            Raman = devPartRamanTestFile.objects.create(txtURL=url,devPartSampleRaman = devPartSampleRaman)
+            Raman = devPartSampleRamanTestFile.objects.create(txtURL=url,devPartSampleRaman = devPartSampleRaman)
             result = preProcess('RAMAN',devPartSampleRaman.id,Raman.id,os.path.join(MEDIA_ROOT,str(Raman.txtURL)))
             if result[0] == '0':
                 Raman.txtHandledURL = result[1]
@@ -485,13 +485,13 @@ class devPartSampleRamanSerializer(serializers.ModelSerializer):
         fields = ("id","devPartSample","devDetect","methodDetect", "user","inputDate")
 class devPartSampleRamanDetailSerializer(serializers.ModelSerializer):
     # 被指向用related_name来连接
-    devPartRamanTestFile = devPartSampleRamanTestFileSerializer(many = True)
+    devPartSampleRamanTestFile = devPartSampleRamanTestFileSerializer(many = True)
     # 自身的外键直接用serializer代替即可
     user = UserDetailSerializer()
 
     class Meta:
         model = devPartSampleRaman
-        fields = ("id","devPartSample","devDetect","methodDetect", "user","inputDate","devPartRamanTestFile")
+        fields = ("id","devPartSample","devDetect","methodDetect", "user","inputDate","devPartSampleRamanTestFile")
 
 class devPartSampleXRFTestFileSerializer(serializers.ModelSerializer):
     handledData = serializers.SerializerMethodField()

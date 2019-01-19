@@ -295,10 +295,10 @@ class devPartSampleRamanViewset(viewsets.ModelViewSet):
             # self.action == "list" or
             return devPartSampleRamanDetailSerializer
         return devPartSampleRamanSerializer
-class devPartRamanTestFileViewset(viewsets.ModelViewSet):
-    queryset = devPartRamanTestFile.objects.all()
+class devPartSampleRamanTestFileViewset(viewsets.ModelViewSet):
+    queryset = devPartSampleRamanTestFile.objects.all()
     #queryset = exploSample.objects.filter(sname="样本3")
-    # serializer_class = devPartRamanTestFileSerializer
+    # serializer_class = devPartSampleRamanTestFileSerializer
     permission_classes = (IsAuthenticated,IsAdmin)
     parser_classes = (MultiPartParser, FileUploadParser,)
     pagination_class = MyPageNumberPagination

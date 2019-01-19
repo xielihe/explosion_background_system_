@@ -188,12 +188,12 @@ class devMatchRamanSerializer(serializers.ModelSerializer):
     devSampleName = serializers.SerializerMethodField(read_only=True,)
 
     def get_devSampleName(self, obj):
-        devSampleName = obj.devPartRamanTestFile.devPartSampleRaman.devPartSample.sname
+        devSampleName = obj.devPartSampleRamanTestFile.devPartSampleRaman.devPartSample.sname
         return devSampleName
     class Meta:
         model = devMatchRaman
         #返回id是为了方便删除
-        fields =("id","devEviRamanTestFile","devPartRamanTestFile","Score","devSampleName")
+        fields =("id","devEviRamanTestFile","devPartSampleRamanTestFile","Score","devSampleName")
 
 class devMatchXRFSerializer(serializers.ModelSerializer):
     devSampleName = serializers.SerializerMethodField(read_only=True,)

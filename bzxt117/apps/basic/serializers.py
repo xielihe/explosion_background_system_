@@ -60,34 +60,34 @@ class UserRegSerializer(serializers.ModelSerializer):
         model = userProfile
         fields = ("id","name","username","password","phone","email","unit","department","posts","role","isDelete","picUrl","note")
 
+# class methodDetectSerializer(serializers.ModelSerializer):
+#     handledData = serializers.SerializerMethodField()
+#
+#     def get_handledData(self, obj):
+#         path = os.path.join(MEDIA_ROOT, "GCMS.npy")
+#         data = np.load(path).item()
+#         # print(type(data))
+#         # print(data[0])
+#
+#         return data
+#     class Meta:
+#         model = methodDetect
+#         fields = ("id","method","handledData")
+
 class methodDetectSerializer(serializers.ModelSerializer):
-    handledData = serializers.SerializerMethodField()
-
-    def get_handledData(self, obj):
-        path = os.path.join(MEDIA_ROOT, "GCMS.npy")
-        data = np.load(path).item()
-        # print(type(data))
-        # print(data[0])
-
-        return data
+    # fileDoc = serializers.FileField(write_only=True,)
     class Meta:
         model = methodDetect
-        fields = ("id","method","handledData")
-
-class methodDetectCreateSerializer(serializers.Serializer):
-    fileDoc = serializers.FileField(write_only=True,)
-
-
-    def create(self, validated_data):
-        doc = validated_data['fileDoc']
-        file = docx.Document(doc)
-        for para in file.paragraphs:
-            data = para.text.strip()
-            if len(data)!=0:
-                methodCreate = methodDetect.objects.get_or_create(method = para.text)
-                # methodSE = methodDetectSerializer(methodCreate,context=self.context)
-        return {'state':"over"}
-
+        fields = "__all__"
+    # def create(self, validated_data):
+    #     doc = validated_data['fileDoc']
+    #     file = docx.Document(doc)
+    #     for para in file.paragraphs:
+    #         data = para.text.strip()
+    #         if len(data)!=0:
+    #             methodCreate = methodDetect.objects.get_or_create(method = para.text)
+    #             # methodSE = methodDetectSerializer(methodCreate,context=self.context)
+    #     return {'state':"over"}
 
 class devDetectSerializer(serializers.ModelSerializer):
     class Meta:

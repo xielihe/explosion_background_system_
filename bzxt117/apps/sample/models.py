@@ -307,12 +307,12 @@ class devPartSampleRaman(models.Model):
         return "%s,Raman" %(self.devPartSample.sname,)
 
 
-class devPartRamanTestFile(models.Model):
+class devPartSampleRamanTestFile(models.Model):
     """
    爆炸装置关键组件样本零件Raman检测实验文件表
     """
-    devPartSampleRaman = models.ForeignKey(devPartSampleRaman, verbose_name=u"对应的Raman检测",related_name="devPartRamanTestFile")
-    txtURL = models.FileField(max_length=300, upload_to="file/devPartRamanTestFile/", null=True, blank=True,
+    devPartSampleRaman = models.ForeignKey(devPartSampleRaman, verbose_name=u"对应的Raman检测",related_name="devPartSampleRamanTestFile")
+    txtURL = models.FileField(max_length=300, upload_to="file/devPartSampleRamanTestFile/", null=True, blank=True,
                               verbose_name="录入TXT文档路径")
     txtHandledURL = models.CharField(max_length=300, null=True, blank=True, verbose_name="处理过的TXT文档路径")
 

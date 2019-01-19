@@ -57,7 +57,7 @@ router.register(r'devPartSamples', devPartSampleViewset, base_name="devPartSampl
 router.register(r'devPartSampleFTIRs', devPartSampleFTIRViewset, base_name="devPartSampleFTIRs")
 router.register(r'devPartSampleFTIRTestFiles', devPartSampleFTIRTestFileViewset, base_name="devPartSampleFTIRTestFiles")
 router.register(r'devPartSampleRamans', devPartSampleRamanViewset, base_name="devPartSampleRamans")
-router.register(r'devPartRamanTestFiles', devPartRamanTestFileViewset, base_name="devPartRamanTestFiles")
+router.register(r'devPartSampleRamanTestFiles', devPartSampleRamanTestFileViewset, base_name="devPartSampleRamanTestFiles")
 router.register(r'devPartSampleXRFs', devPartSampleXRFViewset, base_name="devPartSampleXRFs")
 router.register(r'devPartSampleXRFTestFiles', devPartSampleXRFTestFileViewset, base_name="devPartSampleXRFTestFiles")
 

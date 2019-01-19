@@ -208,7 +208,7 @@ class startMatch(APIView):
                 RAMANs = devMatchRaman.objects.filter(devEviRamanTestFile__devEviId=eviId)
                 for RAMAN in RAMANs:
                     idScoreList = []
-                    idScoreList.append(RAMAN.devPartRamanTestFile.devPartSampleRaman.devPartSample_id)
+                    idScoreList.append(RAMAN.devPartSampleRamanTestFile.devPartSampleRaman.devPartSample_id)
                     idScoreList.append(RAMAN.Score)
                     comListRAMAN.append(idScoreList)
                 comDictDict["RAMAN"] = comListRAMAN
@@ -456,14 +456,14 @@ class startMatch(APIView):
             result_dict = {}
             querysetList = []
 
-            gci(os.path.join(MEDIA_ROOT, "file/devPartRamanTestFile/handled"), sampleList)
+            gci(os.path.join(MEDIA_ROOT, "file/devPartSampleRamanTestFile/handled"), sampleList)
             eviFile = devEviRamanTestFile.objects.get(id=eviFileId)
 
             result = CalculateSimilarity('RAMAN', os.path.join(MEDIA_ROOT, str(eviFile.txtHandledURL)), sampleList,
                                          score_dict)
             for id, score in score_dict.items():
                 match = devMatchRaman.objects.get_or_create(devEviRamanTestFile_id=eviFileId,
-                                                            devPartRamanTestFile_id=id)
+                                                            devPartSampleRamanTestFile_id=id)
                 matchObj = match[0]
                 matchObj.Score = score
                 matchObj.save()

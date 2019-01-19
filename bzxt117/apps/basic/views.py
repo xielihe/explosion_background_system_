@@ -220,8 +220,6 @@ class methodDetectViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mixins
         return methodDetect.objects.all()
 
     def get_serializer_class(self):
-        if self.action == "create":
-            return methodDetectCreateSerializer
         return methodDetectSerializer
 
     def perform_create(self, serializer):

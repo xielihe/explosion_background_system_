@@ -11,6 +11,7 @@ class userProfile(AbstractUser):
         (1, "超级管理员"),
         (2, "管理员"),
         (3, "普通用户"),
+        (4, "专家"),
     )
     name = models.CharField(max_length=6,verbose_name="人员姓名")
     # mobile = models.CharField(max_length=11,null=True, blank=True,verbose_name="手机（登录）")
@@ -37,6 +38,8 @@ class methodDetect(models.Model):
     检测方法信息表
     """
     method = models.CharField(max_length=100, null=True, blank=True, verbose_name="方法")
+    txtURL = models.FileField(max_length=300, upload_to="file/methodDetect/", null=True, blank=True,
+                              verbose_name="检测方法信息文档路径")
 
     class Meta:
         verbose_name = "检测方法信息表 "
