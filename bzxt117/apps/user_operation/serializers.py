@@ -28,9 +28,3 @@ class userMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = userMessage
         fields = "__all__"
-
-class allowUpdateSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = allowUpdate
-        fields = "__all__"

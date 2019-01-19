@@ -22,22 +22,29 @@
 # match.matchDegree = 88.888
 # match.matchType = 4
 # match.save()
-import numpy as np
-
-data = np.load('XRD.npy')
-print(type(data))
-print(data[0])
-# data.tolist()
-# print(type(data))
-# list 转 numpy
-# np.array(a)
+# import numpy as np
 #
-# ndarray 转 list
-# a.tolist()
+# data = np.load('XRD.npy')
+# print(type(data))
+# print(data[0])
+# # data.tolist()
+# # print(type(data))
+# # list 转 numpy
+# # np.array(a)
+# #
+# # ndarray 转 list
+# # a.tolist()
+#
+# data2 = np.load('GCMS.npy')
+# print(data2)
+# data2 = data2.item()
+# print(data2['119'])
+# data3 = data2['119']
+# print(data3[0])
 
-data2 = np.load('GCMS.npy')
-print(data2)
-data2 = data2.item()
-print(data2['119'])
-data3 = data2['119']
-print(data3[0])
+import re
+# 去除\r\n\t字符
+s = '_实在__%buxing'
+s1 = re.sub('[_%]', ' ', s)
+s1List = s1.split()
+print(s1List)

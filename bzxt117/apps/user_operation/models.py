@@ -26,20 +26,4 @@ class userMessage(models.Model):
     def __str__(self):
         return self.title
 
-class allowUpdate(models.Model):
-    """
-    普通用户修改物证权限表
-    """
-    # related_name不仅是被引用，如果一个类中有两个指向同一个类的外键，那么也要用related_name来做区分
-    entitled = models.ForeignKey(userProfile, verbose_name=u"被授权的普通用户",related_name="entitled")
-    authorized = models.ForeignKey(userProfile, verbose_name=u"授权的管理员",related_name="authorized")
-    exploEviId = models.IntegerField(null=True, blank=True,verbose_name=u"所涉及的炸药物证")
-    devEviId = models.IntegerField(null=True, blank=True,verbose_name=u"所涉及的爆炸装置物证")
-
-    class Meta:
-        verbose_name = "普通用户修改物证权限表"
-        verbose_name_plural = verbose_name
-
-    def __str__(self):
-        return self.entitled
 

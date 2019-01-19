@@ -137,6 +137,7 @@ USE_L10N = True
 
 USE_TZ = True
 
+# 在配置文件中告知Django使用我们自定义的认证后端
 AUTHENTICATION_BACKENDS = (
     'basic.views.CustomBackend',
 )
@@ -165,4 +166,5 @@ import datetime
 JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=7),
     'JWT_AUTH_HEADER_PREFIX': 'JWT',
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'basic.views.jwt_response_payload_handler',
 }

@@ -12,7 +12,7 @@ from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
-
+import pytz
 from rest_framework_jwt.serializers import jwt_encode_handler, jwt_payload_handler
 
 
@@ -58,13 +58,6 @@ class userMessageViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.
         #     # ifinstance.exploEviId!= NULL)and (instance.devEviId == NULL)):
         #     # 第一次读的时候，即此时hasRead = False，这时候才去创建权限记录。
         #         if instance.hasRead == False:
-        #             # 可能重复哦
-        #             allow_Update = allowUpdate()
-        #             allow_Update.entitled = instance.sendUser
-        #             allow_Update.authorized = instance.receiveUser
-        #             allow_Update.exploEviId = instance.exploEviId
-        #             allow_Update.devEviId = instance.devEviId
-        #             allow_Update.save()
         if instance.receiveUser == request.user:
             instance.hasRead = True
             instance.save()
@@ -72,19 +65,19 @@ class userMessageViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
-class allowUpdateViewset(viewsets.ModelViewSet):
-    """
-   前端需要判断如果发送者（请求者）是普通用户，而接受者（被请求者）是管理员或者超级管理员，才会去创建权限
-   这时当用户点击允许授权时会来请求这个新建接口
-    """
- #   authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
-#    lookup_field = "goods_id"
-    permission_classes = (IsAuthenticated, IsAdmin)
-    def get_queryset(self):
-        return allowUpdate.objects.all()
+# 判断消息是否更新
+class messageUpdate(APIView):
+    def get(self,request):
+        receiver = request.user
+        if userMessage.objects.filter(receiveUser = receiver).count()>0:
+            lastMessage = userMessage.objects.filter(receiveUser = receiver).order_by('sendDate')[0].sendDate
+        else:
+            lastMessage = datetime.min.replace(tzinfo=pytz.timezone('Asia/Shanghai'))
 
-    def get_serializer_class(self):
-        return allowUpdateSerializer
-
-    def perform_create(self, serializer):
-        serializer.save()
+        if datetime.now().replace(tzinfo=pytz.timezone('Asia/Shanghai'))<= lastMessage:
+            isUpdate = True
+        else:
+            isUpdate = False
+        return Response({
+            "isMessageUpdate": isUpdate,
+        }, status=status.HTTP_200_OK)

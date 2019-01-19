@@ -10,8 +10,11 @@ from django.http import HttpResponse
 from rest_framework.views import APIView
 from django.db.models import Q
 import json
+import re
 from rest_framework.pagination import PageNumberPagination
-
+#导入`connection`
+from django.db import connection
+from itertools import chain
 
 from apps.match.serializers import *
 from utils.permissions import *
@@ -23,7 +26,7 @@ from utils.ComScore import ComScore
 
 class MyPageNumberPagination(PageNumberPagination):
     # 指定这一页有多少个
-    page_size=1  #默认两个
+    page_size=10  #默认两个
 
     page_size_query_param = 'page_size'  #传一个size参数 一页显示多少  http://127.0.0.1:8000/wordSelect/?page=1&page_size=3
     # 代表多少页
@@ -44,9 +47,12 @@ class wordSelect(APIView):
         # 待语义匹配的物证对象
         devEviSelect = devEvi.objects.get(id = devEviId)
 
+
         #创建分页对象
         pg = MyPageNumberPagination()
         sampleQuery = devPartSample.objects.all()
+        finalQuery = devPartSample.objects.none()
+        # 建一个空的queryset
         if Color == 'True':
             sampleQuery = sampleQuery.filter(Color = devEviSelect.Color)
         if Shape == 'True':
@@ -58,11 +64,39 @@ class wordSelect(APIView):
         keyWordList = keyWords.split()
         sampleQueryRES = sampleQuery
         for keyWord in keyWordList:
-            sampleQueryRES = sampleQueryRES.filter(Q(Origin__icontains=keyWord)|Q(Factory__icontains=keyWord)|Q(Model__icontains=keyWord)
-                                             |Q(Logo__icontains=keyWord)|Q(function__icontains=keyWord)|Q(note__icontains=keyWord))
+            querySetN = devPartSample.objects.none()
+            cursor = connection.cursor()  # 要想使用sql原生语句，必须用到execute()函数 #然后在里面写入sql原生语句
+            # concat(Origin,Factory,Model,Logo,function,note) 不能用，因为concat是连接字段，是把所有字段连在一起作为一个，因此那种_的就不适用。
+            # 所以只能用or连接。
+            # ps：CONCAT()可以连接一个或者多个字符串,CONCAT_WS()可以添加分割符参数。
+            select_words = 'select * from sample_devpartsample where Origin like "%s" or Factory like "%s" or Model like "%s" or Logo like "%s" or function like "%s"'% (keyWord,keyWord,keyWord,keyWord,keyWord)
+            cursor.execute(select_words)
+            # 使用一个变量来接收查询到的数据，WHERE note LIKE keyWord
+            # fetchall（）返回查询到的所有数据
+            # sampleQueryRES = cursor.fetchall()
+            tempResults = cursor.fetchall()
+            querySetN = sampleQueryRES.filter(id__in=[tempResult[0] for tempResult in tempResults])
+            keyWord1 = re.sub('[_%]', ' ',keyWord)
+            keyWordList1s = keyWord1.split()
+            for keyWordList1 in keyWordList1s:
+                tempQuery = sampleQueryRES.filter(note__icontains=keyWordList1)
+                querySetN =querySetN|tempQuery
+            finalQuery =querySetN|finalQuery
+            # for tempResult in tempResults:
+            #     tempSampleQuery = sampleQueryRES.filter(id = tempResult[0])
+            #     if len(tempSampleQuery) > 0:
+            #         querySetN.append(tempSampleQuery)
+        #     不用去重，因为合并的时候取或就自动去重了
+        # finalQuery = finalQuery.values('id').distinct().order_by('id')
+
+        #  此时为一个tuple的列表，要使用id进行filter可以方便将list重新转化为Queryset
+
+        # for keyWord in keyWordList:
+        #     sampleQueryRES = sampleQueryRES.filter(Q(Origin__icontains=keyWord)|Q(Factory__icontains=keyWord)|Q(Model__icontains=keyWord)
+        #                                      |Q(Logo__icontains=keyWord)|Q(function__icontains=keyWord)|Q(note__icontains=keyWord))
 
         #在数据库中获取分页数据
-        pager_roles = pg.paginate_queryset(queryset=sampleQueryRES, request=request,view=self)
+        pager_roles = pg.paginate_queryset(queryset=finalQuery, request=request,view=self)
         #对分页数据进行序列化
         ser = PagerSerialiser(instance=pager_roles, many=True)
 

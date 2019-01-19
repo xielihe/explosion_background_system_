@@ -26,7 +26,6 @@ class exploSampleSerializer(serializers.ModelSerializer):
         fields = "__all__"
 class exploSampleFTIRTestFileSerializer(serializers.ModelSerializer):
     handledData = serializers.SerializerMethodField()
-
     def get_handledData(self, obj):
         path = obj.txtHandledURL
         if os.path.exists(path) == True:

@@ -101,7 +101,6 @@ router.register(r'devSynMatchs', devSynMatchViewset, base_name="devSynMatchs")
 router.register(r'devShapeMatchs', devShapeMatchViewset, base_name="devShapeMatchs")
 
 router.register(r'userMessages', userMessageViewset, base_name="userMessages")
-router.register(r'allowUpdates', allowUpdateViewset, base_name="allowUpdates")
 
 urlpatterns = [
     # url(r'^admin/', admin.site.urls),
@@ -116,6 +115,7 @@ urlpatterns = [
      # 6：devMatchFTIR，7:devMatchRaman,8:devMatchXRF,9:PCBImgMatch,10:oPartImgMatch,11:logoImgMatch
      # 12:devShapeMatch
      url(r'^startMatch/',startMatch.as_view(), name='startMatch'),
+     url(r'messageUpdate/',messageUpdate.as_view(),name='messageUpdate'),
      # 用POST方法请求这个接口，其中包含type和id的参数，id为exploSampleFTIR等级别的id，若成功返回201_created的响应。
      # type对应的法则如下
      # 1：exploSampleFTIR，2：exploSampleRaman，3：exploSampleXRD，4：exploSampleXRF，5：exploSampleGCMS，
