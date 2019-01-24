@@ -24,6 +24,7 @@ class exploSampleSerializer(serializers.ModelSerializer):
     class Meta:
         model = exploSample
         fields = "__all__"
+
 class exploSampleFTIRTestFileSerializer(serializers.ModelSerializer):
     handledData = serializers.SerializerMethodField()
     def get_handledData(self, obj):
@@ -335,9 +336,7 @@ class exploSampleGCMSDetailSerializer(serializers.ModelSerializer):
         fields = ("id","exploSample","devDetect","methodDetect", "user","inputDate","exploSampleGCMSFile")
 
 class exploSampleDetailSerializer(serializers.ModelSerializer):
-    user = serializers.HiddenField(
-        default=serializers.CurrentUserDefault()
-    )
+    user = UserDetailSerializer()
     inputDate = serializers.DateTimeField(read_only=True, format='%Y-%m-%d %H:%M')
     exploSampleFTIR = exploSampleFTIRDetailSerializer(many= True)
     exploSampleRaman = exploSampleRamanDetailSerializer(many= True)
@@ -371,9 +370,7 @@ class devPartSampleSerializer(serializers.ModelSerializer):
         model = devPartSample
         fields = "__all__"
 class devSampleDetailSerializer(serializers.ModelSerializer):
-    user = serializers.HiddenField(
-        default=serializers.CurrentUserDefault()
-    )
+    user = UserDetailSerializer()
     inputDate = serializers.DateTimeField(read_only=True, format='%Y-%m-%d %H:%M')
     devPartSample = devPartSampleSerializer(many = True)
 
@@ -568,9 +565,7 @@ class devShapeSampleSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class devPartSampleDetailSerializer(serializers.ModelSerializer):
-    user = serializers.HiddenField(
-        default=serializers.CurrentUserDefault()
-    )
+    user = UserDetailSerializer()
     inputDate = serializers.DateTimeField(read_only=True, format='%Y-%m-%d %H:%M')
     devPartSampleFTIR = devPartSampleFTIRDetailSerializer(many = True)
     devPartSampleRaman = devPartSampleRamanDetailSerializer(many= True)

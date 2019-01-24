@@ -42,19 +42,21 @@ class exploEviViewset(viewsets.ModelViewSet):
     queryset = exploEvi.objects.all()
     #queryset = exploSample.objects.filter(sname="样本3")
     # serializer_class = exploEviSerializer
-    # permission_classes = (IsAuthenticated,IsAllowExploUpdate)
+    # permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
     filter_backends = (filters.SearchFilter, filters.OrderingFilter)
     search_fields = ("caseName","evidenceName","note")
     ordering_fields = ("id","inputDate")
 
     def get_permissions(self):
-        if self.action == "delete" or "update" or "partial_update":
+        # 物证创建的话应该his谁都可以创建的
+        if self.action == "create":
         #     return [permissions.IsAuthenticated(),IsAdmin()]
         # elif self.action == "update":
-            return [permissions.IsAuthenticated(),IsAllowExploUpdate()]
+            return [permissions.IsAuthenticated()]
+        # 但是一旦涉及到删除之类的，就得把普通用户过滤掉
         else:
-            return [permissions.IsAuthenticated(),]
+            return [permissions.IsAuthenticated(),IsAdmin()]
 
     def get_serializer_class(self):
         if  self.action == "retrieve":
@@ -67,7 +69,7 @@ class exploEviFTIRViewset(viewsets.ModelViewSet):
     queryset = exploEviFTIR.objects.all()
     #queryset = exploSample.objects.filter(sname="样本3")
     # serializer_class = exploSampleFTIRSerializer
-    # permission_classes = (IsAuthenticated,IsAllowExploUpdate)
+    # permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
     def get_serializer_class(self):
         if  self.action == "retrieve":
@@ -76,12 +78,14 @@ class exploEviFTIRViewset(viewsets.ModelViewSet):
         return exploEviFTIRSerializer
 
     def get_permissions(self):
-        if self.action == "delete" or "update" or "partial_update":
+        # 物证创建的话应该his谁都可以创建的
+        if self.action == "create":
         #     return [permissions.IsAuthenticated(),IsAdmin()]
         # elif self.action == "update":
-            return [permissions.IsAuthenticated(),IsAllowExploUpdate()]
+            return [permissions.IsAuthenticated()]
+        # 但是一旦涉及到删除之类的，就得把普通用户过滤掉
         else:
-            return [permissions.IsAuthenticated(),]
+            return [permissions.IsAuthenticated(),IsAdmin()]
 
 class exploEviFTIRTestFileViewset(viewsets.ModelViewSet):
     pagination_class = MyPageNumberPagination
@@ -102,12 +106,14 @@ class exploEviFTIRTestFileViewset(viewsets.ModelViewSet):
     # update方法：对某个实例进行更新 第三角色需验证
     # delete方法：删除某个实例 第三角色不可以
     def get_permissions(self):
-        if self.action == "delete" or "update" or "partial_update":
+        # 物证创建的话应该his谁都可以创建的
+        if self.action == "create":
         #     return [permissions.IsAuthenticated(),IsAdmin()]
         # elif self.action == "update":
-            return [permissions.IsAuthenticated(),IsAllowExploUpdate()]
+            return [permissions.IsAuthenticated()]
+        # 但是一旦涉及到删除之类的，就得把普通用户过滤掉
         else:
-            return [permissions.IsAuthenticated(),]
+            return [permissions.IsAuthenticated(),IsAdmin()]
 
     # 物证文件删除，由于外键关联，会自动删除关联的FTIR表的匹配信息，但综合表应该更新记录
     def perform_destroy(self, instance):
@@ -130,12 +136,14 @@ class exploEviRamanViewset(viewsets.ModelViewSet):
         return exploEviRamanSerializer
 
     def get_permissions(self):
-        if self.action == "delete" or "update" or "partial_update":
-        #     return [permissions.IsAuthenticated(),IsAdmin()]
-        # elif self.action == "update":
-            return [permissions.IsAuthenticated(),IsAllowExploUpdate()]
+        # 物证创建的话应该his谁都可以创建的
+        if self.action == "create":
+            #     return [permissions.IsAuthenticated(),IsAdmin()]
+            # elif self.action == "update":
+            return [permissions.IsAuthenticated()]
+        # 但是一旦涉及到删除之类的，就得把普通用户过滤掉
         else:
-            return [permissions.IsAuthenticated(),]
+            return [permissions.IsAuthenticated(), IsAdmin()]
 
 class exploEviRamanTestFileViewset(viewsets.ModelViewSet):
     pagination_class = MyPageNumberPagination
@@ -151,12 +159,14 @@ class exploEviRamanTestFileViewset(viewsets.ModelViewSet):
         return exploEviRamanTestFileSerializer
 
     def get_permissions(self):
-        if self.action == "delete" or "update" or "partial_update":
-        #     return [permissions.IsAuthenticated(),IsAdmin()]
-        # elif self.action == "update":
-            return [permissions.IsAuthenticated(),IsAllowExploUpdate()]
+        # 物证创建的话应该his谁都可以创建的
+        if self.action == "create":
+            #     return [permissions.IsAuthenticated(),IsAdmin()]
+            # elif self.action == "update":
+            return [permissions.IsAuthenticated()]
+        # 但是一旦涉及到删除之类的，就得把普通用户过滤掉
         else:
-            return [permissions.IsAuthenticated(),]
+            return [permissions.IsAuthenticated(), IsAdmin()]
 
     def perform_destroy(self, instance):
         # synMatchs = exploSynMatch.objects.filter(exploEvi = instance.exploEviRaman.exploEvi )
@@ -178,12 +188,14 @@ class exploEviXRDViewset(viewsets.ModelViewSet):
         return exploEviXRDSerializer
 
     def get_permissions(self):
-        if self.action == "delete" or "update" or "partial_update":
-        #     return [permissions.IsAuthenticated(),IsAdmin()]
-        # elif self.action == "update":
-            return [permissions.IsAuthenticated(),IsAllowExploUpdate()]
+        # 物证创建的话应该his谁都可以创建的
+        if self.action == "create":
+            #     return [permissions.IsAuthenticated(),IsAdmin()]
+            # elif self.action == "update":
+            return [permissions.IsAuthenticated()]
+        # 但是一旦涉及到删除之类的，就得把普通用户过滤掉
         else:
-            return [permissions.IsAuthenticated(),]
+            return [permissions.IsAuthenticated(), IsAdmin()]
 
 class exploEviXRDTestFileViewset(viewsets.ModelViewSet):
     pagination_class = MyPageNumberPagination
@@ -200,12 +212,14 @@ class exploEviXRDTestFileViewset(viewsets.ModelViewSet):
         return exploEviXRDTestFileSerializer
 
     def get_permissions(self):
-        if self.action == "delete" or "update"or "partial_update":
+        # 物证创建的话应该his谁都可以创建的
+        if self.action == "create":
             #     return [permissions.IsAuthenticated(),IsAdmin()]
             # elif self.action == "update":
-            return [permissions.IsAuthenticated(), IsAllowExploUpdate()]
+            return [permissions.IsAuthenticated()]
+        # 但是一旦涉及到删除之类的，就得把普通用户过滤掉
         else:
-            return [permissions.IsAuthenticated(), ]
+            return [permissions.IsAuthenticated(), IsAdmin()]
 
     # 物证文件删除，由于外键关联，会自动删除关联的FTIR表的匹配信息，但综合表和报告表的也应该手动删除
     def perform_destroy(self, instance):
@@ -228,12 +242,14 @@ class exploEviXRFViewset(viewsets.ModelViewSet):
         return exploEviXRFSerializer
 
     def get_permissions(self):
-        if self.action == "delete" or "update" or "partial_update":
-        #     return [permissions.IsAuthenticated(),IsAdmin()]
-        # elif self.action == "update":
-            return [permissions.IsAuthenticated(),IsAllowExploUpdate()]
+        # 物证创建的话应该his谁都可以创建的
+        if self.action == "create":
+            #     return [permissions.IsAuthenticated(),IsAdmin()]
+            # elif self.action == "update":
+            return [permissions.IsAuthenticated()]
+        # 但是一旦涉及到删除之类的，就得把普通用户过滤掉
         else:
-            return [permissions.IsAuthenticated(),]
+            return [permissions.IsAuthenticated(), IsAdmin()]
 
 class exploEviXRFTestFileViewset(viewsets.ModelViewSet):
     pagination_class = MyPageNumberPagination
@@ -249,12 +265,14 @@ class exploEviXRFTestFileViewset(viewsets.ModelViewSet):
         return exploEviXRFTestFileSerializer
 
     def get_permissions(self):
-        if self.action == "delete" or "update" or "partial_update":
+        # 物证创建的话应该his谁都可以创建的
+        if self.action == "create":
             #     return [permissions.IsAuthenticated(),IsAdmin()]
             # elif self.action == "update":
-            return [permissions.IsAuthenticated(), IsAllowExploUpdate()]
+            return [permissions.IsAuthenticated()]
+        # 但是一旦涉及到删除之类的，就得把普通用户过滤掉
         else:
-            return [permissions.IsAuthenticated(), ]
+            return [permissions.IsAuthenticated(), IsAdmin()]
 
     def perform_destroy(self, instance):
         # synMatchs = exploSynMatch.objects.filter(exploEvi = instance.exploEviXRF.exploEvi )
@@ -276,12 +294,15 @@ class exploEviGCMSViewset(viewsets.ModelViewSet):
         return exploEviGCMSSerializer
 
     def get_permissions(self):
-        if self.action == "delete" or "update" or "partial_update":
-        #     return [permissions.IsAuthenticated(),IsAdmin()]
-        # elif self.action == "update":
-            return [permissions.IsAuthenticated(),IsAllowExploUpdate()]
+        # 物证创建的话应该his谁都可以创建的
+        if self.action == "create":
+            #     return [permissions.IsAuthenticated(),IsAdmin()]
+            # elif self.action == "update":
+            return [permissions.IsAuthenticated()]
+        # 但是一旦涉及到删除之类的，就得把普通用户过滤掉
         else:
-            return [permissions.IsAuthenticated(),]
+            return [permissions.IsAuthenticated(), IsAdmin()]
+
 class exploEviGCMSFileViewset(viewsets.ModelViewSet):
     pagination_class = MyPageNumberPagination
     queryset = exploEviGCMSFile.objects.all()
@@ -295,12 +316,14 @@ class exploEviGCMSFileViewset(viewsets.ModelViewSet):
         return exploEviGCMSFileSerializer
 
     def get_permissions(self):
-        if self.action == "delete" or "update" or "partial_update":
-        #     return [permissions.IsAuthenticated(),IsAdmin()]
-        # elif self.action == "update":
-            return [permissions.IsAuthenticated(),IsAllowExploUpdate()]
+        # 物证创建的话应该his谁都可以创建的
+        if self.action == "create":
+            #     return [permissions.IsAuthenticated(),IsAdmin()]
+            # elif self.action == "update":
+            return [permissions.IsAuthenticated()]
+        # 但是一旦涉及到删除之类的，就得把普通用户过滤掉
         else:
-            return [permissions.IsAuthenticated(),]
+            return [permissions.IsAuthenticated(), IsAdmin()]
 
 class exploEviGCMSTestFileViewset(viewsets.ModelViewSet):
     pagination_class = MyPageNumberPagination
@@ -315,12 +338,14 @@ class exploEviGCMSTestFileViewset(viewsets.ModelViewSet):
         return exploEviGCMSTestFileSerializer
 
     def get_permissions(self):
-        if self.action == "delete" or "update" or "partial_update":
-        #     return [permissions.IsAuthenticated(),IsAdmin()]
-        # elif self.action == "update":
-            return [permissions.IsAuthenticated(),IsAllowExploUpdate()]
+        # 物证创建的话应该his谁都可以创建的
+        if self.action == "create":
+            #     return [permissions.IsAuthenticated(),IsAdmin()]
+            # elif self.action == "update":
+            return [permissions.IsAuthenticated()]
+        # 但是一旦涉及到删除之类的，就得把普通用户过滤掉
         else:
-            return [permissions.IsAuthenticated(),]
+            return [permissions.IsAuthenticated(), IsAdmin()]
 
     def perform_destroy(self, instance):
         # synMatchs = exploSynMatch.objects.filter(exploEvi = instance.exploEviGCMS.exploEvi )
@@ -346,12 +371,14 @@ class devEviViewset(viewsets.ModelViewSet):
         return devEviSerializer
 
     def get_permissions(self):
-        if self.action == "delete" or "update" or "partial_update":
-        #     return [permissions.IsAuthenticated(),IsAdmin()]
-        # elif self.action == "update":
-            return [permissions.IsAuthenticated(),IsAllowExploUpdate()]
+        # 物证创建的话应该his谁都可以创建的
+        if self.action == "create":
+            #     return [permissions.IsAuthenticated(),IsAdmin()]
+            # elif self.action == "update":
+            return [permissions.IsAuthenticated()]
+        # 但是一旦涉及到删除之类的，就得把普通用户过滤掉
         else:
-            return [permissions.IsAuthenticated(),]
+            return [permissions.IsAuthenticated(), IsAdmin()]
 
 class devEviFTIRViewset(viewsets.ModelViewSet):
     queryset = devEviFTIR.objects.all()
@@ -366,12 +393,14 @@ class devEviFTIRViewset(viewsets.ModelViewSet):
         return devEviFTIRSerializer
 
     def get_permissions(self):
-        if self.action == "delete" or "update" or "partial_update":
-        #     return [permissions.IsAuthenticated(),IsAdmin()]
-        # elif self.action == "update":
-            return [permissions.IsAuthenticated(),IsAllowExploUpdate()]
+        # 物证创建的话应该是谁都可以创建的
+        if self.action == "create":
+            #     return [permissions.IsAuthenticated(),IsAdmin()]
+            # elif self.action == "update":
+            return [permissions.IsAuthenticated()]
+        # 但是一旦涉及到删除之类的，就得把普通用户过滤掉
         else:
-            return [permissions.IsAuthenticated(),]
+            return [permissions.IsAuthenticated(), IsAdmin()]
 
 class devEviFTIRTestFileViewset(viewsets.ModelViewSet):
     queryset = devEviFTIRTestFile.objects.all()
@@ -386,12 +415,14 @@ class devEviFTIRTestFileViewset(viewsets.ModelViewSet):
         return devEviFTIRTestFileSerializer
 
     def get_permissions(self):
-        if self.action == "delete" or "update" or "partial_update":
-        #     return [permissions.IsAuthenticated(),IsAdmin()]
-        # elif self.action == "update":
-            return [permissions.IsAuthenticated(),IsAllowExploUpdate()]
+        # 物证创建的话应该his谁都可以创建的
+        if self.action == "create":
+            #     return [permissions.IsAuthenticated(),IsAdmin()]
+            # elif self.action == "update":
+            return [permissions.IsAuthenticated()]
+        # 但是一旦涉及到删除之类的，就得把普通用户过滤掉
         else:
-            return [permissions.IsAuthenticated(),]
+            return [permissions.IsAuthenticated(), IsAdmin()]
 
     def perform_destroy(self, instance):
         # compMatchs = devCompMatch.objects.filter(devEvi=instance.devEviFTIR.devEvi_id)
@@ -416,12 +447,14 @@ class devEviRamanViewset(viewsets.ModelViewSet):
         return devEviRamanSerializer
 
     def get_permissions(self):
-        if self.action == "delete" or "update" or "partial_update":
-        #     return [permissions.IsAuthenticated(),IsAdmin()]
-        # elif self.action == "update":
-            return [permissions.IsAuthenticated(),IsAllowExploUpdate()]
+        # 物证创建的话应该his谁都可以创建的
+        if self.action == "create":
+            #     return [permissions.IsAuthenticated(),IsAdmin()]
+            # elif self.action == "update":
+            return [permissions.IsAuthenticated()]
+        # 但是一旦涉及到删除之类的，就得把普通用户过滤掉
         else:
-            return [permissions.IsAuthenticated(),]
+            return [permissions.IsAuthenticated(), IsAdmin()]
 
 class devEviRamanTestFileViewset(viewsets.ModelViewSet):
     queryset = devEviRamanTestFile.objects.all()
@@ -436,12 +469,14 @@ class devEviRamanTestFileViewset(viewsets.ModelViewSet):
         return devEviRamanTestFileSerializer
 
     def get_permissions(self):
-        if self.action == "delete" or "update" or "partial_update":
-        #     return [permissions.IsAuthenticated(),IsAdmin()]
-        # elif self.action == "update":
-            return [permissions.IsAuthenticated(),IsAllowExploUpdate()]
+        # 物证创建的话应该his谁都可以创建的
+        if self.action == "create":
+            #     return [permissions.IsAuthenticated(),IsAdmin()]
+            # elif self.action == "update":
+            return [permissions.IsAuthenticated()]
+        # 但是一旦涉及到删除之类的，就得把普通用户过滤掉
         else:
-            return [permissions.IsAuthenticated(),]
+            return [permissions.IsAuthenticated(), IsAdmin()]
 
     def perform_destroy(self, instance):
         # compMatchs = devCompMatch.objects.filter(devEvi=instance.devEviRaman.devEvi_id)
@@ -466,12 +501,14 @@ class devEviXRFViewset(viewsets.ModelViewSet):
         return devEviXRFSerializer
 
     def get_permissions(self):
-        if self.action == "delete" or "update" or "partial_update":
-        #     return [permissions.IsAuthenticated(),IsAdmin()]
-        # elif self.action == "update":
-            return [permissions.IsAuthenticated(),IsAllowExploUpdate()]
+        # 物证创建的话应该his谁都可以创建的
+        if self.action == "create":
+            #     return [permissions.IsAuthenticated(),IsAdmin()]
+            # elif self.action == "update":
+            return [permissions.IsAuthenticated()]
+        # 但是一旦涉及到删除之类的，就得把普通用户过滤掉
         else:
-            return [permissions.IsAuthenticated(),]
+            return [permissions.IsAuthenticated(), IsAdmin()]
 
 class devEviXRFTestFileViewset(viewsets.ModelViewSet):
     queryset = devEviXRFTestFile.objects.all()
@@ -486,12 +523,14 @@ class devEviXRFTestFileViewset(viewsets.ModelViewSet):
         return devEviXRFTestFileSerializer
 
     def get_permissions(self):
-        if self.action == "delete" or "update" or "partial_update":
-        #     return [permissions.IsAuthenticated(),IsAdmin()]
-        # elif self.action == "update":
-            return [permissions.IsAuthenticated(),IsAllowExploUpdate()]
+        # 物证创建的话应该his谁都可以创建的
+        if self.action == "create":
+            #     return [permissions.IsAuthenticated(),IsAdmin()]
+            # elif self.action == "update":
+            return [permissions.IsAuthenticated()]
+        # 但是一旦涉及到删除之类的，就得把普通用户过滤掉
         else:
-            return [permissions.IsAuthenticated(),]
+            return [permissions.IsAuthenticated(), IsAdmin()]
 
     def perform_destroy(self, instance):
         # compMatchs = devCompMatch.objects.filter(devEvi=instance.devEviXRF.devEvi_id)
@@ -510,12 +549,15 @@ class devShapeEviViewset(viewsets.ModelViewSet):
     pagination_class = MyPageNumberPagination
 
     def get_permissions(self):
-        if self.action == "delete" or "update" or "partial_update":
+        if self.action == "update" or "partial_update":
+        # 这里更新对应的是话矩形框等的操作，因为定期那采用师姐的版本
         #     return [permissions.IsAuthenticated(),IsAdmin()]
         # elif self.action == "update":
-            return [permissions.IsAuthenticated(),IsAllowExploUpdate()]
-        else:
+            return [permissions.IsAuthenticated(),IsOwnerOrReadOnly()]
+        # 创建还是所有人都可以创建
+        elif self.action == "create":
             return [permissions.IsAuthenticated(),]
+        return [permissions.IsAuthenticated(),IsAdmin(),]
 
     def perform_create(self, serializer):
         evi = serializer.save()

@@ -92,15 +92,20 @@ router.register(r'exploMatchXRDs', exploMatchXRDViewset, base_name="exploMatchXR
 router.register(r'exploMatchXRFs', exploMatchXRFViewset, base_name="exploMatchXRFs")
 router.register(r'exploMatchGCMSs', exploMatchGCMSViewset, base_name="exploMatchGCMSs")
 router.register(r'exploSynMatchs', exploSynMatchViewset, base_name="exploSynMatchs")
+
+router.register(r'exploReportMatchs', exploReportMatchViewset, base_name="exploReportMatchs")
+
 router.register(r'devMatchFTIRs', devMatchFTIRViewset, base_name="devMatchFTIRs")
 router.register(r'devMatchRamans', devMatchRamanViewset, base_name="devMatchRamans")
 router.register(r'devMatchXRFs', devMatchXRFViewset, base_name="devMatchXRFs")
 router.register(r'devCompMatchs', devCompMatchViewset, base_name="devCompMatchs")
+router.register(r'devShapeMatchs', devShapeMatchViewset, base_name="devShapeMatchs")
+router.register(r'devShapeMultiMatchs', devShapeMultiMatchViewset, base_name="devShapeMultiMatchs")
+
 router.register(r'devSynMatchs', devSynMatchViewset, base_name="devSynMatchs")
 
-router.register(r'devShapeMatchs', devShapeMatchViewset, base_name="devShapeMatchs")
-
 router.register(r'userMessages', userMessageViewset, base_name="userMessages")
+router.register(r'userMessageFilees', userMessageFileViewset, base_name="userMessageFiles")
 
 urlpatterns = [
     # url(r'^admin/', admin.site.urls),
@@ -115,7 +120,9 @@ urlpatterns = [
      # 6：devMatchFTIR，7:devMatchRaman,8:devMatchXRF,9:PCBImgMatch,10:oPartImgMatch,11:logoImgMatch
      # 12:devShapeMatch
      url(r'^startMatch/',startMatch.as_view(), name='startMatch'),
-     url(r'messageUpdate/',messageUpdate.as_view(),name='messageUpdate'),
+     url(r'^createDevReport/', createDevReport.as_view(), name='createDevReport'),
+     url(r'^createExploReport/', createExploReport.as_view(), name='createExploReport'),
+     url(r'^messageUpdate/',messageUpdate.as_view(),name='messageUpdate'),
      # 用POST方法请求这个接口，其中包含type和id的参数，id为exploSampleFTIR等级别的id，若成功返回201_created的响应。
      # type对应的法则如下
      # 1：exploSampleFTIR，2：exploSampleRaman，3：exploSampleXRD，4：exploSampleXRF，5：exploSampleGCMS，
@@ -124,7 +131,6 @@ urlpatterns = [
      # type对应的法则如下
      # 1：exploEviFTIR，2：exploEviRaman，3：exploEviXRD，4：exploEviXRF，5：exploEviGCMS，
      # 6：devEviFTIR，7:devEviRaman,8:devEviXRF
-
      url(r'^wordSelect/',wordSelect.as_view(), name='wordSelect'),
      url(r'^api-token-auth/', obtain_jwt_token),
 

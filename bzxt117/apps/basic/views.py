@@ -34,6 +34,8 @@ def jwt_response_payload_handler(token, user=None, request=None):
     """
     # 在更新最后登录时间之前比较，分两类，炸药和爆炸装置的
     oldLastLogin = user.last_login
+    if oldLastLogin == None:
+        oldLastLogin = datetime.min.replace(tzinfo=pytz.timezone('Asia/Shanghai'))
     # print(datetime.min)
     # # 记得要加时区，datetime的min是不含时区的
     # minTime = datetime.min.replace(tzinfo=pytz.timezone('Asia/Shanghai'))
@@ -186,7 +188,8 @@ class UserViewset(viewsets.ModelViewSet):
         payload = jwt_payload_handler(user)
         # 注意！这里不是每次登陆的时候的过程，而是创建新用户的时候的逻辑！
         re_dict["token"] = jwt_encode_handler(payload)
-        re_dict["name"] = user.name if user.name else user.username
+        re_dict["username"] = user.username
+        re_dict["name"] = user.name #if user.name else user.username
 
         headers = self.get_success_headers(serializer.data)
         return Response(re_dict, status=status.HTTP_201_CREATED, headers=headers)
@@ -214,7 +217,7 @@ class methodDetectViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mixins
     """
  #   authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
 #    lookup_field = "goods_id"
-#     permission_classes = (IsAuthenticated, IsAdmin)
+    permission_classes = (IsAuthenticated, IsAdmin)
     pagination_class = MyPageNumberPagination
     def get_queryset(self):
         return methodDetect.objects.all()

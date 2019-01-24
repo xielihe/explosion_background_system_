@@ -359,10 +359,6 @@ class devShapeSample(models.Model):
     devPartSample = models.ForeignKey(devPartSample, verbose_name="所属零件",related_name="devShapeSample")
     user = models.ForeignKey(userProfile, verbose_name=u"处理人员")
     inputDate = models.DateTimeField(default=datetime.now, verbose_name=u"录入日期")
-    mrfs=models.CharField(max_length=30,null=True, blank=True, verbose_name="厂家")
-    sampleModel=models.CharField(max_length=20,null=True, blank=True, verbose_name="型号")
-    trademark=models.CharField(max_length=30,null=True, blank=True, verbose_name="商标")
-    function=models.CharField(max_length=100,null=True, blank=True, verbose_name="所属装置")
     isFirst = models.BooleanField(default=True,verbose_name="是否是第一次分割")
     rectCoordi=models.CharField(max_length=100,null=True, blank=True, verbose_name="矩形框坐标（4个）")
     proCoordi = models.CharField(max_length=400, null=True, blank=True, verbose_name="前景颜色点坐标")
@@ -403,19 +399,13 @@ class PCBImgSample(models.Model):
     inputDate = models.DateTimeField(default=datetime.now, verbose_name=u"录入日期")
     sampleSide = models.IntegerField(choices=SIDE_TYPE, default=1, verbose_name="电路板是哪个面（1-2；1为正面）", help_text="电路板是哪个面（1-2；1为正面）")
     rectCoordi=models.CharField(max_length=50,null=True, blank=True, verbose_name="矩形框坐标（4个）")
-    fgCoordi = models.CharField(max_length=300, null=True, blank=True, verbose_name="前景颜色点坐标")
-    bgCoordi=models.CharField(max_length=300,null=True, blank=True, verbose_name="背景颜色点坐标")
-    boardCoordi=models.CharField(max_length=300,null=True, blank=True, verbose_name="主板颜色点坐标")
     markImgURL=models.ImageField(max_length=300,null=True, blank=True, verbose_name="PCB区域标记图像文件路径 ")#upload_to="image/devShapeSample/blackWhite/",
-    compCheckCoordi=models.CharField(max_length=300,null=True, blank=True, verbose_name="元器件点坐标（校验）")
-    boardCheckCoordi=models.CharField(max_length=300,null=True, blank=True, verbose_name="主板像素坐标（校验）")
     featureUrl=models.FileField(max_length=300,null=True, blank=True, verbose_name="特征文件路径")#, upload_to="file/devShapeSample/feature"
-    isFirst = models.BooleanField(default=True,verbose_name="是否是第一次分割")
     componentSegURL=models.FileField(max_length=300,null=True, blank=True, verbose_name="元器件分割结果文件路径")# upload_to="file/devShapeSample/result/",
     srcImgURL =models.ImageField(max_length=300,upload_to="image/PCBImgSample/original/",null=True,blank=True,verbose_name="原始图像文件路径")#
     sResolution=models.IntegerField(null=True, blank=True, verbose_name="原始图像采集分辨率")
     norImgURL=models.ImageField(max_length=300,upload_to="image/devShapeSample/nom/",null=True,blank=True,verbose_name="归一化图像文件路径")#
-    nResolution=models.IntegerField(null=True, blank=True, verbose_name="归一化图像分辨率")
+    nResolution=models.IntegerField(default= 135, verbose_name="归一化图像分辨率")
     note = models.CharField(max_length=500, null=True, blank=True, verbose_name="备注")
     class Meta:
         verbose_name = "爆炸装置关键组件样本电路板图像表"
@@ -440,14 +430,7 @@ class oPartImgSample(models.Model):
     user = models.ForeignKey(userProfile, verbose_name=u"处理人员")
     inputDate = models.DateTimeField(default=datetime.now, verbose_name=u"录入日期")
     sampleSide = models.IntegerField(choices=SIDE_TYPE, default=1, verbose_name="零件是哪个面（1-6；1为正面，2为反面）", help_text="零件是哪个面（1-6；1为正面，2为反面）")
-    rectCoordi=models.CharField(max_length=50,null=True, blank=True, verbose_name="矩形框坐标（4个）")
-    fgCoordi = models.CharField(max_length=300, null=True, blank=True, verbose_name="前景颜色点坐标")
-    bgCoordi=models.CharField(max_length=300,null=True, blank=True, verbose_name="背景颜色点坐标")
-    boardCoordi=models.CharField(max_length=300,null=True, blank=True, verbose_name="主板颜色点坐标")
-    markImgURL=models.ImageField(max_length=300,null=True, blank=True, verbose_name="PCB区域标记图像文件路径 ")#upload_to="image/devShapeSample/blackWhite/",
-    compCheckCoordi=models.CharField(max_length=300,null=True, blank=True, verbose_name="元器件点坐标（校验）")
-    boardCheckCoordi=models.CharField(max_length=300,null=True, blank=True, verbose_name="主板像素坐标（校验）")
-    featureUrl=models.FileField(max_length=300,null=True, blank=True, verbose_name="特征文件路径")#, upload_to="file/devShapeSample/feature"
+    rectCoordi=models.CharField(max_length=50,null=True, blank=True, verbose_name="矩形框坐标（2个）")
     srcImgURL =models.ImageField(max_length=300,upload_to="image/oPartImgSample/original/",null=True,blank=True,verbose_name="原始图像文件路径")#
     sResolution=models.IntegerField(null=True, blank=True, verbose_name="原始图像采集分辨率")
     norImgURL=models.ImageField(max_length=300,upload_to="image/oPartImgSample/nom/",null=True,blank=True,verbose_name="归一化图像文件路径")#
@@ -468,14 +451,7 @@ class logoImgSample(models.Model):
     devPartSample =models.ForeignKey(devPartSample,verbose_name="所属零件",related_name="logoImgSample")
     user = models.ForeignKey(userProfile, verbose_name=u"处理人员")
     inputDate = models.DateTimeField(default=datetime.now, verbose_name=u"录入日期")
-    rectCoordi=models.CharField(max_length=50,null=True, blank=True, verbose_name="矩形框坐标（4个）")
-    fgCoordi = models.CharField(max_length=300, null=True, blank=True, verbose_name="前景颜色点坐标")
-    bgCoordi=models.CharField(max_length=300,null=True, blank=True, verbose_name="背景颜色点坐标")
-    boardCoordi=models.CharField(max_length=300,null=True, blank=True, verbose_name="主板颜色点坐标")
-    markImgURL=models.ImageField(max_length=300,null=True, blank=True, verbose_name="PCB区域标记图像文件路径 ")#upload_to="image/devShapeSample/blackWhite/",
-    compCheckCoordi=models.CharField(max_length=300,null=True, blank=True, verbose_name="元器件点坐标（校验）")
-    boardCheckCoordi=models.CharField(max_length=300,null=True, blank=True, verbose_name="主板像素坐标（校验）")
-    featureUrl=models.FileField(max_length=300,null=True, blank=True, verbose_name="特征文件路径")#, upload_to="file/devShapeSample/feature"
+    rectCoordi=models.CharField(max_length=50,null=True, blank=True, verbose_name="矩形框坐标（2个）")
     srcImgURL =models.ImageField(max_length=300,upload_to="image/logoImgSample/original/",null=True,blank=True,verbose_name="原始图像文件路径")#
     sResolution=models.IntegerField(null=True, blank=True, verbose_name="原始图像采集分辨率")
     norImgURL=models.ImageField(max_length=300,upload_to="image/logoImgSample/nom/",null=True,blank=True,verbose_name="归一化图像文件路径")#

@@ -381,9 +381,7 @@ class exploEviGCMSDetailSerializer(serializers.ModelSerializer):
         fields = ("id","exploEvi","devDetect","methodDetect", "user","inputDate","exploEviGCMSTestFile")
 
 class exploEviDetailSerializer(serializers.ModelSerializer):
-    user = serializers.HiddenField(
-        default=serializers.CurrentUserDefault()
-    )
+    user = UserDetailSerializer()
     inputDate = serializers.DateTimeField(read_only=True, format='%Y-%m-%d %H:%M')
     exploEviFTIR = exploEviFTIRDetailSerializer(many= True)
     exploEviRaman = exploEviRamanDetailSerializer(many= True)
@@ -619,9 +617,7 @@ class devShapeEviSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class devEviDetailSerializer(serializers.ModelSerializer):
-    user = serializers.HiddenField(
-        default=serializers.CurrentUserDefault()
-    )
+    user = UserDetailSerializer()
     inputDate = serializers.DateTimeField(read_only=True, format='%Y-%m-%d %H:%M')
     devEviFTIR = devEviFTIRDetailSerializer(many= True)
     devEviRaman = devEviRamanDetailSerializer(many= True)
@@ -632,3 +628,13 @@ class devEviDetailSerializer(serializers.ModelSerializer):
         model = devEvi
         fields = ('id','evidenceName','caseName','user','inputDate','eviType','picUrl','Factory','Model','Logo',
                   'Color','Material','Shape','thickness','note','devEviFTIR','devEviRaman','devEviXRF','devShapeEvi')
+# 物证形态详情表
+class devEviShapeDetailSerializer(serializers.ModelSerializer):
+    user = UserDetailSerializer()
+    inputDate = serializers.DateTimeField(read_only=True, format='%Y-%m-%d %H:%M')
+    devShapeEvi = devShapeEviSerializer(many=True)
+
+    class Meta:
+        model = devEvi
+        fields = ('id','evidenceName','caseName','user','inputDate','eviType','picUrl','Factory','Model','Logo',
+                  'Color','Material','Shape','thickness','note','devShapeEvi')

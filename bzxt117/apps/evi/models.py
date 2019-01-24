@@ -385,14 +385,8 @@ class PCBImgEvi(models.Model):
     inputDate = models.DateTimeField(default=datetime.now, verbose_name=u"录入日期")
     sampleSide = models.IntegerField(choices=SIDE_TYPE, default=1, verbose_name="电路板是哪个面（1-2；1为正面）", help_text="电路板是哪个面（1-2；1为正面）")
     rectCoordi=models.CharField(max_length=50,null=True, blank=True, verbose_name="矩形框坐标（4个）")
-    fgCoordi = models.CharField(max_length=300, null=True, blank=True, verbose_name="前景颜色点坐标")
-    bgCoordi=models.CharField(max_length=300,null=True, blank=True, verbose_name="背景颜色点坐标")
-    boardCoordi=models.CharField(max_length=300,null=True, blank=True, verbose_name="主板颜色点坐标")
     markImgURL=models.ImageField(max_length=300,null=True, blank=True, verbose_name="PCB区域标记图像文件路径 ")#upload_to="image/devShapeSample/blackWhite/",
-    compCheckCoordi=models.CharField(max_length=300,null=True, blank=True, verbose_name="元器件点坐标（校验）")
-    boardCheckCoordi=models.CharField(max_length=300,null=True, blank=True, verbose_name="主板像素坐标（校验）")
     featureUrl=models.FileField(max_length=300,null=True, blank=True, verbose_name="特征文件路径")#, upload_to="file/devShapeSample/feature"
-    isFirst = models.BooleanField(default=True,verbose_name="是否是第一次分割")
     componentSegURL=models.FileField(max_length=300,null=True, blank=True, verbose_name="元器件分割结果文件路径")# upload_to="file/devShapeSample/result/",
     srcImgURL =models.ImageField(max_length=300,upload_to="image/devShapeEvi/original/",null=True,blank=True,verbose_name="原始图像文件路径")#
     sResolution=models.IntegerField(null=True, blank=True, verbose_name="原始图像采集分辨率")
@@ -422,14 +416,7 @@ class oPartImgEvi(models.Model):
     user = models.ForeignKey(userProfile, verbose_name=u"处理人员")
     inputDate = models.DateTimeField(default=datetime.now, verbose_name=u"录入日期")
     eviSide = models.IntegerField(choices=SIDE_TYPE, default=1, verbose_name="物证是哪个面（1-6；1为正面，2为反面）", help_text="物证是哪个面（1-6；1为正面，2为反面）")
-    rectCoordi=models.CharField(max_length=50,null=True, blank=True, verbose_name="矩形框坐标（4个）")
-    fgCoordi = models.CharField(max_length=300, null=True, blank=True, verbose_name="前景颜色点坐标")
-    bgCoordi=models.CharField(max_length=300,null=True, blank=True, verbose_name="背景颜色点坐标")
-    boardCoordi=models.CharField(max_length=300,null=True, blank=True, verbose_name="主板颜色点坐标")
-    markImgURL=models.ImageField(max_length=300,null=True, blank=True, verbose_name="PCB区域标记图像文件路径 ")#upload_to="image/devShapeSample/blackWhite/",
-    compCheckCoordi=models.CharField(max_length=300,null=True, blank=True, verbose_name="元器件点坐标（校验）")
-    boardCheckCoordi=models.CharField(max_length=300,null=True, blank=True, verbose_name="主板像素坐标（校验）")
-    featureUrl=models.FileField(max_length=300,null=True, blank=True, verbose_name="特征文件路径")#, upload_to="file/devShapeSample/feature"
+    rectCoordi=models.CharField(max_length=50,null=True, blank=True, verbose_name="矩形框坐标（2个）")
     srcImgURL =models.ImageField(max_length=300,upload_to="image/oPartImgEvi/original/",null=True,blank=True,verbose_name="原始图像文件路径")#
     sResolution=models.IntegerField(null=True, blank=True, verbose_name="原始图像采集分辨率")
     norImgURL=models.ImageField(max_length=300,upload_to="image/oPartImgEvi/nom/",null=True,blank=True,verbose_name="归一化图像文件路径")#
@@ -450,14 +437,7 @@ class logoImgEvi(models.Model):
     devEvi =models.ForeignKey(devEvi,verbose_name="所属物证",related_name="logoImgEvi")
     user = models.ForeignKey(userProfile, verbose_name=u"处理人员")
     inputDate = models.DateTimeField(default=datetime.now, verbose_name=u"录入日期")
-    rectCoordi=models.CharField(max_length=50,null=True, blank=True, verbose_name="矩形框坐标（4个）")
-    fgCoordi = models.CharField(max_length=300, null=True, blank=True, verbose_name="前景颜色点坐标")
-    bgCoordi=models.CharField(max_length=300,null=True, blank=True, verbose_name="背景颜色点坐标")
-    boardCoordi=models.CharField(max_length=300,null=True, blank=True, verbose_name="主板颜色点坐标")
-    markImgURL=models.ImageField(max_length=300,null=True, blank=True, verbose_name="PCB区域标记图像文件路径 ")#upload_to="image/devShapeSample/blackWhite/",
-    compCheckCoordi=models.CharField(max_length=300,null=True, blank=True, verbose_name="元器件点坐标（校验）")
-    boardCheckCoordi=models.CharField(max_length=300,null=True, blank=True, verbose_name="主板像素坐标（校验）")
-    featureUrl=models.FileField(max_length=300,null=True, blank=True, verbose_name="特征文件路径")#, upload_to="file/devShapeSample/feature"
+    rectCoordi=models.CharField(max_length=50,null=True, blank=True, verbose_name="矩形框坐标（2个）")
     srcImgURL =models.ImageField(max_length=300,upload_to="image/logoImgEvi/original/",null=True,blank=True,verbose_name="原始图像文件路径")#
     sResolution=models.IntegerField(null=True, blank=True, verbose_name="原始图像采集分辨率")
     norImgURL=models.ImageField(max_length=300,upload_to="image/logoImgEvi/nom/",null=True,blank=True,verbose_name="归一化图像文件路径")#

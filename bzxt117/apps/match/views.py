@@ -109,6 +109,7 @@ class wordSelect(APIView):
         #     "result": samples,
         # }, status=status.HTTP_201_CREATED)
 
+# 开始比对接口
 class startMatch(APIView):
     # 1：exploMatchFTIR，2：exploMatchRaman，3：exploMatchXRD，4：exploMatchXRF，5：exploMatchGCMS，
     # 6：devMatchFTIR，7:devMatchRaman,8:devMatchXRF,9:PCBImgMatch,10:oPartImgMatch,11:logoImgMatch
@@ -527,6 +528,50 @@ class startMatch(APIView):
         # return pg.get_paginated_response(ser.data)  # 返回上一页或者下一页
         # return  Response("success")
 
+# 将炸药核准结果变成报告记录接口
+class createExploReport(APIView):
+    def post(self,request):
+        exploId = int(request.POST["exploId"])
+        # 将报告表中的该物证对应的记录拿出来，如果没有就按照物证序号建立一条记录
+        reportMatch = exploReportMatch.objects.get_or_create(exploEvi_id = exploId)
+        reportMatchList = []
+        # 获取炸药成分综合匹配结果id列表
+        # 先把这个额乌镇对应的所有记录筛选出来
+        reportMatchList1= exploSynMatch.objects.filter(exploEvi_id = exploId)
+        # 再把所有核准过的（包括普通人员核准和专家核准的）的所有匹配结果的id以列表的形式提取出来
+        reportMatchList = reportMatchList1.filter(Q(isCheck=2) | Q(isExpertCheck=2)).values_list("id", flat=True)
+        # 将id列表转换为字符串，方便存入数据库中
+        reportMatch.exploSynMatch = " ".join(reportMatchList)
+        # 提取报告的id用于返回
+        reportId = reportMatch.id
+        reportMatch.save()
+
+        return Response({
+            "exploId": exploId,
+            "reportId":reportId
+        }, status=status.HTTP_201_CREATED)
+
+# 将爆炸装置核准结果变成报告记录接口
+class createDevReport(APIView):
+    def post(self,request):
+        devEviId = int(request.POST["devEviId"])
+        synMatch = devSynMatch.objects.get_or_create(devEvi_id = devEviId)
+        devShapeMultiMatchList = []
+        devCompMatchList = []
+        # 获取形态综合匹配结果核准过的id列表
+        devShapeMultiMatchList1 = devShapeMultiMatch.objects.filter(devEvi_id = devEviId)
+        devShapeMultiMatchList = devShapeMultiMatchList1.filter(Q(isCheck=2) | Q(isExpertCheck=2)).values_list("id", flat=True)
+        devCompMatchList1 = devCompMatch.objects.filter(devEvi_id = devEviId).values_list("id", flat=True)
+        devCompMatchList = devCompMatchList1.filter(Q(isCheck=2) | Q(isExpertCheck=2)).values_list("id", flat=True)
+        synMatch.devShapeMultiMatch = " ".join(devShapeMultiMatchList)
+        synMatch.devCompMatch = " ".join(devCompMatchList)
+        reportId = synMatch.id
+        synMatch.save()
+
+        return Response({
+            "devEviId": devEviId,
+            "reportId":reportId
+        }, status=status.HTTP_201_CREATED)
 
 class exploMatchFTIRViewset(viewsets.ModelViewSet):
     """
@@ -536,7 +581,7 @@ class exploMatchFTIRViewset(viewsets.ModelViewSet):
  #   authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
 #    lookup_field = "goods_id"
     filter_backends = (filters.OrderingFilter,)
-    ordering_fields = ("Score",)
+    ordering_fields = ("-Score",)
 
     def get_queryset(self):
         return exploMatchFTIR.objects.all()
@@ -550,7 +595,7 @@ class exploMatchRamanViewset(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
     filter_backends = (filters.OrderingFilter,)
-    ordering_fields = ("Score",)
+    ordering_fields = ("-Score",)
  #   authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
 #    lookup_field = "goods_id"
 
@@ -566,7 +611,7 @@ class exploMatchXRDViewset(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
     filter_backends = (filters.OrderingFilter,)
-    ordering_fields = ("Score",)
+    ordering_fields = ("-Score",)
  #   authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
 #    lookup_field = "goods_id"
 
@@ -582,7 +627,7 @@ class exploMatchXRFViewset(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
     filter_backends = (filters.OrderingFilter,)
-    ordering_fields = ("averScore",)
+    ordering_fields = ("-averScore",)
  #   authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
 #    lookup_field = "goods_id"
 
@@ -598,7 +643,7 @@ class exploMatchGCMSViewset(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
     filter_backends = (filters.OrderingFilter,)
-    ordering_fields = ("Score",)
+    ordering_fields = ("-Score",)
  #   authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
 #    lookup_field = "goods_id"
 
@@ -614,7 +659,7 @@ class exploSynMatchViewset(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
     filter_backends = (filters.OrderingFilter,)
-    ordering_fields = ("Score",)
+    ordering_fields = ("-Score",)
  #   authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
 #    lookup_field = "goods_id"
 
@@ -627,16 +672,15 @@ class exploSynMatchViewset(viewsets.ModelViewSet):
         # partial_update和update不同方法！
         # 这里对应的是核准
         elif self.action == "update" or "partial_update":
-            return exploSynMatchSerializer
+            return exploSynMatchCheckSerializer
         return exploSynMatchCreateSerializer
 
 class exploReportMatchViewset(viewsets.ModelViewSet):
     """
     """
-    permission_classes = (IsAuthenticated,IsAdmin)
+    permission_classes = (IsAuthenticated,IsAllowExploUpdate)
     pagination_class = MyPageNumberPagination
     filter_backends = (filters.OrderingFilter,)
-    ordering_fields = ("Score",)
  #   authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
 #    lookup_field = "goods_id"
 
@@ -644,6 +688,8 @@ class exploReportMatchViewset(viewsets.ModelViewSet):
         return exploReportMatch.objects.all()
 
     def get_serializer_class(self):
+        if self.action == "retrieve":
+            return exploReportMatchDetailSerializer
         return exploReportMatchSerializer
 
 class devMatchFTIRViewset(viewsets.ModelViewSet):
@@ -652,7 +698,7 @@ class devMatchFTIRViewset(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
     filter_backends = (filters.OrderingFilter,)
-    ordering_fields = ("Score",)
+    ordering_fields = ("-Score",)
  #   authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
 #    lookup_field = "goods_id"
 
@@ -660,6 +706,8 @@ class devMatchFTIRViewset(viewsets.ModelViewSet):
         return devMatchFTIR.objects.all()
 
     def get_serializer_class(self):
+        if self.action == "retrieve":
+            return devMatchFTIRDetailSerializer
         return devMatchFTIRSerializer
 
 class devMatchRamanViewset(viewsets.ModelViewSet):
@@ -668,7 +716,7 @@ class devMatchRamanViewset(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,IsAdmin )
     pagination_class = MyPageNumberPagination
     filter_backends = (filters.OrderingFilter,)
-    ordering_fields = ("Score",)
+    ordering_fields = ("-Score",)
  #   authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
 #    lookup_field = "goods_id"
 
@@ -676,6 +724,8 @@ class devMatchRamanViewset(viewsets.ModelViewSet):
         return devMatchRaman.objects.all()
 
     def get_serializer_class(self):
+        if self.action == "retrieve":
+            return devMatchRamanDetailSerializer
         return devMatchRamanSerializer
 
 class devMatchXRFViewset(viewsets.ModelViewSet):
@@ -684,7 +734,7 @@ class devMatchXRFViewset(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,IsAdmin )
     pagination_class = MyPageNumberPagination
     filter_backends = (filters.OrderingFilter,)
-    ordering_fields = ("averScore",)
+    ordering_fields = ("-averScore",)
  #   authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
 #    lookup_field = "goods_id"
 
@@ -692,15 +742,17 @@ class devMatchXRFViewset(viewsets.ModelViewSet):
         return devMatchXRF.objects.all()
 
     def get_serializer_class(self):
+        if self.action == "retrieve":
+            return devMatchXRFDetailSerializer
         return devMatchXRFSerializer
 
 class devCompMatchViewset(viewsets.ModelViewSet):
     """
     """
-    permission_classes = (IsAuthenticated,IsAdmin )
+    permission_classes = (IsAuthenticated,IsAllowDevUpdate)
     pagination_class = MyPageNumberPagination
     filter_backends = (filters.OrderingFilter,)
-    ordering_fields = ("Score",)
+    ordering_fields = ("-Score",)
  #   authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
 #    lookup_field = "goods_id"
 
@@ -708,12 +760,12 @@ class devCompMatchViewset(viewsets.ModelViewSet):
         return devCompMatch.objects.all()
 
     def get_serializer_class(self):
-        if self.action == "retrieve":
+        if self.action == "retrieve"or self.action == "list":
             return devCompMatchDetailSerializer
         # partial_update和update不同方法！
         # 这里对应的是核准
         elif self.action == "update" or "partial_update":
-            return devCompMatchSerializer
+            return devCompMatchCheckSerializer
         return devCompMatchCreateSerializer
 
 class devShapeMatchViewset(viewsets.ModelViewSet):
@@ -728,17 +780,42 @@ class devShapeMatchViewset(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         # 这里对应的是核准
-        if self.action == "update" or "partial_update":
+        if self.action == "retrieve":
             return devShapeMatchDetailSerializer
         return devShapeMatchSerializer
 
+class devShapeMultiMatchViewset(viewsets.ModelViewSet):
+    """
+    形态综合表
+    """
+    permission_classes = (IsAuthenticated,IsAllowDevUpdate)
+    pagination_class = MyPageNumberPagination
+    filter_backends = (filters.OrderingFilter,)
+    ordering_fields = ("-Score",)
+ #   authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
+#    lookup_field = "goods_id"
+
+    def get_queryset(self):
+        return devShapeMultiMatch.objects.all()
+
+    def get_serializer_class(self):
+        if self.action == "retrieve"or self.action == "list":
+            return devShapeMultiMatchDetailSerializer
+        # partial_update和update不同方法！
+        # 这里对应的是核准
+        elif self.action == "update" or "partial_update":
+            return devShapeMultiMatchCheckSerializer
+        return devShapeMultiMatchSerializer
+
+
 class devSynMatchViewset(viewsets.ModelViewSet):
     """
+    报告表
     """
     permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
-    filter_backends = (filters.OrderingFilter,)
-    ordering_fields = ("ScoreComp","ScoreShape")
+    # filter_backends = (filters.OrderingFilter,)
+    # ordering_fields = ("-ScoreComp","-ScoreShape")
  #   authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
 #    lookup_field = "goods_id"
 
@@ -746,4 +823,6 @@ class devSynMatchViewset(viewsets.ModelViewSet):
         return devSynMatch.objects.all()
 
     def get_serializer_class(self):
+        if self.action == "retrieve":
+            return devSynMatchDetailSerializer
         return devSynMatchSerializer

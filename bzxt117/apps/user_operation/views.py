@@ -45,7 +45,52 @@ class userMessageViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.
     def get_serializer_class(self):
         if self.action == "retrieve":
             return userMessageDetailSerializer
+        # elif self.action == "list":
+        #     return userMessageTestSerializer
         return userMessageSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response({
+            "isSend": True,
+        }, status=status.HTTP_201_CREATED)
+        # return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def perform_create(self, serializer):
+        message1 = serializer.save()
+        if self.request.user.role == 3:
+            experts = userProfile.objects.filter(Q(role =2)| Q(role = 4))
+            for expert in experts:
+                userMess = userMessage()
+                userMess.sendUser = message1.sendUser
+                userMess.receiveUser = expert
+                userMess.title = message1.title
+                userMess.message = message1.message
+                userMess.exploEviId = message1.exploEviId
+                userMess.devEviId = message1.devEviId
+                userMess.hasRead = message1.hasRead
+                userMess.hasHandle = message1.hasHandle
+                userMess.sendDate = message1.sendDate
+                userMess.save()
+            message1.delete()
+
+    def perform_update(self, serializer):
+        if ('hasHandle' in serializer.validated_data.keys()):
+            userMess = self.get_object()
+            Messs = userMessage.objects.filter(title = userMess.title,sendUser = userMess.sendUser)
+            userMess.handleUser = self.request.user
+            userMess.save()
+            for Mess in Messs:
+                Mess.hasHandle = True
+                Mess.handleUser = self.request.user
+                Mess.save()
+            # user.set_password(password)
+            # serializer.validated_data['password'] = user.password
+        serializer.save()
+
 
     # 用户查看一条信息时，该消息置为已读，但不会同时赋予该条物证的权限，而是点击允许授权才会授权
     def retrieve(self, request, *args, **kwargs):
@@ -81,3 +126,14 @@ class messageUpdate(APIView):
         return Response({
             "isMessageUpdate": isUpdate,
         }, status=status.HTTP_200_OK)
+
+class userMessageFileViewset(viewsets.ModelViewSet):
+    queryset = userMessageFile.objects.all()
+    permission_classes = (IsAuthenticated,)
+    parser_classes = (MultiPartParser, FileUploadParser,)
+    pagination_class = MyPageNumberPagination
+    def get_serializer_class(self):
+        if self.action == "create":
+            return LsituserMessageFileSerializer
+        return userMessageFileSerializer
+

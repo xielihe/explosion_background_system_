@@ -7,6 +7,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
+from PIL import Image
+import math
+import os
 
 from apps.sample.serializers import *
 from apps.sample.models import *
@@ -16,7 +19,9 @@ from utils.PCB import *
 from apps.evi.models import *
 from apps.match.models import *
 from apps.match.views import *
+from bzxt117.settings import MEDIA_ROOT,BASE_DIR
 
+path2 = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
     # get方法是请求在url中的参数的，而post是请求在request中的参数的
         # 此时type等都是str类型哦
@@ -38,6 +43,39 @@ from apps.match.views import *
                 # exploSyn_Match.expertHandle_id = 2
        #修改得分，同时核准置为False，核准人员为None
         # 会返回201的response，且因为Response是rest_framework的，因此只能最低使用APIView
+class nomPicture(APIView):
+    def post(self,request):
+        scaleX1 = int(request.POST["scaleX1"])
+        scaleY1 = int(request.POST["scaleY1"])
+        scaleX2 = int(request.POST["scaleX2"])
+        scaleY2 = int(request.POST["scaleY2"])
+        rotateX1 = int(request.POST["rotateX1"])
+        rotateY1 = int(request.POST["rotateY1"])
+        rotateX2 = int(request.POST["rotateX2"])
+        rotateY2 = int(request.POST["rotateY2"])
+        PCBImgSampleId = int(request.POST["PCBImgSampleId"])
+
+        # https://www.jianshu.com/p/5c05eb437e08 fileField保存
+        hudu = math.atan2(rotateY2 - rotateY1, rotateX2 - rotateX1)
+        angle = hudu/ math.pi * 180
+
+        # python的三目运算符
+        deltaX = scaleX1 - scaleX2 if scaleX1 - scaleX2 > 0 else - scaleX1 + scaleX2
+        deltaY = scaleY1 - scaleY2 if scaleY1 - scaleY2 > 0 else  - scaleY1 + scaleY2
+        resolution = deltaX if deltaX > deltaY else deltaY
+
+
+        # id angle resolution 去original中找原图像，新的图像存在nom中，具体路径我来拼，避免了路径不统一的问题
+
+        PCBImgSample1 = PCBImgSample.objects.get(id = PCBImgSampleId)
+        PCBImgSample1.sResolution = resolution
+        PCBImgSample1.norImgURL = "image/devShapeSample/nom/" + str(PCBImgSampleId) + ".jpg"
+        PCBImgSample1.save()
+
+        return Response({
+            "norImgURL":PCBImgSample1.norImgURL
+        }, status=status.HTTP_201_CREATED)
+
 class exploSampleViewset(viewsets.ModelViewSet):
     """
     炸药及原材料常见样本管理
@@ -79,7 +117,7 @@ class exploSampleFTIRTestFileViewset(viewsets.ModelViewSet):
     queryset = exploSampleFTIRTestFile.objects.all()
     #queryset = exploSample.objects.filter(sname="样本3")
     # serializer_class = LsitExploSampleFTIRTestFileSerializer
-    # permission_classes = (IsAuthenticated,IsAdmin)
+    permission_classes = (IsAuthenticated,IsAdmin)
     parser_classes = (MultiPartParser, FileUploadParser,)
     pagination_class = MyPageNumberPagination
     def get_serializer_class(self):
@@ -208,7 +246,7 @@ class exploSampleGCMSTestFileViewset(viewsets.ModelViewSet):
     queryset = exploSampleGCMSTestFile.objects.all()
     #queryset = exploSample.objects.filter(sname="样本3")
     # serializer_class = exploSampleGCMSTestFileSerializer
-    # permission_classes = (IsAuthenticated,IsAdmin)
+    permission_classes = (IsAuthenticated,IsAdmin)
     parser_classes = (MultiPartParser, FileUploadParser,)
 
     def get_serializer_class(self):

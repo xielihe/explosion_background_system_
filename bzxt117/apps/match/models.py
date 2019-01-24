@@ -25,7 +25,7 @@ class exploMatchFTIR(models.Model):
         #     ]
         # }的错误，来自于数据库
         unique_together = ("exploSampleFTIRTestFile", "exploEviFTIRTestFile")
-        ordering = ['Score']
+        ordering = ['-Score']
 
 
 class exploMatchRaman(models.Model):
@@ -40,7 +40,7 @@ class exploMatchRaman(models.Model):
         verbose_name = "炸药及原材料物证Raman匹配结果表"
         verbose_name_plural = verbose_name
         unique_together = ("exploSampleRamanTestFile", "exploEviRamanTestFile")
-        ordering = ['Score']
+        ordering = ['-Score']
 
 class exploMatchXRD(models.Model):
     """
@@ -54,7 +54,7 @@ class exploMatchXRD(models.Model):
         verbose_name = " 炸药及原材料物证XRD匹配结果表"
         verbose_name_plural = verbose_name
         unique_together = ("exploSampleXRDTestFile", "exploEviXRDTestFile")
-        ordering = ['Score']
+        ordering = ['-Score']
 
 
 
@@ -70,7 +70,7 @@ class exploMatchXRF(models.Model):
         verbose_name = "炸药及原材料物证XRF匹配结果表"
         verbose_name_plural = verbose_name
         unique_together = ("exploSampleXRFTestFile", "exploEviXRFTestFile")
-        ordering = ['averScore']
+        ordering = ['-averScore']
 
 
 class exploMatchGCMS(models.Model):
@@ -88,7 +88,7 @@ class exploMatchGCMS(models.Model):
         verbose_name = "炸药及原材料物证GC-MS匹配结果表"
         verbose_name_plural = verbose_name
         unique_together = ("exploSampleGCMSFile", "exploEviGCMSFile")
-        ordering = ['Score']
+        ordering = ['-Score']
 
 
 class exploSynMatch(models.Model):
@@ -114,7 +114,7 @@ class exploSynMatch(models.Model):
     class Meta:
         verbose_name = "炸药及原材料物证综合匹配结果表"
         verbose_name_plural = verbose_name
-        ordering = ['Score']
+        ordering = ['-Score']
 
 class exploReportMatch(models.Model):
     """
@@ -125,16 +125,10 @@ class exploReportMatch(models.Model):
         (2, "匹配"),
         (3, "非匹配"),
     )
-    exploSample = models.ForeignKey(exploSample,verbose_name=u"对应的样本"
-                                        , related_name="exploReportMatch", on_delete=models.CASCADE)
     exploEvi = models.ForeignKey(exploEvi, verbose_name=u"对应的物证",
                                      related_name="exploReportMatch", on_delete=models.CASCADE)
-    Score = models.FloatField(default=0.0, verbose_name="相似分")
-    isCheck =models.IntegerField(choices=CHECK_TYPE, default=1,verbose_name="普通用户核准状态")
-    checkHandle = models.ForeignKey(userProfile, blank=True,null=True,verbose_name=u"普通核准人员（外键）",related_name='exploReportMatchcheckHandle')
-    isExpertCheck =models.IntegerField(choices=CHECK_TYPE, default=1,verbose_name="专家核准状态")
-    expertHandle = models.ForeignKey(userProfile,blank=True,null=True, verbose_name=u"专家核准人员（外键）",related_name='exploReportMatchexpertHandle')
-    expertOpinion = models.CharField(max_length=300, blank=True, null=True, verbose_name="专家核准意见")
+    exploSynMatch = models.CharField(max_length=300, blank=True, null=True, verbose_name="对应的综合匹配id数组")
+
     class Meta:
         verbose_name = "炸药及原材料物证报告结果表"
         verbose_name_plural = verbose_name
@@ -165,7 +159,7 @@ class devMatchFTIR(models.Model):
         verbose_name = "爆炸装置物证FTIR匹配结果表"
         verbose_name_plural = verbose_name
         unique_together = ("devPartSampleFTIRTestFile", "devEviFTIRTestFile")
-        ordering = ['Score']
+        ordering = ['-Score']
 
 
 class devMatchRaman(models.Model):
@@ -182,7 +176,7 @@ class devMatchRaman(models.Model):
         verbose_name = "爆炸装置物证Raman匹配结果表"
         verbose_name_plural = verbose_name
         unique_together = ("devPartSampleRamanTestFile", "devEviRamanTestFile")
-        ordering = ['Score']
+        ordering = ['-Score']
 
 class devMatchXRF(models.Model):
     """
@@ -198,7 +192,7 @@ class devMatchXRF(models.Model):
         verbose_name = "爆炸装置物证XRF匹配结果表"
         verbose_name_plural = verbose_name
         unique_together = ("devPartSampleXRFTestFile", "devEviXRFTestFile")
-        ordering = ['averScore']
+        ordering = ['-averScore']
 
 
 class devCompMatch(models.Model):
@@ -223,7 +217,7 @@ class devCompMatch(models.Model):
     class Meta:
         verbose_name = "爆炸装置物证成分综合匹配结果表"
         verbose_name_plural = verbose_name
-        ordering = ['Score']
+        ordering = ['-Score']
 
 class devShapeMatch(models.Model):
     """
@@ -234,18 +228,13 @@ class devShapeMatch(models.Model):
         (2, "匹配"),
         (3, "非匹配"),
     )
-    devShapeSample = models.ForeignKey(devShapeSample,verbose_name=u"对应的成分样本",related_name="devShapeMatchSample",on_delete=models.CASCADE)
-    devShapeEvi = models.ForeignKey(devShapeEvi, verbose_name=u"对应的物证",related_name="devShapeMatchEvi",on_delete=models.CASCADE)
+    devShapeSample = models.ForeignKey(devShapeSample,verbose_name=u"对应的形态样本",related_name="devShapeMatchSample",on_delete=models.CASCADE)
+    devShapeEvi = models.ForeignKey(devShapeEvi, verbose_name=u"对应的形态物证",related_name="devShapeMatchEvi",on_delete=models.CASCADE)
     isCircuit = models.BooleanField(default=False, verbose_name="是否是元器件匹配")
     matchDegree =models.FloatField(default=0.0,verbose_name="得分")
     matchSampleCoordi = models.CharField(max_length=400, null=True, blank=True, verbose_name="匹配的样本位置坐标")
     matchEviCoordi = models.CharField(max_length=400, null=True, blank=True, verbose_name="匹配的物证位置坐标")
     isSure = models.BooleanField(default=False, verbose_name="是否确认")
-    isCheck = models.IntegerField(choices=CHECK_TYPE, default=1, verbose_name="普通用户核准状态")
-    checkHandle = models.ForeignKey(userProfile, blank=True,null=True, verbose_name=u"普通核准人员（外键）", related_name='devShapeMatchcheckHandle')
-    isExpertCheck = models.IntegerField(choices=CHECK_TYPE, default=1, verbose_name="专家核准状态")
-    expertHandle = models.ForeignKey(userProfile, blank=True,null=True, verbose_name=u"专家核准人员（外键）", related_name='devShapeMatchexpertHandle')
-    expertShapeOpinion = models.CharField(max_length=300, blank=True, null=True, verbose_name="专家形态核准意见")
     class Meta:
         verbose_name = "爆炸装置案件物证形态匹配结果表"
         verbose_name_plural = verbose_name
@@ -266,16 +255,10 @@ class PCBImgMatch(models.Model):
     PCBImgEvi = models.ForeignKey(PCBImgEvi, verbose_name=u"对应的物证",related_name="PCBImgMatch",on_delete=models.CASCADE)
     Score = models.FloatField(default=0.0, verbose_name="相似分")
     similarRect = models.CharField(max_length=20, null=True, blank=True, verbose_name="匹配的样本位置坐标")
-    smallPicURL =models.ImageField(max_length=300,null=True,blank=True,verbose_name="缩略小图图像文件路径")#,upload_to="image/PCBImgMatch/"
-    isCheck = models.IntegerField(choices=CHECK_TYPE, default=1, verbose_name="普通用户核准状态")
-    checkHandle = models.ForeignKey(userProfile, blank=True,null=True,  verbose_name=u"普通核准人员（外键）",related_name='PCBImgMatchcheckHandle')
-    isExpertCheck = models.IntegerField(choices=CHECK_TYPE, default=1, verbose_name="专家核准状态")
-    expertHandle = models.ForeignKey(userProfile, blank=True,null=True,  verbose_name=u"专家核准人员（外键）",related_name='PCBImgMatchexpertHandle')
-    expertShapeOpinion = models.CharField(max_length=300, blank=True, null=True, verbose_name="专家形态核准意见")
     class Meta:
         verbose_name = "爆炸装置物证电路板匹配结果表"
         verbose_name_plural = verbose_name
-        ordering = ['Score']
+        ordering = ['-Score']
 
 class oPartImgMatch(models.Model):
     """
@@ -291,17 +274,10 @@ class oPartImgMatch(models.Model):
     oPartImgEvi = models.ForeignKey(oPartImgEvi, verbose_name=u"对应的物证",related_name="oPartImgMatch",
                                     on_delete=models.CASCADE)
     Score = models.FloatField(default=0.0, verbose_name="相似分")
-    similarRect = models.CharField(max_length=20, null=True, blank=True, verbose_name="匹配的样本位置坐标")
-    smallPicURL =models.ImageField(max_length=300,null=True,blank=True,verbose_name="缩略小图图像文件路径")#,upload_to="image/PCBImgMatch/"
-    isCheck = models.IntegerField(choices=CHECK_TYPE, default=1, verbose_name="普通用户核准状态")
-    checkHandle = models.ForeignKey(userProfile, blank=True,null=True,  verbose_name=u"普通核准人员（外键）",related_name='oPartImgMatchcheckHandle')
-    isExpertCheck = models.IntegerField(choices=CHECK_TYPE, default=1, verbose_name="专家核准状态")
-    expertHandle = models.ForeignKey(userProfile, blank=True,null=True,  verbose_name=u"专家核准人员（外键）",related_name='oPartImgMatchexpertHandle')
-    expertShapeOpinion = models.CharField(max_length=300, blank=True, null=True, verbose_name="专家形态核准意见")
     class Meta:
         verbose_name = " 爆炸装置物证其它零件图像（也包括组件外壳）匹配结果表"
         verbose_name_plural = verbose_name
-        ordering = ['Score']
+        ordering = ['-Score']
 
 class logoImgMatch(models.Model):
     """
@@ -317,48 +293,42 @@ class logoImgMatch(models.Model):
     logoImgEvi = models.ForeignKey(logoImgEvi, verbose_name=u"对应的物证",related_name="logoImgMatch",
                                     on_delete=models.CASCADE)
     Score = models.FloatField(default=0.0, verbose_name="相似分")
-    similarRect = models.CharField(max_length=20, null=True, blank=True, verbose_name="匹配的样本位置坐标")
-    smallPicURL =models.ImageField(max_length=300,null=True,blank=True,verbose_name="缩略小图图像文件路径")#,upload_to="image/PCBImgMatch/"
-    isCheck = models.IntegerField(choices=CHECK_TYPE, default=1, verbose_name="普通用户核准状态")
-    checkHandle = models.ForeignKey(userProfile, blank=True,null=True, verbose_name=u"普通核准人员（外键）",related_name='logoImgMatchcheckHandle')
-    isExpertCheck = models.IntegerField(choices=CHECK_TYPE, default=1, verbose_name="专家核准状态")
-    expertHandle = models.ForeignKey(userProfile, blank=True,null=True, verbose_name=u"专家核准人员（外键）",related_name='logoImgMatchexpertHandle')
-    expertShapeOpinion = models.CharField(max_length=300, blank=True, null=True, verbose_name="专家形态核准意见")
     class Meta:
         verbose_name = "爆炸装置物证商标图像匹配结果表"
         verbose_name_plural = verbose_name
-        ordering = ['Score']
-
-class devSynMatch(models.Model):
+        ordering = ['-Score']
+class devShapeMultiMatch(models.Model):
     """
-  爆炸装置物证综合匹配结果表（成分+形态）
+    爆炸装置物证形态综合匹配结果表
     """
     CHECK_TYPE = (
         (1, "未核准"),
         (2, "匹配"),
         (3, "非匹配"),
     )
-    devEviComp = models.ForeignKey(devPartSample,verbose_name=u"成分比对对应的物证",
-                                     related_name="devSynMatchDevEviComp",on_delete=models.CASCADE)
-    devPartSampleComp = models.ForeignKey(devEvi, verbose_name=u"成分比对对应的样本",related_name="devSynMatchDevPartSampleComp",
-                                    on_delete=models.CASCADE)
-    ScoreComp = models.FloatField(default=0.0, verbose_name="成分相似分")
-    isCheckComp = models.IntegerField(choices=CHECK_TYPE, default=1, verbose_name="成分普通用户核准状态")
-    checkHandleComp = models.ForeignKey(userProfile, blank=True,null=True,  verbose_name=u"成分普通核准人员（外键）",related_name='devSynMatchcheckHandleComp')
-    isExpertCheckComp = models.IntegerField(choices=CHECK_TYPE, default=1, verbose_name="成分专家核准状态")
-    expertHandleComp = models.ForeignKey(userProfile, blank=True,null=True, verbose_name=u"成分专家核准人员（外键）",related_name='devSynMatchexpertHandleComp')
-    expertCompOpinion = models.CharField(max_length=300, blank=True, null=True, verbose_name="专家成分核准意见")
-    devPartSampleShape = models.ForeignKey(devPartSample, verbose_name=u"图像比对对应的样本（外键）",
-                                      related_name="devSynMatch", on_delete=models.CASCADE)
-    devEviShape = models.ForeignKey(devEvi, verbose_name=u"图像比对对应的物证（外键）", related_name="devSynMatch",
-                               on_delete=models.CASCADE)
-    ScoreShape = models.FloatField(default=0.0, verbose_name="图像相似分")
-    similarRect = models.CharField(max_length=20, null=True, blank=True, verbose_name="匹配的样本位置坐标")
-    isCheckShape = models.IntegerField(choices=CHECK_TYPE, default=1, verbose_name="图像普通用户核准状态")
-    checkHandleShape = models.ForeignKey(userProfile, blank=True,null=True, verbose_name=u"图像普通核准人员（外键）", related_name='devSynMatchcheckHandleShape')
-    isExpertCheckShape = models.IntegerField(choices=CHECK_TYPE, default=1, verbose_name="图像专家核准状态")
-    expertHandleShape = models.ForeignKey(userProfile, blank=True,null=True, verbose_name=u"图像专家核准人员（外键）", related_name='devSynMatchexpertHandleShape')
+    devPartSample = models.ForeignKey(devPartSample, verbose_name=u"对应的样本"
+                                        , related_name="devShapeMultiMatch", on_delete=models.CASCADE)
+    devEvi = models.ForeignKey(devEvi, verbose_name=u"对应的物证",
+                                     related_name="devShapeMultiMatch", on_delete=models.CASCADE)
+    Score = models.FloatField(default=0.0, verbose_name="相似分")
+    isCheck =models.IntegerField(choices=CHECK_TYPE, default=1,verbose_name="普通用户核准状态")
+    checkHandle = models.ForeignKey(userProfile,  blank=True,null=True,verbose_name=u"普通核准人员（外键）",related_name='devShapeMultiMatchcheckHandle')
+    isExpertCheck =models.IntegerField(choices=CHECK_TYPE, default=1,verbose_name="专家核准状态")
+    expertHandle = models.ForeignKey(userProfile, blank=True,null=True, verbose_name=u"专家核准人员（外键）",related_name='devShapeMultiMatchexpertHandle')
     expertShapeOpinion = models.CharField(max_length=300, blank=True, null=True, verbose_name="专家形态核准意见")
+    class Meta:
+        verbose_name = "爆炸装置物证形态综合匹配结果表"
+        verbose_name_plural = verbose_name
+        ordering = ['-Score']
+
+class devSynMatch(models.Model):
+    """
+  爆炸装置物证综合匹配结果表（成分+形态）
+    """
+    devEvi = models.ForeignKey(devEvi, verbose_name=u"	对应的物证（外键）",related_name="devSynMatch",
+                                    on_delete=models.CASCADE)
+    devShapeMultiMatch = models.CharField(max_length=300, blank=True, null=True, verbose_name="对应的形态匹配id数组")
+    devCompMatch = models.CharField(max_length=300, blank=True, null=True, verbose_name="对应的成分匹配id数组")
     class Meta:
         verbose_name = "爆炸装置物证综合匹配结果表（成分+形态）"
         verbose_name_plural = verbose_name
@@ -375,3 +345,6 @@ class devMatchPDF(models.Model):
         verbose_name = "爆炸装置物证报告文件表"
         verbose_name_plural = verbose_name
 
+# miningList = models.CharField(max_length=300,null=True,blank=True,verbose_name='Mining元素列表')
+# class exploSampleXRFTestFileSerializer(serializers.ModelSerializer):
+# miningList = serializers.CharField(read_only=True,)
