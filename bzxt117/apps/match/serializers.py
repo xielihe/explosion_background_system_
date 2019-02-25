@@ -6,6 +6,7 @@ from apps.evi.serializers import *
 from apps.basic.serializers import *
 from apps.user_operation.models import *
 
+# 语义筛选用的分类器，因为语义筛选只有爆炸装置所以不用写炸药的
 class PagerSerialiser(serializers.ModelSerializer):
     class Meta:
         model = devPartSample
@@ -212,7 +213,7 @@ class exploSynMatchCreateSerializer(serializers.ModelSerializer):
 #     # 如果isCheck ==2 ，则表示有普通用户核准了，那么剩余的其他匹配结果的匹配状态应该全都置为3
 #     # 如果isExpertCheck == 2,则表示有专家核准了，那么不仅剩余的其他匹配结果的匹配状态置为3，还要找到如果有请求的消息的hasHandle置为True
 #     # 既然申请update，那么肯定会带着id，如果isCheck在请求字段中且为2，则表示核准
-#     # 核准同时记得维护报告表
+#     # 核准同时记得维护报告表（现在不用了，报告表额外接口生成）
 #     def update(self, instance, validated_data):
 #         user = self.context["request"].user
 #         # 根据PATCH的id就可以知道是哪条记录了，因为是从view过来的，view确定了queryset，所以知道是哪个
@@ -232,14 +233,13 @@ class exploSynMatchCreateSerializer(serializers.ModelSerializer):
 #                         match.checkHandle = user
 #                         match.save()
 #
-#                 #报告表中不一定有记录，有则找出来，没有则按照物证和样本创建
-#                 # reportMatch = exploReportMatch.objects.get_or_create(exploEvi=instance.exploEvi)
 #                 # 由于一个物证被核准为多个样本是可能的，因此不能进行核准更替，都要存储，所以要以物证以及核准的样本进行过滤，而不能单单过滤物证
 #                 reportMatchs = exploReportMatch.objects.filter(exploEvi=instance.exploEvi,exploSample = instance.exploSample)
 #                 if reportMatchs.count() >0:
 #                     for reportMatch in reportMatchs:
 #                         # 只有在没有专家核准的情况下才会用普通用户的核准结果去填报告表中的
 #                         # for reportMatch in reportMatchs:
+#                           该记录没有被专家核准
 #                         if reportMatch.isExpertCheck == 1:
 #                             # 如果有其余普通用户核准过，则新建
 #                             if reportMatch.isCheck == 2:
@@ -271,6 +271,7 @@ class exploSynMatchCreateSerializer(serializers.ModelSerializer):
 #                 # 报告表的操作
 #                 reportMatchs = exploReportMatch.objects.filter(exploEvi=instance.exploEvi,exploSample = instance.exploSample)
 #                 if reportMatchs.count() >0:
+#                   有记录可能是普通用户核准的或者其他专家核准的
 #                     for reportMatch in reportMatchs:
 #                         # 其余专家核准过，则新建
 #                         if reportMatch.isExpertCheck == 2:
@@ -281,7 +282,7 @@ class exploSynMatchCreateSerializer(serializers.ModelSerializer):
 #                             reportMatchNew.expertHandle = user
 #                             reportMatchNew.expertOpinion = instance.expertOpinion
 #                             reportMatchNew.save()
-#                         # 其余专家未核准，则直接赋值
+#                         # 其余专家未核准，则直接赋值（普通用户核准的）
 #                         else:
 #                             reportMatch.Score = instance.Score
 #                             reportMatch.isExpertCheck = 2
@@ -307,10 +308,10 @@ class exploSynMatchCheckSerializer(serializers.Serializer):
     # 如果isCheck ==2 ，则表示有普通用户核准了，那么剩余的其他匹配结果的匹配状态应该全都置为3
     # 如果isExpertCheck == 2,则表示有专家核准了，那么不仅剩余的其他匹配结果的匹配状态置为3，还要找到如果有请求的消息的hasHandle置为True
     # 既然申请update，那么肯定会带着id，如果isCheck在请求字段中且为2，则表示核准
-    # 核准同时记得维护报告表
     def update(self, instance, validated_data):
         user = self.context["request"].user
         # 根据PATCH的id就可以知道是哪条记录了，因为是从view过来的，view确定了queryset，所以知道是哪个
+        # 作用只是记录
         matchId = instance.id
         # 如果核准了
         if validated_data["Check"] == True:
@@ -365,6 +366,7 @@ class exploReportMatchDetailSerializer(serializers.ModelSerializer):
         length = len(exploMatchList)
         if length > 0:
             if length > 1:
+                # 把字符型数组转化为int形数组
                 exploMatchList = [int(i) for i in exploMatchList ]
                 synMatch = exploSynMatch.objects.filter(id__in=exploMatchList).order_by("-Score")
                 # 返回形态综合详情展示
@@ -486,6 +488,7 @@ class devMatchXRFDetailSerializer(serializers.ModelSerializer):
 #             if user.role == 3:
 #                 # 本匹配记录的核准字段更新
 #                 instance.isCheck = 2
+
 #                 instance.checkHandle = user
 #                 matchs = devShapeMatch.objects.exclude(id=instance.id)
 #                 # 其余记录置为未核准

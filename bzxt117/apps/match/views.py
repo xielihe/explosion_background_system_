@@ -66,7 +66,7 @@ class wordSelect(APIView):
         for keyWord in keyWordList:
             querySetN = devPartSample.objects.none()
             cursor = connection.cursor()  # 要想使用sql原生语句，必须用到execute()函数 #然后在里面写入sql原生语句
-            # concat(Origin,Factory,Model,Logo,function,note) 不能用，因为concat是连接字段，是把所有字段连在一起作为一个，因此那种_的就不适用。
+            # concat(Origin,Factory,Model,Logo,function,note) 不能用，因为concat是连接字段，是把所有字段连在一起作为一个，因此那种_的就不适用，不能简单用concat来进行对所有字段的搜索。
             # 所以只能用or连接。
             # ps：CONCAT()可以连接一个或者多个字符串,CONCAT_WS()可以添加分割符参数。
             select_words = 'select * from sample_devpartsample where Origin like "%s" or Factory like "%s" or Model like "%s" or Logo like "%s" or function like "%s"'% (keyWord,keyWord,keyWord,keyWord,keyWord)
@@ -516,7 +516,6 @@ class startMatch(APIView):
         else:
             return  Response("fail")
 
-    #修改得分，同时核准置为False，核准人员为None
         # 会返回201的response，且因为Response是rest_framework的，因此只能最低使用APIView
         #在数据库中获取分页数据
         # 应该每个类型返回依次，因为涉及到queryset和serializer，
@@ -528,7 +527,125 @@ class startMatch(APIView):
         # return pg.get_paginated_response(ser.data)  # 返回上一页或者下一页
         # return  Response("success")
 
+# 综合表维护接口（重新生成综合表）
+class SynUpdate(APIView):
+    # 生成综合匹配的各自匹配的结果列表
+    # type = 1/2,对应炸药和爆炸装置，id即为物证的id，comDict是那个列表
+    def post(self,request):
+        # 此时type等都是str类型哦
+        type = int(request.POST["type"])
+        eviFileId = int(request.POST["eviFileId"])
+        # 没法直接用type当成类去做filter
+        # result = type.objects.all()
+        # python没有switch case
+        #创建分页对象
+        pg = MyPageNumberPagination()
+        def comDict(type, eviId, comDictDict):
+            if type == 1:
+                FTIRs = []
+                RAMANs = []
+                XRDs = []
+                XRFs = []
+                GCMSs = []
+
+                comListFTIR = []
+                comListRAMAN = []
+                comListXRD = []
+                comListXRF = []
+                comListGCMS = []
+
+                FTIRs = exploMatchFTIR.objects.filter(exploEviFTIRTestFile__exploEviId=eviId)
+                for FTIR in FTIRs:
+                    idScoreList = []
+                    idScoreList.append(FTIR.exploSampleFTIRTestFile.exploSampleFTIR.exploSample_id)
+                    idScoreList.append(FTIR.Score)
+                    comListFTIR.append(idScoreList)
+                comDictDict["FTIR"] = comListFTIR
+
+                RAMANs = exploMatchRaman.objects.filter(exploEviRamanTestFile__exploEviId=eviId)
+                for RAMAN in RAMANs:
+                    idScoreList = []
+                    idScoreList.append(RAMAN.exploSampleRamanTestFile.exploSampleRaman.exploSample_id)
+                    idScoreList.append(RAMAN.Score)
+                    comListRAMAN.append(idScoreList)
+                comDictDict["RAMAN"] = comListRAMAN
+
+                XRDs = exploMatchXRD.objects.filter(exploEviXRDTestFile__exploEviId=eviId)
+                for XRD in XRDs:
+                    idScoreList = []
+                    idScoreList.append(XRD.exploSampleXRDTestFile.exploSampleXRD.exploSample_id)
+                    idScoreList.append(XRD.Score)
+                    comListXRD.append(idScoreList)
+                comDictDict["XRD"] = comListXRD
+
+                XRFs = exploMatchXRF.objects.filter(exploEviXRFTestFile__exploEviId=eviId)
+                for XRF in XRFs:
+                    idScoreList = []
+                    idScoreList.append(XRF.exploSampleXRFTestFile.exploSampleXRF.exploSample_id)
+                    idScoreList.append(XRF.averScore)
+                    comListXRF.append(idScoreList)
+                comDictDict["XRF"] = comListXRF
+
+                GCMSs = exploMatchGCMS.objects.filter(exploEviGCMSFile__exploEviId=eviId)
+                for GCMS in GCMSs:
+                    idScoreList = []
+                    idScoreList.append(GCMS.exploSampleGCMSFile.exploSampleGCMS.exploSample_id)
+                    idScoreList.append(GCMS.Score)
+                    comListGCMS.append(idScoreList)
+                comDictDict["GCMS"] = comListGCMS
+            elif type == 2:
+                FTIRs = []
+                RAMANs = []
+                XRFs = []
+
+                comListFTIR = []
+                comListRAMAN = []
+                comListXRF = []
+
+                FTIRs = devMatchFTIR.objects.filter(devEviFTIRTestFile__devEviId=eviId)
+                for FTIR in FTIRs:
+                    idScoreList = []
+                    idScoreList.append(FTIR.devPartSampleFTIRTestFile.devPartSampleFTIR.devPartSample_id)
+                    idScoreList.append(FTIR.Score)
+                    comListFTIR.append(idScoreList)
+                comDictDict["FTIR"] = comListFTIR
+
+                RAMANs = devMatchRaman.objects.filter(devEviRamanTestFile__devEviId=eviId)
+                for RAMAN in RAMANs:
+                    idScoreList = []
+                    idScoreList.append(RAMAN.devPartSampleRamanTestFile.devPartSampleRaman.devPartSample_id)
+                    idScoreList.append(RAMAN.Score)
+                    comListRAMAN.append(idScoreList)
+                comDictDict["RAMAN"] = comListRAMAN
+
+                XRFs = devMatchXRF.objects.filter(devEviXRFTestFile__devEviId=eviId)
+                for XRF in XRFs:
+                    idScoreList = []
+                    idScoreList.append(XRF.devPartSampleXRFTestFile.devPartSampleXRF.devPartSample_id)
+                    idScoreList.append(XRF.averScore)
+                    comListXRF.append(idScoreList)
+                comDictDict["XRF"] = comListXRF
+
+
+
+        # comDict(1, eviFile.exploEviId, score_dictSim)
+        #
+        # result = ComScore(score_dictSim, result_dict)
+        # resultDict = result_dict
+        # for id, score in result_dict.items():
+        #     match = exploSynMatch.objects.get_or_create(exploEvi_id=eviFile.exploEviId, exploSample_id=id)
+        #     matchObj = match[0]
+        #     matchObj.Score = score
+        #     matchObj.save()
+        # pager_roles = pg.paginate_queryset(queryset=querysetList, request=request, view=self)
+        # ser = exploMatchFTIRSerializer(instance=pager_roles, many=True)
+        # return pg.get_paginated_response(ser.data)  # 返回上一页或者下一页
+        #
+
 # 将炸药核准结果变成报告记录接口
+# 和在核准那里不同的是核准那里要根据该条记录是否被专家核准过等判断是否要在报告表中新增一条记录或者将专家核准的结果把普通用户核准的结果替换
+# 而这里报告生成的方式是无论是谁核准的，在综合表中的记录都拿出来（通过id的形式），到时候报告表就根据这些id来生成。
+# 所以核准（综合表）只是记录核准情况，并不会对报告表中的记录产生什么影响，等到生成报告表时才会去查找所有核准过的综合记录的id
 class createExploReport(APIView):
     def post(self,request):
         exploId = int(request.POST["exploId"])
@@ -594,7 +711,8 @@ class exploMatchRamanViewset(viewsets.ModelViewSet):
     """
     permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
-    filter_backends = (filters.OrderingFilter,)
+    fil
+    ter_backends = (filters.OrderingFilter,)
     ordering_fields = ("-Score",)
  #   authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
 #    lookup_field = "goods_id"
@@ -774,7 +892,7 @@ class devShapeMatchViewset(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
     filter_backends = (filters.OrderingFilter,)
-    ordering_fields = ("matchDegree",)
+    ordering_fields = ("-matchDegree",)
     def get_queryset(self):
         return devShapeMatch.objects.all()
 

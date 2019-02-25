@@ -25,7 +25,6 @@ class exploEviSerializer(serializers.ModelSerializer):
         model = exploEvi
         fields = "__all__"
 
-
 class exploEviFTIRTestFileSerializer(serializers.ModelSerializer):
     handledData = serializers.SerializerMethodField()
     exploEviId = serializers.IntegerField(read_only= True)

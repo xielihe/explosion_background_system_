@@ -82,7 +82,7 @@ class exploSampleViewset(viewsets.ModelViewSet):
     list:
         获取
     create:
-        添加
+        添加0
     update:
         更新
     delete:
@@ -317,9 +317,9 @@ class devPartSampleFTIRTestFileViewset(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         # 综合表中的对应的值应该更新，减去这个文件对综合匹配结果的影响，同时都置为未匹配
         # 样本库的变化会导致报告表的结果不准确，因此报告表清零
-        synMatchs = devSynMatch.objects.objects.all()
-        for synMatch in synMatchs:
-            synMatch.delete()
+        # synMatchs = devSynMatch.objects.objects.all()
+        # for synMatch in synMatchs:
+        #     synMatch.delete()
         instance.delete()
 
 class devPartSampleRamanViewset(viewsets.ModelViewSet):
@@ -348,9 +348,9 @@ class devPartSampleRamanTestFileViewset(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         # 综合表中的对应的值应该更新，减去这个文件对综合匹配结果的影响，同时都置为未匹配
         # 样本库的变化会导致报告表的结果不准确，因此报告表清零
-        synMatchs = devSynMatch.objects.objects.all()
-        for synMatch in synMatchs:
-            synMatch.delete()
+        # synMatchs = devSynMatch.objects.objects.all()
+        # for synMatch in synMatchs:
+        #     synMatch.delete()
         instance.delete()
 
 class devPartSampleXRFViewset(viewsets.ModelViewSet):
@@ -379,9 +379,9 @@ class devPartSampleXRFTestFileViewset(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         # 综合表中的对应的值应该更新，减去这个文件对综合匹配结果的影响，同时都置为未匹配
         # 样本库的变化会导致报告表的结果不准确，因此报告表清零
-        synMatchs = devSynMatch.objects.objects.all()
-        for synMatch in synMatchs:
-            synMatch.delete()
+        # synMatchs = devSynMatch.objects.objects.all()
+        # for synMatch in synMatchs:
+            # synMatch.delete()
         instance.delete()
 
 class devShapeSampleViewset(viewsets.ModelViewSet):

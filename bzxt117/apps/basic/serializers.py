@@ -32,7 +32,7 @@ class UserRegSerializer(serializers.ModelSerializer):
     def validate_role(self, role):
         # 注意参数，self以及字段名
         # 注意函数名写法，validate_ + 字段名字
-        if self.context["request"].user.role == 3:
+        if self.context["request"].user.role == 3 or self.context['request'].user.role == 4:
             raise serializers.ValidationError("您没有执行该操作的权限。")
         elif self.context["request"].user.role == 2 and role != 3:
             raise serializers.ValidationError("您没有执行该操作的权限。")
@@ -44,6 +44,7 @@ class UserRegSerializer(serializers.ModelSerializer):
     #     return attrs
 
     # save方法掉的create函数
+    # password加密
     def create(self, validated_data):
         user = super(UserRegSerializer, self).create(validated_data=validated_data)
         user.set_password(validated_data["password"])
@@ -79,6 +80,8 @@ class methodDetectSerializer(serializers.ModelSerializer):
     class Meta:
         model = methodDetect
         fields = "__all__"
+
+    # 上传文档每一行为一个方法，提取出每一行且去除空格的影响（现在已经不这么想了，现在一个文档一种方法）
     # def create(self, validated_data):
     #     doc = validated_data['fileDoc']
     #     file = docx.Document(doc)

@@ -22,9 +22,11 @@ from apps.match.views import MyPageNumberPagination
 
 
 
+
 # 物证更新在匹配界面的提示表现在所有相关的匹配结果全部为空，即一旦物证文件变化相关匹配结果会删除，那么数据库无法得到相关数据，在前端展示为空
 # 物证的匹配结果一旦删除，在前端展示的时候会表示成一个表是空的，而不像一个样本变化时如果只是删除匹配结果而不是更新匹配结果的话在前端根本看不出来，因为少一行没有提示
 # 因此要维护好当物证文件一旦变化，匹配结果也要删除
+# 不用了，因为更新现在默认为请求删除，删除后重新上传，那么删除的时候匹配结果也会一并删除
 
 
 class exploEviViewset(viewsets.ModelViewSet):
@@ -49,7 +51,7 @@ class exploEviViewset(viewsets.ModelViewSet):
     ordering_fields = ("id","inputDate")
 
     def get_permissions(self):
-        # 物证创建的话应该his谁都可以创建的
+        # 物证创建的话应该是谁都可以创建的
         if self.action == "create":
         #     return [permissions.IsAuthenticated(),IsAdmin()]
         # elif self.action == "update":
@@ -348,6 +350,15 @@ class exploEviGCMSTestFileViewset(viewsets.ModelViewSet):
             return [permissions.IsAuthenticated(), IsAdmin()]
 
     def perform_destroy(self, instance):
+        if instance.type == "TIC":
+            filePath = os.path.join(MEDIA_ROOT, "file/exploSampleGCMSTestFile/%d_%d/" % (instance.exploSampleGCMS.exploSample.id, instance.id))
+            # dirPath = "file/exploSampleGCMSTestFile/%d_%d/" % (instance.exploSampleGCMS.exploSample.id, instance.id)
+            # for (root, dirs, files) in os.walk(filePath):
+            #     for file in files:
+            #         d = os.path.join(dirPath, file)
+            #         fileDel = exploSampleGCMSTestFile.objects.filter(txtURL = d)
+            #         fileDel.delete()
+            shutil.rmtree(filePath)
         # synMatchs = exploSynMatch.objects.filter(exploEvi = instance.exploEviGCMS.exploEvi )
         # for synMatch in synMatchs:
         #     synMatch.delete()

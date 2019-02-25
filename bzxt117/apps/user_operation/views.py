@@ -62,6 +62,7 @@ class userMessageViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.
     def perform_create(self, serializer):
         message1 = serializer.save()
         if self.request.user.role == 3:
+            # 普通用户发送信息默认的是全体管理员和专家，如果不是普通用户则正常建立
             experts = userProfile.objects.filter(Q(role =2)| Q(role = 4))
             for expert in experts:
                 userMess = userMessage()
@@ -78,6 +79,7 @@ class userMessageViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.
             message1.delete()
 
     def perform_update(self, serializer):
+        # 更新的时候只要有一个handle其余该标题和用户的消息全职微已处理。
         if ('hasHandle' in serializer.validated_data.keys()):
             userMess = self.get_object()
             Messs = userMessage.objects.filter(title = userMess.title,sendUser = userMess.sendUser)

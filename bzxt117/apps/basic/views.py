@@ -163,7 +163,7 @@ class UserViewset(viewsets.ModelViewSet):
     pagination_class = MyPageNumberPagination
     # 查看详情时不是id而是用户名
     lookup_field = "username"
-    permission_classes = (IsAuthenticated,IsSuperAdmin,)
+    # permission_classes = (IsAuthenticated,IsSuperAdmin,)
     filter_backends = (DjangoFilterBackend,filters.SearchFilter, filters.OrderingFilter)
     filter_class = userFilter
     search_fields = ("name","phone","email", "unit","department","posts","note")
