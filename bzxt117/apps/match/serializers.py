@@ -691,6 +691,8 @@ class devShapeMultiMatchDetailSerializer(serializers.ModelSerializer):
 
     def get_devSample(self,obj):
         devSampleShow = devSample.objects.filter(id = obj.devPartSample.devSample.id)
+        if devSampleShow.count() > 1:
+            raise APIException("id错误无法找到对应的devSample")
         return devSampleSerializer(devSampleShow,).data
 
     def get_devSampleList(self, obj):

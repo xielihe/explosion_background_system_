@@ -119,6 +119,7 @@ class startMatch(APIView):
         # 此时type等都是str类型哦
         type = int(request.POST["type"])
         eviFileId = int(request.POST["eviFileId"])
+
         # 没法直接用type当成类去做filter
         # result = type.objects.all()
         # python没有switch case
@@ -129,6 +130,8 @@ class startMatch(APIView):
         # Create your tests here.
         def gci(filepath, fileList):
             # 遍历filepath下所有文件，包括子目录
+            if os.path.exists(filepath) == False:
+                raise APIException("想要遍历的文件夹路径不存在")
             files = os.listdir(filepath)
             for fi in files:
                 fi_d = os.path.join(filepath, fi)
@@ -234,12 +237,17 @@ class startMatch(APIView):
             #     score_dict - - 空字典，以存储结果
             # 输出参数: score_dict
             # 返回值: 0 —— 成功，其他数值 —— 失败
+
+            # 容错
+            if exploEviFTIRTestFile.objects.filter(id=eviFileId).count() != 1:
+                raise APIException("爆炸物证文件id输入错误，无法找到对应文件")
             gci(os.path.join(MEDIA_ROOT, "file/exploSampleFTIRTestFile/handled"), sampleList)
             eviFile = exploEviFTIRTestFile.objects.get(id=eviFileId)
 
-            # 容错
             result = CalculateSimilarity('FTIR', os.path.join(MEDIA_ROOT, str(eviFile.txtHandledURL)), sampleList,
                                          score_dict)
+            if result != '0':
+                raise APIException("物证文件与样本比对程序CalculateSimilarity出错")
             for id, score in score_dict.items():
                 match = exploMatchFTIR.objects.get_or_create(exploEviFTIRTestFile_id=eviFileId, exploSampleFTIRTestFile_id=id)
                 matchObj = match[0]
@@ -258,6 +266,8 @@ class startMatch(APIView):
             comDict(1, eviFile.exploEviId, score_dictSim)
 
             result = ComScore(score_dictSim, result_dict)
+            if result != '0':
+                raise APIException("物证与各个样本的综合得分程序 ComScore出错")
             resultDict = result_dict
             for id, score in result_dict.items():
                 match = exploSynMatch.objects.get_or_create(exploEvi_id=eviFile.exploEviId, exploSample_id=id)
@@ -291,11 +301,17 @@ class startMatch(APIView):
             result_dict = {}
             querysetList = []
 
+            # 容错
+            if exploEviRamanTestFile.objects.filter(id=eviFileId).count() != 1:
+                raise APIException("爆炸物证文件id输入错误，无法找到对应文件")
+
             gci(os.path.join(MEDIA_ROOT, "file/exploSampleRamanTestFile/handled"), sampleList)
             eviFile = exploEviRamanTestFile.objects.get(id=eviFileId)
 
             result = CalculateSimilarity('RAMAN', os.path.join(MEDIA_ROOT, str(eviFile.txtHandledURL)), sampleList,
                                          score_dict)
+            if result != '0':
+                raise APIException("物证文件与样本比对程序CalculateSimilarity出错")
             for id, score in score_dict.items():
                 match = exploMatchRaman.objects.get_or_create(exploEviRamanTestFile_id=eviFileId,
                                                               exploSampleRamanTestFile_id=id)
@@ -307,6 +323,8 @@ class startMatch(APIView):
             comDict(1, eviFile.exploEviId, score_dictSim)
 
             result = ComScore(score_dictSim, result_dict)
+            if result != '0':
+                raise APIException("物证与各个样本的综合得分程序 ComScore出错")
             resultDict = result_dict
             for id, score in result_dict.items():
                 match = exploSynMatch.objects.get_or_create(exploEvi_id=eviFile.exploEviId, exploSample_id=id)
@@ -324,11 +342,17 @@ class startMatch(APIView):
             result_dict = {}
             querysetList = []
 
+            # 容错
+            if exploEviXRDTestFile.objects.filter(id=eviFileId).count() != 1:
+                raise APIException("爆炸物证文件id输入错误，无法找到对应文件")
+
             gci(os.path.join(MEDIA_ROOT, "file/exploSampleXRDTestFile/handled"), sampleList)
             eviFile = exploEviXRDTestFile.objects.get(id=eviFileId)
 
             result = CalculateSimilarity('XRD', os.path.join(MEDIA_ROOT, str(eviFile.txtHandledURL)), sampleList,
                                          score_dict)
+            if result != '0':
+                raise APIException("物证文件与样本比对程序CalculateSimilarity出错")
             for id, score in score_dict.items():
                 match = exploMatchXRD.objects.get_or_create(exploEviXRDTestFile_id=eviFileId,
                                                             exploSampleXRDTestFile_id=id)
@@ -340,6 +364,8 @@ class startMatch(APIView):
             comDict(1, eviFile.exploEviId, score_dictSim)
 
             result = ComScore(score_dictSim, result_dict)
+            if result != '0':
+                raise APIException("物证与各个样本的综合得分程序 ComScore出错")
             resultDict = result_dict
             for id, score in result_dict.items():
                 match = exploSynMatch.objects.get_or_create(exploEvi_id=eviFile.exploEviId, exploSample_id=id)
@@ -357,11 +383,19 @@ class startMatch(APIView):
             result_dict = {}
             querysetList = []
 
+            # 容错
+            if exploEviXRFTestFile.objects.filter(id=eviFileId).count() != 1:
+                raise APIException("爆炸物证文件id输入错误，无法找到对应文件")
+
             gci(os.path.join(MEDIA_ROOT, "file/exploSampleXRFTestFile/handled"), sampleList)
             eviFile = exploEviXRFTestFile.objects.get(id=eviFileId)
 
             result = CalculateSimilarity('XRF', os.path.join(MEDIA_ROOT, str(eviFile.handledURL)), sampleList,
                                          score_dict)
+
+            if result != '0':
+                raise APIException("物证文件与样本比对程序CalculateSimilarity出错")
+
             for id, score in score_dict.items():
                 match = exploMatchXRF.objects.get_or_create(exploEviXRFTestFile_id=eviFileId,
                                                             exploSampleXRFTestFile_id=id)
@@ -373,6 +407,8 @@ class startMatch(APIView):
             comDict(1, eviFile.exploEviId, score_dictSim)
 
             result = ComScore(score_dictSim, result_dict)
+            if result != '0':
+                raise APIException("物证与各个样本的综合得分程序 ComScore出错")
             resultDict = result_dict
             for id, score in result_dict.items():
                 match = exploSynMatch.objects.get_or_create(exploEvi_id=eviFile.exploEviId, exploSample_id=id)
@@ -390,11 +426,17 @@ class startMatch(APIView):
             result_dict = {}
             querysetList = []
 
+            # 容错
+            if exploEviGCMSFile.objects.filter(id=eviFileId).count() != 1:
+                raise APIException("爆炸物证文件id输入错误，无法找到对应文件")
+
             gci(os.path.join(MEDIA_ROOT, "file/exploSampleGCMSTestFile/handled"), sampleList)
             eviFile = exploEviGCMSFile.objects.get(id=eviFileId)
 
             result = CalculateSimilarity('GCMS', os.path.join(MEDIA_ROOT, str(eviFile.txtHandledURL)), sampleList,
                                          score_dict)
+            if result != '0':
+                raise APIException("物证文件与样本比对程序CalculateSimilarity出错")
             for id, score in score_dict.items():
                 match = exploMatchGCMS.objects.get_or_create(exploEviGCMSFile_id=eviFileId,
                                                              exploSampleGCMSFile_id=id)
@@ -408,6 +450,8 @@ class startMatch(APIView):
 
 
             result = ComScore(score_dictSim, result_dict)
+            if result != '0':
+                raise APIException("物证与各个样本的综合得分程序 ComScore出错")
             resultDict = result_dict
             for id, score in result_dict.items():
                 match = exploSynMatch.objects.get_or_create(exploEvi_id=eviFile.exploEviId, exploSample_id=id)
@@ -425,11 +469,17 @@ class startMatch(APIView):
             result_dict = {}
             querysetList = []
 
+            # 容错
+            if devEviFTIRTestFile.objects.filter(id=eviFileId).count() != 1:
+                raise APIException("爆炸物证文件id输入错误，无法找到对应文件")
+
             gci(os.path.join(MEDIA_ROOT, "file/devPartSampleFTIRTestFile/handled"), sampleList)
             eviFile = devEviFTIRTestFile.objects.get(id=eviFileId)
 
             result = CalculateSimilarity('FTIR', os.path.join(MEDIA_ROOT, str(eviFile.txtHandledURL)), sampleList,
                                          score_dict)
+            if result != '0':
+                raise APIException("物证文件与样本比对程序CalculateSimilarity出错")
             for id, score in score_dict.items():
                 match = devMatchFTIR.objects.get_or_create(devEviFTIRTestFile_id=eviFileId,
                                                            devPartSampleFTIRTestFile_id=id)
@@ -440,6 +490,8 @@ class startMatch(APIView):
 
             comDict(2, eviFile.devEviFTIR.devEvi_id, score_dictSim)
             result =  ComScore(score_dictSim, result_dict)
+            if result != '0':
+                raise APIException("物证与各个样本的综合得分程序 ComScore出错")
             resultDict = result_dict
             for id, score in result_dict.items():
                 match = devCompMatch.objects.get_or_create(devEvi_id=eviFile.devEviId, devPartSample_id=id)
@@ -457,11 +509,17 @@ class startMatch(APIView):
             result_dict = {}
             querysetList = []
 
+            # 容错
+            if devEviRamanTestFile.objects.filter(id=eviFileId).count() != 1:
+                raise APIException("爆炸物证文件id输入错误，无法找到对应文件")
+
             gci(os.path.join(MEDIA_ROOT, "file/devPartSampleRamanTestFile/handled"), sampleList)
             eviFile = devEviRamanTestFile.objects.get(id=eviFileId)
 
             result = CalculateSimilarity('RAMAN', os.path.join(MEDIA_ROOT, str(eviFile.txtHandledURL)), sampleList,
                                          score_dict)
+            if result != '0':
+                raise APIException("物证文件与样本比对程序CalculateSimilarity出错")
             for id, score in score_dict.items():
                 match = devMatchRaman.objects.get_or_create(devEviRamanTestFile_id=eviFileId,
                                                             devPartSampleRamanTestFile_id=id)
@@ -472,6 +530,8 @@ class startMatch(APIView):
 
             comDict(2, eviFile.devEviRaman.devEvi_id, score_dictSim)
             result =  ComScore(score_dictSim, result_dict)
+            if result != '0':
+                raise APIException("物证与各个样本的综合得分程序 ComScore出错")
             resultDict = result_dict
             for id, score in result_dict.items():
                 match = devCompMatch.objects.get_or_create(devEvi_id=eviFile.devEviId, devPartSample_id=id)
@@ -489,11 +549,18 @@ class startMatch(APIView):
             result_dict = {}
             querysetList = []
 
+            # 容错
+            if devEviXRFTestFile.objects.filter(id=eviFileId).count() != 1:
+                raise APIException("爆炸物证文件id输入错误，无法找到对应文件")
+
             gci(os.path.join(MEDIA_ROOT, "file/devPartSampleXRFTestFile/handled"), sampleList)
             eviFile = devEviXRFTestFile.objects.get(id=eviFileId)
 
             result = CalculateSimilarity('XRF', os.path.join(MEDIA_ROOT, str(eviFile.handledURL)), sampleList,
                                          score_dict)
+            if result != '0':
+                raise APIException("物证文件与样本比对程序CalculateSimilarity出错")
+
             for id, score in score_dict.items():
                 match = devMatchXRF.objects.get_or_create(devEviXRFTestFile_id=eviFileId,
                                                           devPartSampleXRFTestFile_id=id)
@@ -504,6 +571,8 @@ class startMatch(APIView):
 
             comDict(2, eviFile.devEviXRF.devEvi_id, score_dictSim)
             result =  ComScore(score_dictSim, result_dict)
+            if result != '0':
+                raise APIException("物证与各个样本的综合得分程序 ComScore出错")
             resultDict = result_dict
             for id, score in result_dict.items():
                 match = devCompMatch.objects.get_or_create(devEvi_id=eviFile.devEviId, devPartSample_id=id)
@@ -527,126 +596,127 @@ class startMatch(APIView):
         # return pg.get_paginated_response(ser.data)  # 返回上一页或者下一页
         # return  Response("success")
 
-# 综合表维护接口（重新生成综合表）
-class SynUpdate(APIView):
-    # 生成综合匹配的各自匹配的结果列表
-    # type = 1/2,对应炸药和爆炸装置，id即为物证的id，comDict是那个列表
-    def post(self,request):
-        # 此时type等都是str类型哦
-        type = int(request.POST["type"])
-        eviFileId = int(request.POST["eviFileId"])
-        # 没法直接用type当成类去做filter
-        # result = type.objects.all()
-        # python没有switch case
-        #创建分页对象
-        pg = MyPageNumberPagination()
-        def comDict(type, eviId, comDictDict):
-            if type == 1:
-                FTIRs = []
-                RAMANs = []
-                XRDs = []
-                XRFs = []
-                GCMSs = []
+# # 综合表维护接口（重新生成综合表）
+# class SynUpdate(APIView):
+#     # 生成综合匹配的各自匹配的结果列表
+#     # type = 1/2,对应炸药和爆炸装置，id即为物证的id，comDict是那个列表
+#     def post(self,request):
+#         # 此时type等都是str类型哦
+#         type = int(request.POST["type"])
+#         eviFileId = int(request.POST["eviFileId"])
+#         # 没法直接用type当成类去做filter
+#         # result = type.objects.all()
+#         # python没有switch case
+#         #创建分页对象
+#         pg = MyPageNumberPagination()
+#         def comDict(type, eviId, comDictDict):
+#             if type == 1:
+#                 FTIRs = []
+#                 RAMANs = []
+#                 XRDs = []
+#                 XRFs = []
+#                 GCMSs = []
+#
+#                 comListFTIR = []
+#                 comListRAMAN = []
+#                 comListXRD = []
+#                 comListXRF = []
+#                 comListGCMS = []
+#
+#                 FTIRs = exploMatchFTIR.objects.filter(exploEviFTIRTestFile__exploEviId=eviId)
+#                 for FTIR in FTIRs:
+#                     idScoreList = []
+#                     idScoreList.append(FTIR.exploSampleFTIRTestFile.exploSampleFTIR.exploSample_id)
+#                     idScoreList.append(FTIR.Score)
+#                     comListFTIR.append(idScoreList)
+#                 comDictDict["FTIR"] = comListFTIR
+#
+#                 RAMANs = exploMatchRaman.objects.filter(exploEviRamanTestFile__exploEviId=eviId)
+#                 for RAMAN in RAMANs:
+#                     idScoreList = []
+#                     idScoreList.append(RAMAN.exploSampleRamanTestFile.exploSampleRaman.exploSample_id)
+#                     idScoreList.append(RAMAN.Score)
+#                     comListRAMAN.append(idScoreList)
+#                 comDictDict["RAMAN"] = comListRAMAN
+#
+#                 XRDs = exploMatchXRD.objects.filter(exploEviXRDTestFile__exploEviId=eviId)
+#                 for XRD in XRDs:
+#                     idScoreList = []
+#                     idScoreList.append(XRD.exploSampleXRDTestFile.exploSampleXRD.exploSample_id)
+#                     idScoreList.append(XRD.Score)
+#                     comListXRD.append(idScoreList)
+#                 comDictDict["XRD"] = comListXRD
+#
+#                 XRFs = exploMatchXRF.objects.filter(exploEviXRFTestFile__exploEviId=eviId)
+#                 for XRF in XRFs:
+#                     idScoreList = []
+#                     idScoreList.append(XRF.exploSampleXRFTestFile.exploSampleXRF.exploSample_id)
+#                     idScoreList.append(XRF.averScore)
+#                     comListXRF.append(idScoreList)
+#                 comDictDict["XRF"] = comListXRF
+#
+#                 GCMSs = exploMatchGCMS.objects.filter(exploEviGCMSFile__exploEviId=eviId)
+#                 for GCMS in GCMSs:
+#                     idScoreList = []
+#                     idScoreList.append(GCMS.exploSampleGCMSFile.exploSampleGCMS.exploSample_id)
+#                     idScoreList.append(GCMS.Score)
+#                     comListGCMS.append(idScoreList)
+#                 comDictDict["GCMS"] = comListGCMS
+#             elif type == 2:
+#                 FTIRs = []
+#                 RAMANs = []
+#                 XRFs = []
+#
+#                 comListFTIR = []
+#                 comListRAMAN = []
+#                 comListXRF = []
+#
+#                 FTIRs = devMatchFTIR.objects.filter(devEviFTIRTestFile__devEviId=eviId)
+#                 for FTIR in FTIRs:
+#                     idScoreList = []
+#                     idScoreList.append(FTIR.devPartSampleFTIRTestFile.devPartSampleFTIR.devPartSample_id)
+#                     idScoreList.append(FTIR.Score)
+#                     comListFTIR.append(idScoreList)
+#                 comDictDict["FTIR"] = comListFTIR
+#
+#                 RAMANs = devMatchRaman.objects.filter(devEviRamanTestFile__devEviId=eviId)
+#                 for RAMAN in RAMANs:
+#                     idScoreList = []
+#                     idScoreList.append(RAMAN.devPartSampleRamanTestFile.devPartSampleRaman.devPartSample_id)
+#                     idScoreList.append(RAMAN.Score)
+#                     comListRAMAN.append(idScoreList)
+#                 comDictDict["RAMAN"] = comListRAMAN
+#
+#                 XRFs = devMatchXRF.objects.filter(devEviXRFTestFile__devEviId=eviId)
+#                 for XRF in XRFs:
+#                     idScoreList = []
+#                     idScoreList.append(XRF.devPartSampleXRFTestFile.devPartSampleXRF.devPartSample_id)
+#                     idScoreList.append(XRF.averScore)
+#                     comListXRF.append(idScoreList)
+#                 comDictDict["XRF"] = comListXRF
+#
+#
+#
+#         # comDict(1, eviFile.exploEviId, score_dictSim)
+#         #
+#         # result = ComScore(score_dictSim, result_dict)
+#         # resultDict = result_dict
+#         # for id, score in result_dict.items():
+#         #     match = exploSynMatch.objects.get_or_create(exploEvi_id=eviFile.exploEviId, exploSample_id=id)
+#         #     matchObj = match[0]
+#         #     matchObj.Score = score
+#         #     matchObj.save()
+#         # pager_roles = pg.paginate_queryset(queryset=querysetList, request=request, view=self)
+#         # ser = exploMatchFTIRSerializer(instance=pager_roles, many=True)
+#         # return pg.get_paginated_response(ser.data)  # 返回上一页或者下一页
+#         #
 
-                comListFTIR = []
-                comListRAMAN = []
-                comListXRD = []
-                comListXRF = []
-                comListGCMS = []
 
-                FTIRs = exploMatchFTIR.objects.filter(exploEviFTIRTestFile__exploEviId=eviId)
-                for FTIR in FTIRs:
-                    idScoreList = []
-                    idScoreList.append(FTIR.exploSampleFTIRTestFile.exploSampleFTIR.exploSample_id)
-                    idScoreList.append(FTIR.Score)
-                    comListFTIR.append(idScoreList)
-                comDictDict["FTIR"] = comListFTIR
-
-                RAMANs = exploMatchRaman.objects.filter(exploEviRamanTestFile__exploEviId=eviId)
-                for RAMAN in RAMANs:
-                    idScoreList = []
-                    idScoreList.append(RAMAN.exploSampleRamanTestFile.exploSampleRaman.exploSample_id)
-                    idScoreList.append(RAMAN.Score)
-                    comListRAMAN.append(idScoreList)
-                comDictDict["RAMAN"] = comListRAMAN
-
-                XRDs = exploMatchXRD.objects.filter(exploEviXRDTestFile__exploEviId=eviId)
-                for XRD in XRDs:
-                    idScoreList = []
-                    idScoreList.append(XRD.exploSampleXRDTestFile.exploSampleXRD.exploSample_id)
-                    idScoreList.append(XRD.Score)
-                    comListXRD.append(idScoreList)
-                comDictDict["XRD"] = comListXRD
-
-                XRFs = exploMatchXRF.objects.filter(exploEviXRFTestFile__exploEviId=eviId)
-                for XRF in XRFs:
-                    idScoreList = []
-                    idScoreList.append(XRF.exploSampleXRFTestFile.exploSampleXRF.exploSample_id)
-                    idScoreList.append(XRF.averScore)
-                    comListXRF.append(idScoreList)
-                comDictDict["XRF"] = comListXRF
-
-                GCMSs = exploMatchGCMS.objects.filter(exploEviGCMSFile__exploEviId=eviId)
-                for GCMS in GCMSs:
-                    idScoreList = []
-                    idScoreList.append(GCMS.exploSampleGCMSFile.exploSampleGCMS.exploSample_id)
-                    idScoreList.append(GCMS.Score)
-                    comListGCMS.append(idScoreList)
-                comDictDict["GCMS"] = comListGCMS
-            elif type == 2:
-                FTIRs = []
-                RAMANs = []
-                XRFs = []
-
-                comListFTIR = []
-                comListRAMAN = []
-                comListXRF = []
-
-                FTIRs = devMatchFTIR.objects.filter(devEviFTIRTestFile__devEviId=eviId)
-                for FTIR in FTIRs:
-                    idScoreList = []
-                    idScoreList.append(FTIR.devPartSampleFTIRTestFile.devPartSampleFTIR.devPartSample_id)
-                    idScoreList.append(FTIR.Score)
-                    comListFTIR.append(idScoreList)
-                comDictDict["FTIR"] = comListFTIR
-
-                RAMANs = devMatchRaman.objects.filter(devEviRamanTestFile__devEviId=eviId)
-                for RAMAN in RAMANs:
-                    idScoreList = []
-                    idScoreList.append(RAMAN.devPartSampleRamanTestFile.devPartSampleRaman.devPartSample_id)
-                    idScoreList.append(RAMAN.Score)
-                    comListRAMAN.append(idScoreList)
-                comDictDict["RAMAN"] = comListRAMAN
-
-                XRFs = devMatchXRF.objects.filter(devEviXRFTestFile__devEviId=eviId)
-                for XRF in XRFs:
-                    idScoreList = []
-                    idScoreList.append(XRF.devPartSampleXRFTestFile.devPartSampleXRF.devPartSample_id)
-                    idScoreList.append(XRF.averScore)
-                    comListXRF.append(idScoreList)
-                comDictDict["XRF"] = comListXRF
-
-
-
-        # comDict(1, eviFile.exploEviId, score_dictSim)
-        #
-        # result = ComScore(score_dictSim, result_dict)
-        # resultDict = result_dict
-        # for id, score in result_dict.items():
-        #     match = exploSynMatch.objects.get_or_create(exploEvi_id=eviFile.exploEviId, exploSample_id=id)
-        #     matchObj = match[0]
-        #     matchObj.Score = score
-        #     matchObj.save()
-        # pager_roles = pg.paginate_queryset(queryset=querysetList, request=request, view=self)
-        # ser = exploMatchFTIRSerializer(instance=pager_roles, many=True)
-        # return pg.get_paginated_response(ser.data)  # 返回上一页或者下一页
-        #
-
-# 将炸药核准结果变成报告记录接口
-# 和在核准那里不同的是核准那里要根据该条记录是否被专家核准过等判断是否要在报告表中新增一条记录或者将专家核准的结果把普通用户核准的结果替换
-# 而这里报告生成的方式是无论是谁核准的，在综合表中的记录都拿出来（通过id的形式），到时候报告表就根据这些id来生成。
-# 所以核准（综合表）只是记录核准情况，并不会对报告表中的记录产生什么影响，等到生成报告表时才会去查找所有核准过的综合记录的id
 class createExploReport(APIView):
+    # 将炸药核准结果变成报告记录接口
+    # 和在核准那里不同的是核准那里要根据该条记录是否被专家核准过等判断是否要在报告表中新增一条记录或者将专家核准的结果把普通用户核准的结果替换
+    # 而这里报告生成的方式是无论是谁核准的，在综合表中的记录都拿出来（通过id的形式），到时候报告表就根据这些id来生成。
+    # 所以核准（综合表）只是记录核准情况，并不会对报告表中的记录产生什么影响，等到生成报告表时才会去查找所有核准过的综合记录的id
     def post(self,request):
         exploId = int(request.POST["exploId"])
         # 将报告表中的该物证对应的记录拿出来，如果没有就按照物证序号建立一条记录

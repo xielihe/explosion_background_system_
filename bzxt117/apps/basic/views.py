@@ -146,13 +146,21 @@ class CustomBackend(ModelBackend):
     自定义用户验证
     """
     def authenticate(self, username=None, password=None, **kwargs):
-        try:
+        # try:
             users = userProfile.objects.filter(isDelete=False)
-            user = users.get(username=username)
-            if user.check_password(password):
-                return user
-        except Exception as e:
-            return None
+            num = users.filter(username=username).count()
+            if  num == 0 :
+                raise APIException("用户名不存在，请重新输入")
+            elif num == 1:
+                user = users.get(username=username)
+                if user.check_password(password):
+                    return user
+                else:
+                    raise APIException("密码错误，请重新输入。")
+            else:
+                raise APIException("有人修改过数据库导致用户名不唯一，请检查")
+        # except Exception as e:
+        #     return None
 
 class UserViewset(viewsets.ModelViewSet):
     """

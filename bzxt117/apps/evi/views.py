@@ -358,7 +358,10 @@ class exploEviGCMSTestFileViewset(viewsets.ModelViewSet):
             #         d = os.path.join(dirPath, file)
             #         fileDel = exploSampleGCMSTestFile.objects.filter(txtURL = d)
             #         fileDel.delete()
-            shutil.rmtree(filePath)
+            if os.path.exists(filePath) == True:
+                shutil.rmtree(filePath)
+            else:
+                raise APIException("想要删除的GC_MS文件夹路径不存在")
         # synMatchs = exploSynMatch.objects.filter(exploEvi = instance.exploEviGCMS.exploEvi )
         # for synMatch in synMatchs:
         #     synMatch.delete()

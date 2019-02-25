@@ -47,7 +47,7 @@ class LsitExploSampleFTIRTestFileSerializer(serializers.Serializer):
     FTIRs = serializers.ListField(
         child=serializers.FileField(max_length=100000, allow_empty_file=False, use_url=True),
         write_only=True )
-    exploSampleFTIR = serializers.PrimaryKeyRelatedField(required=True,write_only=True, queryset=exploSampleFTIR.objects.all())
+    exploSampleFTIR = serializers.IntegerField(required=True, write_only=True)
     #
     # return_FTIRs = serializers.ListField(
     #     child=serializers.CharField(max_length=10000,),
@@ -56,18 +56,29 @@ class LsitExploSampleFTIRTestFileSerializer(serializers.Serializer):
     # 增添和更新都必须是多文件，且这个更新和其他更新不同，更新会覆盖，但新建不会覆盖，每次新建上传完都会进行取平均，替换平均文件
     def create(self, validated_data):
         FTIRs = validated_data.get('FTIRs')
-        exploSampleFTIR = validated_data.get('exploSampleFTIR')
-        result = []
+        exploSampleFTIRId = validated_data.get('exploSampleFTIR')
+
+        # 差错检验
+        if len(FTIRs) == 0:
+            raise APIException("没有上传FTIR文件，请上传")
+        if exploSampleFTIR.objects.filter(id=int(exploSampleFTIRId)).count() != 1:
+            raise APIException("填入的炸药FTIR序号不存在，请重新输入")
         for index, url in enumerate(FTIRs):
             if os.path.splitext(url.name)[-1] != '.txt':
                 raise APIException("有FTIR文件不是txt格式，请检查。")
+
+        result = []
+        exploSampleFTIR1 = exploSampleFTIR.objects.get(id=int(exploSampleFTIRId))
+
         for index, url in enumerate(FTIRs):
-            FTIR = exploSampleFTIRTestFile.objects.create(txtURL=url,exploSampleFTIR = exploSampleFTIR)
-            result =  preProcess('FTIR',exploSampleFTIR.id,FTIR.id,os.path.join(MEDIA_ROOT,str(FTIR.txtURL)))
+            FTIR = exploSampleFTIRTestFile.objects.create(txtURL=url,exploSampleFTIR = exploSampleFTIR1)
+            result =  preProcess('FTIR',exploSampleFTIR1.id,FTIR.id,os.path.join(MEDIA_ROOT,str(FTIR.txtURL)))
             if result[0] == '0' :
                 FTIR.txtHandledURL = result[1]
                 FTIR.save()
             # 文件预处理，更新FTIR匹配表和综合匹配表的结果
+            else:
+                raise APIException("预处理过程出错")
 
         # 对上传的文档预处理取平均，再将取完平均的回填
         return {}
@@ -109,23 +120,33 @@ class LsitExploSampleRamanTestFileSerializer(serializers.Serializer):
     Ramans = serializers.ListField(
         child=serializers.FileField(max_length=100000, allow_empty_file=False, use_url=True),
         write_only=True )
-    exploSampleRaman = serializers.PrimaryKeyRelatedField(required=True, write_only=True, queryset=exploSampleRaman.objects.all())
+    exploSampleRaman = serializers.IntegerField(required=True, write_only=True)
 
     # 增添和更新都必须是多文件，且这个更新和其他更新不同，更新会覆盖，但新建不会覆盖，每次新建上传完都会进行取平均，替换平均文件
     def create(self, validated_data):
         Ramans = validated_data.get('Ramans')
-        exploSampleRaman = validated_data.get('exploSampleRaman')
-        result = []
+        exploSampleRamanId = validated_data.get('exploSampleRaman')
+
+        if len(Ramans) == 0:
+            raise APIException("没有上传Raman文件，请上传")
+        if exploSampleRaman.objects.filter(id=int(exploSampleRamanId)).count() != 1:
+            raise APIException("填入的炸药Raman序号不存在，请重新输入")
         for index, url in enumerate(Ramans):
             if os.path.splitext(url.name)[-1] != '.txt':
                 raise APIException("有Raman文件不是txt格式，请检查。")
+
+        result = []
+        exploSampleRaman1 = exploSampleRaman.objects.get(id=int(exploSampleRamanId))
+
         for index, url in enumerate(Ramans):
-            Raman = exploSampleRamanTestFile.objects.create(txtURL=url,exploSampleRaman = exploSampleRaman)
-            result =  preProcess('RAMAN',exploSampleRaman.id,Raman.id,os.path.join(MEDIA_ROOT,str(Raman.txtURL)))
+            Raman = exploSampleRamanTestFile.objects.create(txtURL=url,exploSampleRaman = exploSampleRaman1)
+            result =  preProcess('RAMAN',exploSampleRaman1.id,Raman.id,os.path.join(MEDIA_ROOT,str(Raman.txtURL)))
             if result[0] == '0' :
                 Raman.txtHandledURL = result[1]
                 Raman.save()
             # 文件预处理，更新Raman匹配表和综合匹配表的结果
+            else:
+                raise APIException("预处理过程出错")
         return {}
 class exploSampleRamanSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(
@@ -165,23 +186,34 @@ class LsitExploSampleXRDTestFileSerializer(serializers.Serializer):
     XRDs = serializers.ListField(
         child=serializers.FileField(max_length=100000, allow_empty_file=False, use_url=True),
         write_only=True )
-    exploSampleXRD = serializers.PrimaryKeyRelatedField(required=True,write_only=True, queryset=exploSampleXRD.objects.all())
+    exploSampleXRD = serializers.IntegerField(required=True, write_only=True)
 
     # 增添和更新都必须是多文件，且这个更新和其他更新不同，更新会覆盖，但新建不会覆盖，每次新建上传完都会进行取平均，替换平均文件
     def create(self, validated_data):
         XRDs = validated_data.get('XRDs')
         exploSampleXRD = validated_data.get('exploSampleXRD')
-        result = []
+
+        # 差错检验
+        if len(XRDs) == 0:
+            raise APIException("没有上传XRD文件，请上传")
+        if exploSampleXRD.objects.filter(id=int(exploSampleXRDId)).count() != 1:
+            raise APIException("填入的炸药XRD序号不存在，请重新输入")
         for index, url in enumerate(XRDs):
             if os.path.splitext(url.name)[-1] != '.txt':
                 raise APIException("有XRD文件不是txt格式，请检查。")
+
+        result = []
+        exploSampleXRD1 = exploSampleXRD.objects.get(id=int(exploSampleXRDId))
+
         for index, url in enumerate(XRDs):
-            XRD = exploSampleXRDTestFile.objects.create(txtURL=url,exploSampleXRD = exploSampleXRD)
-            result =  preProcess('XRD',exploSampleXRD.id,XRD.id,os.path.join(MEDIA_ROOT,str(XRD.txtURL)))
+            XRD = exploSampleXRDTestFile.objects.create(txtURL=url,exploSampleXRD = exploSampleXRD1)
+            result =  preProcess('XRD',exploSampleXRD1.id,XRD.id,os.path.join(MEDIA_ROOT,str(XRD.txtURL)))
             if result[0] == '0':
                 XRD.txtHandledURL = result[1]
                 XRD.save()
             # 文件预处理，更新XRD匹配表和综合匹配表的结果
+            else:
+                raise APIException("预处理过程出错")
         return {}
 class exploSampleXRDSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(
@@ -223,25 +255,36 @@ class LsitExploSampleXRFTestFileSerializer(serializers.Serializer):
         child=serializers.FileField(max_length=100000, allow_empty_file=False, use_url=True),
         write_only=True )
     #用于接收外键
-    exploSampleXRF = serializers.PrimaryKeyRelatedField(required=True, write_only=True,queryset=exploSampleXRF.objects.all())
+    exploSampleXRF = serializers.IntegerField(required=True, write_only=True)
+
     def create(self, validated_data):
         XRFs = validated_data.get('XRFs')
-        exploSampleXRF = validated_data.get('exploSampleXRF')
+        exploSampleXRFId = validated_data.get('exploSampleXRF')
         # 新建重复也不可以覆盖！！否则就和修改一样了啊
         # exploSampleXRFTestFiles = exploSampleXRFTestFile.objects.filter(exploSampleXRF = exploSampleXRF)
         # for exploSampleXRFTestFileUp in exploSampleXRFTestFiles:
         #     exploSampleXRFTestFileUp.delete()
-        result = []
+        # 差错检验
+        if len(XRFs) == 0:
+            raise APIException("没有上传XRF文件，请上传")
+        if exploSampleXRF.objects.filter(id=int(exploSampleXRFId)).count() != 1:
+            raise APIException("填入的炸药XRF序号不存在，请重新输入")
         for index, url in enumerate(XRFs):
             if os.path.splitext(url.name)[-1] != '.xlsx':
                 raise APIException("有XRF文件不是excel格式，请检查。")
+
+        result = []
+        exploSampleXRF1 = exploSampleXRF.objects.get(id=int(exploSampleXRFId))
+
         for index, url in enumerate(XRFs):
             # 会自动填入exploSampleId
-            XRF = exploSampleXRFTestFile.objects.create(excelURL=url,exploSampleXRF = exploSampleXRF)
-            result = preProcess('XRF',exploSampleXRF.id,XRF.id,os.path.join(MEDIA_ROOT,str(XRF.excelURL)))
+            XRF = exploSampleXRFTestFile.objects.create(excelURL=url,exploSampleXRF = exploSampleXRF1)
+            result = preProcess('XRF',exploSampleXRF1.id,XRF.id,os.path.join(MEDIA_ROOT,str(XRF.excelURL)))
             if result[0] == '0':
                 XRF.handledURL = result[1]
                 XRF.save()
+            else:
+                raise APIException("预处理过程出错")
         return {}
 class exploSampleXRFSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(
@@ -290,11 +333,11 @@ class LsitExploSampleGCMSTestFileSerializer(serializers.Serializer):
         child=serializers.FileField(max_length=100000, allow_empty_file=False, use_url=True),
         write_only=True )
     #用于接收外键,GCMSTestFile的外键也是GCMS，AverFile只是用来取平均的
-    exploSampleGCMS = serializers.PrimaryKeyRelatedField(required=True, write_only=True,queryset=exploSampleGCMS.objects.all())
+    exploSampleGCMS = serializers.IntegerField(required=True, write_only=True)
 
     def create(self, validated_data):
         GCMSs = validated_data.get('GCMSs')
-        exploSampleGCMS = validated_data.get('exploSampleGCMS')
+        exploSampleGCMSId = validated_data.get('exploSampleGCMS')
         # type = validated_data.get('type')
         # 新建重复也不可以覆盖！！否则就和修改一样了啊
         # exploSampleGCMSTestFiles = exploSampleGCMSTestFile.objects.filter(exploSampleGCMS = exploSampleGCMS)
@@ -305,21 +348,35 @@ class LsitExploSampleGCMSTestFileSerializer(serializers.Serializer):
         # GCMS3s = []
         filePath = ""
         TICId = 0
-        result = []
+        nameList = []
+
+        # 差错检验
+        if len(GCMSs) == 0:
+            raise APIException("没有上传GC_MS文件，请上传")
+        if exploSampleGCMS.objects.filter(id=int(exploSampleGCMSId)).count() != 1:
+            raise APIException("填入的炸药GC_MS序号不存在，请重新输入")
         for index, url in enumerate(GCMSs):
             if os.path.splitext(url.name)[-1] != '.txt':
                 raise APIException("有GCMS文件不是txt格式，请检查。")
+            name = url.name
+            type = os.path.splitext(name)[0]
+            nameList.append(type)
+        if "TIC" not in nameList:
+            raise APIException("上传的GC_MS文件中没有TIC.txt文档，请重新上传")
+
+        exploSampleGCMS1 = exploSampleGCMS.objects.get(id=int(exploSampleGCMSId))
+
         for index, url in enumerate(GCMSs):
             # 会自动填入exploSampleId
             # 从url中知道type，如果是TIC的type，那么就创建一个以此id和样本id联合的文件夹用来存放这一批的文档，
             # 先存下来，再移动
-            GCMS = exploSampleGCMSTestFile.objects.create(txtURL=url, exploSampleGCMS = exploSampleGCMS)
+            GCMS = exploSampleGCMSTestFile.objects.create(txtURL=url, exploSampleGCMS = exploSampleGCMS1)
             name = url.name
             type = os.path.splitext(name)[0]
             GCMS.type = type
             GCMS.save()
             if type == "TIC":
-                filePath = os.path.join(MEDIA_ROOT,"file/exploSampleGCMSTestFile/%d_%d/" % (exploSampleGCMS.exploSample_id,GCMS.id))
+                filePath = os.path.join(MEDIA_ROOT,"file/exploSampleGCMSTestFile/%d_%d/" % (exploSampleGCMS1.exploSample_id,GCMS.id))
                 os.makedirs(filePath)
                 TICId = GCMS.id
             GCMS2s.append(GCMS)
@@ -327,11 +384,13 @@ class LsitExploSampleGCMSTestFileSerializer(serializers.Serializer):
             prePath =os.path.join(MEDIA_ROOT,str(GCMS2.txtURL))
             name = os.path.basename(prePath)
             newPath = os.path.join(filePath,name)
+            if os.path.exists(prePath) == False:
+                raise APIException("上传的GC_MS文件夹路径被更改，找不到文件夹，无法进行预处理")
             shutil.move(prePath, newPath)
             GCMS2.txtURL = newPath
             GCMS2.save()
-        GCMSFile = exploSampleGCMSFile.objects.create(exploSampleGCMS = exploSampleGCMS)
-        result = preProcess('GCMS',exploSampleGCMS.id, GCMSFile.id, filePath)
+        GCMSFile = exploSampleGCMSFile.objects.create(exploSampleGCMS = exploSampleGCMS1)
+        result = preProcess('GCMS',exploSampleGCMS1.id, GCMSFile.id, filePath)
         if result[0] == '0':
             GCMSFile.txtHandledURL = result[1]
             GCMSFile.save()
@@ -343,6 +402,8 @@ class LsitExploSampleGCMSTestFileSerializer(serializers.Serializer):
         #     GCMS3s.append(blog.data['handledData'])
         # 处理完一批我就删掉？
         # 对上传的文档预处理取平均，再将取完平均的回填到exploSampleGCMSAverFile
+        else:
+            raise APIException("预处理过程出错")
         return {}
 class exploSampleGCMSSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(
@@ -430,23 +491,32 @@ class LsitdevPartSampleFTIRTestFileSerializer(serializers.Serializer):
         child=serializers.FileField(max_length=100000, allow_empty_file=False, use_url=True),
         write_only=True )
 
-    devPartSampleFTIR = serializers.PrimaryKeyRelatedField(required=True, write_only=True,queryset=devPartSampleFTIR.objects.all())
+    devPartSampleFTIR =  serializers.IntegerField(required=True, write_only=True)
     # 增添和更新都必须是多文件，且这个更新和其他更新不同，更新会覆盖，但新建不会覆盖，每次新建上传完都会进行取平均，替换平均文件
     def create(self, validated_data):
         FTIRs = validated_data.get('FTIRs')
-        devPartSampleFTIR = validated_data.get('devPartSampleFTIR')
-        result = []
+        devPartSampleFTIRId = validated_data.get('devPartSampleFTIR')
+
+        # 差错检验
+        if len(FTIRs) == 0:
+            raise APIException("没有上传FTIR文件，请上传")
+        if devPartSampleFTIR.objects.filter(id=int(devPartSampleFTIRId)).count() != 1:
+            raise APIException("填入的爆炸装置零件的FTIR序号不存在，请重新输入")
         for index, url in enumerate(FTIRs):
             if os.path.splitext(url.name)[-1] != '.txt':
                 raise APIException("有FTIR文件不是txt格式，请检查。")
+        result = []
+        devPartSampleFTIR1 = devPartSampleFTIR.objects.get(id=int(devPartSampleFTIRId))
+
         for index, url in enumerate(FTIRs):
-            devPartSampleId = devPartSampleFTIR.devPartSample_id
-            FTIR = devPartSampleFTIRTestFile.objects.create(txtURL=url,devPartSampleFTIR = devPartSampleFTIR)
-            result = preProcess('FTIR',devPartSampleFTIR.id,FTIR.id,os.path.join(MEDIA_ROOT,str(FTIR.txtURL)))
+            devPartSampleId = devPartSampleFTIR1.devPartSample_id
+            FTIR = devPartSampleFTIRTestFile.objects.create(txtURL=url,devPartSampleFTIR = devPartSampleFTIR1)
+            result = preProcess('FTIR',devPartSampleFTIR1.id,FTIR.id,os.path.join(MEDIA_ROOT,str(FTIR.txtURL)))
             if result[0] == '0':
                 FTIR.txtHandledURL = result[1]
                 FTIR.save()
-
+            else:
+                raise APIException("预处理过程出错")
         # 对上传的文档预处理取平均，再将取完平均的回填
         return {}
 class devPartSampleFTIRSerializer(serializers.ModelSerializer):
@@ -490,23 +560,33 @@ class LsitdevPartSampleRamanTestFileSerializer(serializers.Serializer):
     Ramans = serializers.ListField(
         child=serializers.FileField(max_length=100000, allow_empty_file=False, use_url=True),
         write_only=True )
-    devPartSampleRaman = serializers.PrimaryKeyRelatedField(required=True, write_only=True,queryset=devPartSampleRaman.objects.all())
+    devPartSampleRaman = serializers.IntegerField(required=True, write_only=True)
     # 增添和更新都必须是多文件，且这个更新和其他更新不同，更新会覆盖，但新建不会覆盖，每次新建上传完都会进行取平均，替换平均文件
     def create(self, validated_data):
         Ramans = validated_data.get('Ramans')
-        devPartSampleRaman = validated_data.get('devPartSampleRaman')
-        result = []
+        devPartSampleRamanId = validated_data.get('devPartSampleRaman')
+
+        if len(Ramans) == 0:
+            raise APIException("没有上传Raman文件，请上传")
+        if devPartSampleRaman.objects.filter(id=int(devPartSampleRamanId)).count() != 1:
+            raise APIException("填入的爆炸装置Raman序号不存在，请重新输入")
         for index, url in enumerate(Ramans):
             if os.path.splitext(url.name)[-1] != '.txt':
                 raise APIException("有Raman文件不是txt格式，请检查。")
+
+        result = []
+        devPartSampleRaman1 = devPartSampleRaman.objects.get(id=int(devPartSampleRamanId))
+
         for index, url in enumerate(Ramans):
-            devPartSampleId = devPartSampleRaman.devPartSample_id
-            Raman = devPartSampleRamanTestFile.objects.create(txtURL=url,devPartSampleRaman = devPartSampleRaman)
-            result = preProcess('RAMAN',devPartSampleRaman.id,Raman.id,os.path.join(MEDIA_ROOT,str(Raman.txtURL)))
+            devPartSampleId = devPartSampleRaman1.devPartSample_id
+            Raman = devPartSampleRamanTestFile.objects.create(txtURL=url,devPartSampleRaman = devPartSampleRaman1)
+            result = preProcess('RAMAN',devPartSampleRaman1.id,Raman.id,os.path.join(MEDIA_ROOT,str(Raman.txtURL)))
             if result[0] == '0':
                 Raman.txtHandledURL = result[1]
                 Raman.save()
             # 文件预处理，更新Raman匹配表和综合匹配表的结果
+            else:
+                raise APIException("预处理过程出错")
 
         return {}
 class devPartSampleRamanSerializer(serializers.ModelSerializer):
@@ -551,24 +631,35 @@ class LsitdevPartSampleXRFTestFileSerializer(serializers.Serializer):
         child=serializers.FileField(max_length=100000, allow_empty_file=False, use_url=True),
         write_only=True )
 
-    devPartSampleXRF = serializers.PrimaryKeyRelatedField(required=True, write_only=True ,queryset=devPartSampleXRF.objects.all())
+    devPartSampleXRF = serializers.IntegerField(required=True, write_only=True)
     # 增添和更新都必须是多文件，且这个更新和其他更新不同，更新会覆盖，但新建不会覆盖，每次新建上传完都会进行取平均，替换平均文件
     def create(self, validated_data):
         XRFs = validated_data.get('XRFs')
-        devPartSampleXRF = validated_data.get('devPartSampleXRF')
-        result = []
+        devPartSampleXRFId = validated_data.get('devPartSampleXRF')
+
+        # 差错检验
+        if len(XRFs) == 0:
+            raise APIException("没有上传XRF文件，请上传")
+        if devPartSampleXRF.objects.filter(id=int(devPartSampleXRFId)).count() != 1:
+            raise APIException("填入的爆炸装置XRF序号不存在，请重新输入")
         for index, url in enumerate(XRFs):
             if os.path.splitext(url.name)[-1] != '.xlsx':
                 raise APIException("有XRF文件不是excel格式，请检查。")
+
+        result = []
+        devPartSampleXRF1 = devPartSampleXRF.objects.get(id=int(devPartSampleXRFId))
+
         for index, url in enumerate(XRFs):
-            devPartSampleId = devPartSampleXRF.devPartSample_id
-            XRF = devPartSampleXRFTestFile.objects.create(excelURL=url,devPartSampleXRF = devPartSampleXRF)
-            result = preProcess('XRF', devPartSampleXRF.id, XRF.id, os.path.join(MEDIA_ROOT, str(XRF.excelURL)))
+            devPartSampleId = devPartSampleXRF1.devPartSample_id
+            XRF = devPartSampleXRFTestFile.objects.create(excelURL=url,devPartSampleXRF = devPartSampleXRF1)
+            result = preProcess('XRF', devPartSampleXRF1.id, XRF.id, os.path.join(MEDIA_ROOT, str(XRF.excelURL)))
             if result[0] == '0':
                 XRF.handledURL = result[1]
                 XRF.save()
             # 文件预处理，更新XRF匹配表和综合匹配表的结果
             # 样本库更新报告都得变
+            else:
+                raise APIException("预处理过程出错")
 
         return {}
 class devPartSampleXRFSerializer(serializers.ModelSerializer):

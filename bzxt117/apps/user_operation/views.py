@@ -79,7 +79,7 @@ class userMessageViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.
             message1.delete()
 
     def perform_update(self, serializer):
-        # 更新的时候只要有一个handle其余该标题和用户的消息全职微已处理。
+        # 更新的时候只要有一个handle其余该标题和用户的消息全置为已处理。
         if ('hasHandle' in serializer.validated_data.keys()):
             userMess = self.get_object()
             Messs = userMessage.objects.filter(title = userMess.title,sendUser = userMess.sendUser)
