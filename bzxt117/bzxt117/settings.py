@@ -160,6 +160,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
+    'EXCEPTION_HANDLER': 'apps.utils.my_exceptions.custom_exception_handler',  # 这是使用自定制异常处理
 }
 
 import datetime

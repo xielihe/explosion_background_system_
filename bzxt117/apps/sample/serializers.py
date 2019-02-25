@@ -12,6 +12,8 @@ from apps.match.models import *
 from apps.utils.PreProcess import *
 from bzxt117.settings import MEDIA_ROOT
 from utils.PreProcess import preProcess
+from rest_framework.exceptions import APIException
+
 
 class exploSampleSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(
@@ -34,6 +36,8 @@ class exploSampleFTIRTestFileSerializer(serializers.ModelSerializer):
         # print(type(data))
         # print(data[0])
             return data
+        else:
+            return "该预处理过的文件已被删除，无法读取"
     def __str__(self):
         return self.txtURL
     class Meta:
@@ -54,6 +58,9 @@ class LsitExploSampleFTIRTestFileSerializer(serializers.Serializer):
         FTIRs = validated_data.get('FTIRs')
         exploSampleFTIR = validated_data.get('exploSampleFTIR')
         result = []
+        for index, url in enumerate(FTIRs):
+            if os.path.splitext(url.name)[-1] != '.txt':
+                raise APIException("有FTIR文件不是txt格式，请检查。")
         for index, url in enumerate(FTIRs):
             FTIR = exploSampleFTIRTestFile.objects.create(txtURL=url,exploSampleFTIR = exploSampleFTIR)
             result =  preProcess('FTIR',exploSampleFTIR.id,FTIR.id,os.path.join(MEDIA_ROOT,str(FTIR.txtURL)))
@@ -90,6 +97,8 @@ class exploSampleRamanTestFileSerializer(serializers.ModelSerializer):
         if os.path.exists(path) == True:
             data = np.load(path)
             return data
+        else:
+            return "该预处理过的文件已被删除，无法读取"
     def __str__(self):
         return self.txtURL
 
@@ -107,6 +116,9 @@ class LsitExploSampleRamanTestFileSerializer(serializers.Serializer):
         Ramans = validated_data.get('Ramans')
         exploSampleRaman = validated_data.get('exploSampleRaman')
         result = []
+        for index, url in enumerate(Ramans):
+            if os.path.splitext(url.name)[-1] != '.txt':
+                raise APIException("有Raman文件不是txt格式，请检查。")
         for index, url in enumerate(Ramans):
             Raman = exploSampleRamanTestFile.objects.create(txtURL=url,exploSampleRaman = exploSampleRaman)
             result =  preProcess('RAMAN',exploSampleRaman.id,Raman.id,os.path.join(MEDIA_ROOT,str(Raman.txtURL)))
@@ -141,6 +153,8 @@ class exploSampleXRDTestFileSerializer(serializers.ModelSerializer):
         if os.path.exists(path) == True:
             data = np.load(path)
             return data
+        else:
+            return "该预处理过的文件已被删除，无法读取"
     def __str__(self):
         return self.txtURL
 
@@ -158,6 +172,9 @@ class LsitExploSampleXRDTestFileSerializer(serializers.Serializer):
         XRDs = validated_data.get('XRDs')
         exploSampleXRD = validated_data.get('exploSampleXRD')
         result = []
+        for index, url in enumerate(XRDs):
+            if os.path.splitext(url.name)[-1] != '.txt':
+                raise APIException("有XRD文件不是txt格式，请检查。")
         for index, url in enumerate(XRDs):
             XRD = exploSampleXRDTestFile.objects.create(txtURL=url,exploSampleXRD = exploSampleXRD)
             result =  preProcess('XRD',exploSampleXRD.id,XRD.id,os.path.join(MEDIA_ROOT,str(XRD.txtURL)))
@@ -192,6 +209,8 @@ class exploSampleXRFTestFileSerializer(serializers.ModelSerializer):
         if os.path.exists(path) == True:
             data = np.load(path)
             return data
+        else:
+            return "该预处理过的文件已被删除，无法读取"
     def __str__(self):
         return self.excelURL
 
@@ -213,6 +232,9 @@ class LsitExploSampleXRFTestFileSerializer(serializers.Serializer):
         # for exploSampleXRFTestFileUp in exploSampleXRFTestFiles:
         #     exploSampleXRFTestFileUp.delete()
         result = []
+        for index, url in enumerate(XRFs):
+            if os.path.splitext(url.name)[-1] != '.xlsx':
+                raise APIException("有XRF文件不是excel格式，请检查。")
         for index, url in enumerate(XRFs):
             # 会自动填入exploSampleId
             XRF = exploSampleXRFTestFile.objects.create(excelURL=url,exploSampleXRF = exploSampleXRF)
@@ -256,6 +278,8 @@ class exploSampleGCMSFileSerializer(serializers.ModelSerializer):
         if os.path.exists(path) == True:
             data = np.load(path).item()
             return data
+        else:
+            return "该预处理过的文件已被删除，无法读取"
 
     class Meta:
         model = exploSampleGCMSFile
@@ -282,6 +306,9 @@ class LsitExploSampleGCMSTestFileSerializer(serializers.Serializer):
         filePath = ""
         TICId = 0
         result = []
+        for index, url in enumerate(GCMSs):
+            if os.path.splitext(url.name)[-1] != '.txt':
+                raise APIException("有GCMS文件不是txt格式，请检查。")
         for index, url in enumerate(GCMSs):
             # 会自动填入exploSampleId
             # 从url中知道type，如果是TIC的type，那么就创建一个以此id和样本id联合的文件夹用来存放这一批的文档，
@@ -390,6 +417,8 @@ class devPartSampleFTIRTestFileSerializer(serializers.ModelSerializer):
         # print(data[0])
 
             return data
+        else:
+            return "该预处理过的文件已被删除，无法读取"
     def __str__(self):
         return self.txtURL
 
@@ -407,6 +436,9 @@ class LsitdevPartSampleFTIRTestFileSerializer(serializers.Serializer):
         FTIRs = validated_data.get('FTIRs')
         devPartSampleFTIR = validated_data.get('devPartSampleFTIR')
         result = []
+        for index, url in enumerate(FTIRs):
+            if os.path.splitext(url.name)[-1] != '.txt':
+                raise APIException("有FTIR文件不是txt格式，请检查。")
         for index, url in enumerate(FTIRs):
             devPartSampleId = devPartSampleFTIR.devPartSample_id
             FTIR = devPartSampleFTIRTestFile.objects.create(txtURL=url,devPartSampleFTIR = devPartSampleFTIR)
@@ -446,6 +478,8 @@ class devPartSampleRamanTestFileSerializer(serializers.ModelSerializer):
         # print(data[0])
 
             return data
+        else:
+            return "该预处理过的文件已被删除，无法读取"
     def __str__(self):
         return self.txtURL
 
@@ -462,6 +496,9 @@ class LsitdevPartSampleRamanTestFileSerializer(serializers.Serializer):
         Ramans = validated_data.get('Ramans')
         devPartSampleRaman = validated_data.get('devPartSampleRaman')
         result = []
+        for index, url in enumerate(Ramans):
+            if os.path.splitext(url.name)[-1] != '.txt':
+                raise APIException("有Raman文件不是txt格式，请检查。")
         for index, url in enumerate(Ramans):
             devPartSampleId = devPartSampleRaman.devPartSample_id
             Raman = devPartSampleRamanTestFile.objects.create(txtURL=url,devPartSampleRaman = devPartSampleRaman)
@@ -501,6 +538,8 @@ class devPartSampleXRFTestFileSerializer(serializers.ModelSerializer):
         # print(data[0])
 
             return data
+        else:
+            return "该预处理过的文件已被删除，无法读取"
     def __str__(self):
         return self.excelURL
 
@@ -518,6 +557,9 @@ class LsitdevPartSampleXRFTestFileSerializer(serializers.Serializer):
         XRFs = validated_data.get('XRFs')
         devPartSampleXRF = validated_data.get('devPartSampleXRF')
         result = []
+        for index, url in enumerate(XRFs):
+            if os.path.splitext(url.name)[-1] != '.xlsx':
+                raise APIException("有XRF文件不是excel格式，请检查。")
         for index, url in enumerate(XRFs):
             devPartSampleId = devPartSampleXRF.devPartSample_id
             XRF = devPartSampleXRFTestFile.objects.create(excelURL=url,devPartSampleXRF = devPartSampleXRF)

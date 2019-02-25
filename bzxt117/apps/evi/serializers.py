@@ -5,6 +5,8 @@ from rest_framework.validators import UniqueTogetherValidator
 from rest_framework.serializers import *
 import os,shutil
 import numpy as np
+from rest_framework.exceptions import APIException
+
 
 from apps.evi.models import *
 from apps.basic.models import *
@@ -35,14 +37,24 @@ class exploEviFTIRTestFileSerializer(serializers.ModelSerializer):
             data = np.load(path)
         # print(type(data))
         # print(data[0])
-
             return data
+        else:
+            return "该预处理过的文件已被删除，无法读取"
+
+    # def validate_txtHandledURL(self, txtHandledURL):
+    #     # 注意参数，self以及字段名
+    #     # 注意函数名写法，validate_ + 字段名字
+    #     if os.path.exists(txtHandledURL) == False:
+    #         raise serializers.ValidationError("该处理过的文件已被删除。")
+    #     else:
+    #         return txtHandledURL
+
     def __str__(self):
         return self.txtURL
 
     class Meta:
         model = exploEviFTIRTestFile
-        fields = ("id","exploEviFTIR","exploEviId","txtURL","handledData")
+        fields = ("id","exploEviFTIR","exploEviId","txtURL","txtHandledURL","handledData")
 class LsitExploEviFTIRTestFileSerializer(serializers.Serializer):
     # 用于接收多个文件
     FTIRs = serializers.ListField(
@@ -61,6 +73,9 @@ class LsitExploEviFTIRTestFileSerializer(serializers.Serializer):
         # for exploEviFTIRTestFileUp in exploEviFTIRTestFiles:
         #     exploEviFTIRTestFileUp.delete()
         result = []
+        for index, url in enumerate(FTIRs):
+            if os.path.splitext(url.name)[-1] != '.txt':
+                raise APIException("有FTIR文件不是txt格式，请检查。")
         for index, url in enumerate(FTIRs):
             # 会自动填入exploEviId
             exploEviId = exploEviFTIR.exploEvi_id
@@ -108,6 +123,8 @@ class exploEviRamanTestFileSerializer(serializers.ModelSerializer):
         # print(data[0])
 
             return data
+        else:
+            return "该预处理过的文件已被删除，无法读取"
     def __str__(self):
         return self.txtURL
 
@@ -128,6 +145,9 @@ class LsitExploEviRamanTestFileSerializer(serializers.Serializer):
         exploEviRaman = validated_data.get('exploEviRaman')
         # 新建重复也不可以覆盖！！否则就和修改一样了啊
         result = []
+        for index, url in enumerate(Ramans):
+            if os.path.splitext(url.name)[-1] != '.txt':
+                raise APIException("有Raman文件不是txt格式，请检查。")
         for index, url in enumerate(Ramans):
             # 会自动填入exploEviId
             Raman = exploEviRamanTestFile.objects.create(txtURL=url, exploEviRaman=exploEviRaman,
@@ -168,6 +188,8 @@ class exploEviXRDTestFileSerializer(serializers.ModelSerializer):
         # print(data[0])
 
             return data
+        else:
+            return "该预处理过的文件已被删除，无法读取"
     def __str__(self):
         return self.txtURL
 
@@ -192,6 +214,9 @@ class LsitExploEviXRDTestFileSerializer(serializers.Serializer):
         # for exploEviXRDTestFileUp in exploEviXRDTestFiles:
         #     exploEviXRDTestFileUp.delete()
         result = []
+        for index, url in enumerate(XRDs):
+            if os.path.splitext(url.name)[-1] != '.txt':
+                raise APIException("有XRD文件不是txt格式，请检查。")
         for index, url in enumerate(XRDs):
             # 会自动填入exploEviId
             XRD = exploEviXRDTestFile.objects.create(txtURL=url, exploEviXRD=exploEviXRD,
@@ -233,6 +258,8 @@ class exploEviXRFTestFileSerializer(serializers.ModelSerializer):
         # print(data[0])
 
             return data
+        else:
+            return "该预处理过的文件已被删除，无法读取"
     def __str__(self):
         return self.excelURL
 
@@ -257,6 +284,9 @@ class LsitExploEviXRFTestFileSerializer(serializers.Serializer):
         # for exploEviXRFTestFileUp in exploEviXRFTestFiles:
         #     exploEviXRFTestFileUp.delete()
         result = []
+        for index, url in enumerate(XRFs):
+            if os.path.splitext(url.name)[-1] != '.xlsx':
+                raise APIException("有XRF文件不是excel格式，请检查。")
         for index, url in enumerate(XRFs):
             # 会自动填入exploEviId
             XRF = exploEviXRFTestFile.objects.create(excelURL=url,exploEviXRF = exploEviXRF,exploEviId = exploEviXRF.exploEvi_id)
@@ -303,6 +333,8 @@ class exploEviGCMSFileSerializer(serializers.ModelSerializer):
         # print(data[0])
 
             return data
+        else:
+            return "该预处理过的文件已被删除，无法读取"
 
     class Meta:
         model = exploEviGCMSFile
@@ -326,6 +358,9 @@ class LsitExploEviGCMSTestFileSerializer(serializers.Serializer):
         result = []
         filePath = ""
         TICId = 0
+        for index, url in enumerate(GCMSs):
+            if os.path.splitext(url.name)[-1] != '.txt':
+                raise APIException("有GCMS文件不是txt格式，请检查。")
         for index, url in enumerate(GCMSs):
             # 会自动填入exploSampleId
             # 从url中知道type，如果是TIC的type，那么就创建一个以此id和样本id联合的文件夹用来存放这一批的文档，
@@ -415,6 +450,8 @@ class devEviFTIRTestFileSerializer(serializers.ModelSerializer):
         # print(data[0])
 
             return data
+        else:
+            return "该预处理过的文件已被删除，无法读取"
     def __str__(self):
         return self.txtURL
 
@@ -439,6 +476,9 @@ class LsitdevEviFTIRTestFileSerializer(serializers.Serializer):
         # for devEviFTIRTestFileUp in devEviFTIRTestFiles:
         #     devEviFTIRTestFileUp.delete()
         result = []
+        for index, url in enumerate(FTIRs):
+            if os.path.splitext(url.name)[-1] != '.txt':
+                raise APIException("有FTIR文件不是txt格式，请检查。")
         for index, url in enumerate(FTIRs):
             # 会自动填入devEviId
             devEviId = devEviFTIR.devEvi_id
@@ -482,6 +522,8 @@ class devEviRamanTestFileSerializer(serializers.ModelSerializer):
         # print(data[0])
 
             return data
+        else:
+            return "该预处理过的文件已被删除，无法读取"
     def __str__(self):
         return self.txtURL
 
@@ -506,6 +548,9 @@ class LsitdevEviRamanTestFileSerializer(serializers.Serializer):
         # for devEviRamanTestFileUp in devEviRamanTestFiles:
         #     devEviRamanTestFileUp.delete()
         result = []
+        for index, url in enumerate(Ramans):
+            if os.path.splitext(url.name)[-1] != '.txt':
+                raise APIException("有Raman文件不是txt格式，请检查。")
         for index, url in enumerate(Ramans):
             # 会自动填入devEviId
             devEviId = devEviRaman.devEvi_id
@@ -549,6 +594,8 @@ class devEviXRFTestFileSerializer(serializers.ModelSerializer):
         # print(data[0])
 
             return data
+        else:
+            return "该预处理过的文件已被删除，无法读取"
     def __str__(self):
         return self.excelURL
 
@@ -572,6 +619,9 @@ class LsitdevEviXRFTestFileSerializer(serializers.Serializer):
         # for devEviXRFTestFileUp in devEviXRFTestFiles:
         #     devEviXRFTestFileUp.delete()
         result = []
+        for index, url in enumerate(XRFs):
+            if os.path.splitext(url.name)[-1] != '.xlsx':
+                raise APIException("有XRF文件不是excel格式，请检查。")
         for index, url in enumerate(XRFs):
             # 会自动填入devEviId
             XRF = devEviXRFTestFile.objects.create(excelURL=url,devEviXRF = devEviXRF,devEviId = devEviXRF.devEvi_id)

@@ -711,8 +711,7 @@ class exploMatchRamanViewset(viewsets.ModelViewSet):
     """
     permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
-    fil
-    ter_backends = (filters.OrderingFilter,)
+    filter_backends = (filters.OrderingFilter,)
     ordering_fields = ("-Score",)
  #   authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
 #    lookup_field = "goods_id"

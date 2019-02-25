@@ -16,6 +16,7 @@ import datetime
 import time
 import pytz
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.exceptions import APIException
 
 
 from rest_framework_jwt.serializers import jwt_encode_handler, jwt_payload_handler
