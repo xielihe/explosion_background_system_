@@ -9,9 +9,9 @@ def getPCB(id,type):
     # os.popen("./getPCB.exe", 'w').write(str(1.2) + r' ' + "Sample")
     # os.popen("./getPCB.exe", 'r')
 
-    path = os.path.join(path2, 'utils/getPCB.exe')
+    path = os.path.join(path2, 'utils/GetPCBFeature.exe')
     # type是"Sample"
-    os.popen(path + r' '+str(id) + r' ' + type).read()
+    os.popen(path+r' '+str(id)+r' '+type).read()
 
     # os.system(path + str(1.2) + r' ' + "Sample")
 

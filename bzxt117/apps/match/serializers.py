@@ -663,7 +663,7 @@ class devShapeMatchDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = devShapeMatch
         #返回id是为了方便删除
-        fields = "__all__"
+        fields = ("id","devShapeSample","devShapeEvi","matchDegree","matchSampleCoordi","matchEviCoordi")
 # 形态匹配详情展示
 class devShapeMatchSerializer(serializers.ModelSerializer):
     devSampleName = serializers.SerializerMethodField(read_only=True,)
@@ -675,7 +675,7 @@ class devShapeMatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = devShapeMatch
         #返回id是为了方便删除
-        fields = ("id","devShapeSample","devShapeEvi","isCircuit","matchDegree","matchSampleCoordi","matchEviCoordi","isSure","devSampleName")
+        fields = ("id","devShapeSample","devShapeEvi","matchDegree","matchSampleCoordi","matchEviCoordi","devSampleName")
 # 形态匹配列表展示
 
 #  形态综合匹配详情展示(把一个物证的所有图片和这个样本的图片的分别得分最高的拿出来)

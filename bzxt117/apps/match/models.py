@@ -238,7 +238,7 @@ class devShapeMatch(models.Model):
     class Meta:
         verbose_name = "爆炸装置案件物证形态匹配结果表"
         verbose_name_plural = verbose_name
-        ordering = ['matchDegree']
+        ordering = ['-matchDegree']
 
 
 class PCBImgMatch(models.Model):

@@ -23,6 +23,9 @@ from apps.evi.models import *
 from apps.sample.serializers import *
 from utils.CalculateSim import CalculateSimilarity
 from utils.ComScore import ComScore
+from utils.PCB import *
+from django_filters.rest_framework import DjangoFilterBackend
+
 
 class MyPageNumberPagination(PageNumberPagination):
     # 指定这一页有多少个
@@ -582,6 +585,24 @@ class startMatch(APIView):
             pager_roles = pg.paginate_queryset(queryset=querysetList, request=request,view=self)
             ser = devMatchXRFSerializer(instance=pager_roles, many=True)
             return pg.get_paginated_response(ser.data)  # 返回上一页或者下一页
+        elif type == 9:
+            # 存储feature文件（暂无）
+            # 特征匹配
+            FeatureMatching(eviFileId)
+            # 特征匹配文件提取
+            matchUrl = os.path.join(MEDIA_ROOT, "image/devShapeEvi/match/" + str(eviFileId)+"/"+ str(eviFileId)  + ".txt")
+            file = open(matchUrl)
+            seq = re.compile("\s+")
+            for line in file:
+                lst = seq.split(line.strip())
+                shapeMatch = devShapeMatch()
+                shapeMatch.devShapeEvi_id = eviFileId
+                shapeMatch.devShapeSample_id = lst[0]
+                shapeMatch.matchDegree = lst[1]
+                shapeMatch.matchSampleCoordi = json.dumps(lst[2:5])
+                shapeMatch.matchEviCoordi = json.dumps(lst[5:])
+                shapeMatch.save()
+                file.close()
         else:
             return  Response("fail")
 
@@ -767,8 +788,12 @@ class exploMatchFTIRViewset(viewsets.ModelViewSet):
     pagination_class = MyPageNumberPagination
  #   authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
 #    lookup_field = "goods_id"
-    filter_backends = (filters.OrderingFilter,)
+    filter_backends = (DjangoFilterBackend,filters.SearchFilter, filters.OrderingFilter)
+    #search_fields是模糊搜索，区别于  filter_fields = ('term',)
+    filter_fields = ("exploEviFTIRTestFile_id",)
+    # search_fields = ("exploSampleFTIRTestFile_id", "exploEviFTIRTestFile_id","Score")
     ordering_fields = ("-Score",)
+
 
     def get_queryset(self):
         return exploMatchFTIR.objects.all()
@@ -781,7 +806,9 @@ class exploMatchRamanViewset(viewsets.ModelViewSet):
     """
     permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
-    filter_backends = (filters.OrderingFilter,)
+    filter_backends = (DjangoFilterBackend,filters.SearchFilter, filters.OrderingFilter)
+    #search_fields是模糊搜索，区别于  filter_fields = ('term',)
+    filter_fields = ("exploEviRamanTestFile_id",)
     ordering_fields = ("-Score",)
  #   authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
 #    lookup_field = "goods_id"
@@ -797,7 +824,9 @@ class exploMatchXRDViewset(viewsets.ModelViewSet):
     """
     permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
-    filter_backends = (filters.OrderingFilter,)
+    filter_backends = (DjangoFilterBackend,filters.SearchFilter, filters.OrderingFilter)
+    #search_fields是模糊搜索，区别于  filter_fields = ('term',)
+    filter_fields = ("exploEviXRDTestFile_id",)
     ordering_fields = ("-Score",)
  #   authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
 #    lookup_field = "goods_id"
@@ -813,7 +842,9 @@ class exploMatchXRFViewset(viewsets.ModelViewSet):
     """
     permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
-    filter_backends = (filters.OrderingFilter,)
+    filter_backends = (DjangoFilterBackend,filters.SearchFilter, filters.OrderingFilter)
+    #search_fields是模糊搜索，区别于  filter_fields = ('term',)
+    filter_fields = ("exploEviXRFTestFile_id",)
     ordering_fields = ("-averScore",)
  #   authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
 #    lookup_field = "goods_id"
@@ -829,7 +860,9 @@ class exploMatchGCMSViewset(viewsets.ModelViewSet):
     """
     permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
-    filter_backends = (filters.OrderingFilter,)
+    filter_backends = (DjangoFilterBackend,filters.SearchFilter, filters.OrderingFilter)
+    #search_fields是模糊搜索，区别于  filter_fields = ('term',)
+    filter_fields = ("exploEviGCMSFile_id",)
     ordering_fields = ("-Score",)
  #   authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
 #    lookup_field = "goods_id"
@@ -845,7 +878,9 @@ class exploSynMatchViewset(viewsets.ModelViewSet):
     """
     permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
-    filter_backends = (filters.OrderingFilter,)
+    filter_backends = (DjangoFilterBackend,filters.SearchFilter, filters.OrderingFilter)
+    #search_fields是模糊搜索，区别于  filter_fields = ('term',)
+    filter_fields = ("exploEvi_id",)
     ordering_fields = ("-Score",)
  #   authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
 #    lookup_field = "goods_id"
@@ -867,7 +902,9 @@ class exploReportMatchViewset(viewsets.ModelViewSet):
     """
     permission_classes = (IsAuthenticated,IsAllowExploUpdate)
     pagination_class = MyPageNumberPagination
-    filter_backends = (filters.OrderingFilter,)
+    filter_backends = (DjangoFilterBackend,filters.SearchFilter, filters.OrderingFilter)
+    #search_fields是模糊搜索，区别于  filter_fields = ('term',)
+    filter_fields = ("exploEvi_id",)
  #   authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
 #    lookup_field = "goods_id"
 
@@ -884,7 +921,9 @@ class devMatchFTIRViewset(viewsets.ModelViewSet):
     """
     permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
-    filter_backends = (filters.OrderingFilter,)
+    filter_backends = (DjangoFilterBackend,filters.SearchFilter, filters.OrderingFilter)
+    #search_fields是模糊搜索，区别于  filter_fields = ('term',)
+    filter_fields = ("devEviFTIRTestFile_id",)
     ordering_fields = ("-Score",)
  #   authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
 #    lookup_field = "goods_id"
@@ -902,7 +941,9 @@ class devMatchRamanViewset(viewsets.ModelViewSet):
     """
     permission_classes = (IsAuthenticated,IsAdmin )
     pagination_class = MyPageNumberPagination
-    filter_backends = (filters.OrderingFilter,)
+    filter_backends = (DjangoFilterBackend,filters.SearchFilter, filters.OrderingFilter)
+    #search_fields是模糊搜索，区别于  filter_fields = ('term',)
+    filter_fields = ("devEviRamanTestFile_id",)
     ordering_fields = ("-Score",)
  #   authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
 #    lookup_field = "goods_id"
@@ -920,7 +961,9 @@ class devMatchXRFViewset(viewsets.ModelViewSet):
     """
     permission_classes = (IsAuthenticated,IsAdmin )
     pagination_class = MyPageNumberPagination
-    filter_backends = (filters.OrderingFilter,)
+    filter_backends = (DjangoFilterBackend,filters.SearchFilter, filters.OrderingFilter)
+    #search_fields是模糊搜索，区别于  filter_fields = ('term',)
+    filter_fields = ("devEviXRFTestFile_id",)
     ordering_fields = ("-averScore",)
  #   authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
 #    lookup_field = "goods_id"
@@ -938,7 +981,9 @@ class devCompMatchViewset(viewsets.ModelViewSet):
     """
     permission_classes = (IsAuthenticated,IsAllowDevUpdate)
     pagination_class = MyPageNumberPagination
-    filter_backends = (filters.OrderingFilter,)
+    filter_backends = (DjangoFilterBackend,filters.SearchFilter, filters.OrderingFilter)
+    #search_fields是模糊搜索，区别于  filter_fields = ('term',)
+    filter_fields = ("devEvi_id",)
     ordering_fields = ("-Score",)
  #   authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
 #    lookup_field = "goods_id"
@@ -960,7 +1005,9 @@ class devShapeMatchViewset(viewsets.ModelViewSet):
 #    lookup_field = "goods_id"
     permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
-    filter_backends = (filters.OrderingFilter,)
+    filter_backends = (DjangoFilterBackend,filters.SearchFilter, filters.OrderingFilter)
+    #search_fields是模糊搜索，区别于  filter_fields = ('term',)
+    filter_fields = ("devShapeEvi_id",)
     ordering_fields = ("-matchDegree",)
     def get_queryset(self):
         return devShapeMatch.objects.all()
@@ -977,7 +1024,9 @@ class devShapeMultiMatchViewset(viewsets.ModelViewSet):
     """
     permission_classes = (IsAuthenticated,IsAllowDevUpdate)
     pagination_class = MyPageNumberPagination
-    filter_backends = (filters.OrderingFilter,)
+    filter_backends = (DjangoFilterBackend,filters.SearchFilter, filters.OrderingFilter)
+    #search_fields是模糊搜索，区别于  filter_fields = ('term',)
+    filter_fields = ("devEvi_id",)
     ordering_fields = ("-Score",)
  #   authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
 #    lookup_field = "goods_id"
@@ -1001,6 +1050,9 @@ class devSynMatchViewset(viewsets.ModelViewSet):
     """
     permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
+    filter_backends = (DjangoFilterBackend,filters.SearchFilter, filters.OrderingFilter)
+    #search_fields是模糊搜索，区别于  filter_fields = ('term',)
+    filter_fields = ("devEvi_id",)
     # filter_backends = (filters.OrderingFilter,)
     # ordering_fields = ("-ScoreComp","-ScoreShape")
  #   authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)

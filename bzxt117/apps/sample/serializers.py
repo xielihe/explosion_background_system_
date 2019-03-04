@@ -685,11 +685,8 @@ class devShapeSampleSerializer(serializers.ModelSerializer):
         default=serializers.CurrentUserDefault()
     )
     inputDate = serializers.DateTimeField(read_only=True, format='%Y-%m-%d %H:%M')
-    blackWhiteUrl =serializers.FileField(read_only=True,)
-    interColorUrl =serializers.FileField(read_only=True,)
     featureUrl =serializers.FileField(read_only=True,)
-    resultPicUrl =serializers.FileField(read_only=True,)
-    resultFileUrl = serializers.FileField(read_only=True, )
+    maskURL = serializers.FileField(read_only=True, )
     nomUrl = serializers.FileField(read_only=True, )
     nomResolution = serializers.FileField(read_only=True, )
 

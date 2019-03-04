@@ -65,15 +65,15 @@ class nomPicture(APIView):
         resolution = deltaX if deltaX > deltaY else deltaY
 
 
-        # id angle resolution 去original中找原图像，新的图像存在nom中，具体路径我来拼，避免了路径不统一的问题
+        #将angle和resolution作为参数传入，
 
-        PCBImgSample1 = PCBImgSample.objects.get(id = PCBImgSampleId)
-        PCBImgSample1.sResolution = resolution
-        PCBImgSample1.norImgURL = "image/devShapeSample/nom/" + str(PCBImgSampleId) + ".jpg"
-        PCBImgSample1.save()
+        devShapeSample1 = devShapeSample.objects.get(id = PCBImgSampleId)
+        devShapeSample1.sResolution = resolution
+        devShapeSample1.norImgURL = "image/devShapeSample/correction/" + str(PCBImgSampleId) + ".jpg"
+        devShapeSample1.save()
 
         return Response({
-            "norImgURL":PCBImgSample1.norImgURL
+            "norImgURL":devShapeSample1.norImgURL
         }, status=status.HTTP_201_CREATED)
 
 class exploSampleViewset(viewsets.ModelViewSet):
@@ -400,73 +400,98 @@ class devShapeSampleViewset(viewsets.ModelViewSet):
         #重命名
         name = str(sample.originalUrl).split("/")[-1]
         picType = os.path.splitext(name)[1]
-        path = os.path.join(MEDIA_ROOT,"image/devShapeSample/original/")
+        path = os.path.join(MEDIA_ROOT,"imagek/devShapeSample/original/")
         os.rename(os.path.join(MEDIA_ROOT,str(sample.originalUrl)), os.path.join(path, str(id) + picType))
         sample.originalUrl = "image/devShapeSample/original/" + str(id) + picType
+        #调用归一化函数,另见函数
         sample.save()
         return sample
 
-
     def perform_update(self, serializer):
-        sample = serializer.save()
-        id =sample.id
-        middle = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "utils/middle/")
-        if sample.isFirst == True:
-            middle = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "utils/middle/")
+        if ('rectCoordi' in serializer.validated_data.keys()):
+            sample = serializer.save()
+            id = sample.id
+            rectURL = os.path.join(MEDIA_ROOT, "image/devShapeSample/rect/")
+            rectCoordi =serializer.validated_data['rectCoordi']
 
-            # 写文件
-            rectUrl = os.path.join(middle, str(id) + "-1.txt")
-            proUrl = os.path.join(middle, str(id) + "-2.txt")
-            backUrl = os.path.join(middle, str(id) + "-3.txt")
-            boardUrl = os.path.join(middle, str(id) + "-4.txt")
-
+            # 写rect文件
+            rectUrl = os.path.join(rectURL, str(id) + "_rect.txt")
             rect = open(rectUrl, "w")
-            rect.write(sample.rectCoordi)
+            rect.write(rectCoordi)
             rect.close()
-            pro = open(proUrl, "w")
-            pro.write(sample.proCoordi)
-            pro.close()
-            back = open(backUrl, "w")
-            back.write(sample.backCoordi)
-            back.close()
-            board = open(boardUrl, "w")
-            board.write(sample.boardCoordi)
-            board.close()
 
+            # 生成mask
             getPCB(id, "Sample")
 
-            sample.blackWhiteUrl = "image/devShapeSample/blackWhite/" + str(id) + ".jpg"
-            sample.interColorUrl = "image/devShapeSample/interColor/" + str(id) + ".jpg"
-            sample.middleResultUrl = "file/devShapeSample/middleResult/" + str(id) + ".txt"
-
-            os.remove(rectUrl)
-            os.remove(proUrl)
-            os.remove(backUrl)
-            os.remove(boardUrl)
-
+            # 存储mask路径
+            sample.maskURL = "image/devShapeSample/mask/" + str(id) + ".jpg"
+            # 存储feature文件
+            # 特征文件存储
+            sample.featureUrl = "image/devShapeSample/feature/" + str(id) + ".harris"
             sample.save()
-        else:
-            compCheckUrl = os.path.join(middle,str(id) + "-5.txt")
-            boardCheckUrl = os.path.join(middle,str(id) + "-6.txt")
+            return sample
+        serializer.save()
 
-            compCheck = open(compCheckUrl,"w")
-            compCheck.write(sample.compCheckCoordi)
-            compCheck.close()
-            boardCheck = open(boardCheckUrl,"w")
-            boardCheck.write(sample.boardCheckCoordi)
-            boardCheck.close()
-
-            segComp(id, "Sample")
-
-            sample.featureUrl = "file/devShapeSample/feature/"+str(id)+".harris"
-            sample.resultPicUrl = "image/devShapeSample/result/"+str(id)+".jpg"
-            sample.resultFileUrl = "file/devShapeSample/result/"+str(id)+".seg"
-
-            os.remove(compCheckUrl)
-            os.remove(boardCheckUrl)
-
-            sample.save()
-        return sample
+    # def perform_update(self, serializer):
+    #     # sample = serializer.save()
+    #     # id =sample.id
+    #     # middle = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "utils/middle/")
+    #     # if sample.isFirst == True:
+    #     #     middle = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "utils/middle/")
+    #     #
+    #     #     # 写文件
+    #     #     rectUrl = os.path.join(middle, str(id) + "-1.txt")
+    #     #     proUrl = os.path.join(middle, str(id) + "-2.txt")
+    #     #     backUrl = os.path.join(middle, str(id) + "-3.txt")
+    #     #     boardUrl = os.path.join(middle, str(id) + "-4.txt")
+    #     #
+    #     #     rect = open(rectUrl, "w")
+    #     #     rect.write(sample.rectCoordi)
+    #     #     rect.close()
+    #     #     pro = open(proUrl, "w")
+    #     #     pro.write(sample.proCoordi)
+    #     #     pro.close()
+    #     #     back = open(backUrl, "w")
+    #     #     back.write(sample.backCoordi)
+    #     #     back.close()
+    #     #     board = open(boardUrl, "w")
+    #     #     board.write(sample.boardCoordi)
+    #     #     board.close()
+    #     #
+    #     #     getPCB(id, "Sample")
+    #     #
+    #     #     sample.blackWhiteUrl = "image/devShapeSample/blackWhite/" + str(id) + ".jpg"
+    #     #     sample.interColorUrl = "image/devShapeSample/interColor/" + str(id) + ".jpg"
+    #     #     sample.middleResultUrl = "file/devShapeSample/middleResult/" + str(id) + ".txt"
+    #     #
+    #     #     os.remove(rectUrl)
+    #     #     os.remove(proUrl)
+    #     #     os.remove(backUrl)
+    #     #     os.remove(boardUrl)
+    #     #
+    #     #     sample.save()
+    #     # else:
+    #     #     compCheckUrl = os.path.join(middle,str(id) + "-5.txt")
+    #     #     boardCheckUrl = os.path.join(middle,str(id) + "-6.txt")
+    #     #
+    #     #     compCheck = open(compCheckUrl,"w")
+    #     #     compCheck.write(sample.compCheckCoordi)
+    #     #     compCheck.close()
+    #     #     boardCheck = open(boardCheckUrl,"w")
+    #     #     boardCheck.write(sample.boardCheckCoordi)
+    #     #     boardCheck.close()
+    #     #
+    #     #     segComp(id, "Sample")
+    #     #
+    #     #     sample.featureUrl = "file/devShapeSample/feature/"+str(id)+".harris"
+    #     #     sample.resultPicUrl = "image/devShapeSample/result/"+str(id)+".jpg"
+    #     #     sample.resultFileUrl = "file/devShapeSample/result/"+str(id)+".seg"
+    #     #
+    #     #     os.remove(compCheckUrl)
+    #     #     os.remove(boardCheckUrl)
+    #     #
+    #     #     sample.save()
+    #     return sample
 
     def perform_destroy(self, instance):
         # originalUrl= os.path.join(MEDIA_ROOT,str( instance.originalUrl))
