@@ -191,7 +191,7 @@ class LsitExploSampleXRDTestFileSerializer(serializers.Serializer):
     # 增添和更新都必须是多文件，且这个更新和其他更新不同，更新会覆盖，但新建不会覆盖，每次新建上传完都会进行取平均，替换平均文件
     def create(self, validated_data):
         XRDs = validated_data.get('XRDs')
-        exploSampleXRD = validated_data.get('exploSampleXRD')
+        exploSampleXRDId = validated_data.get('exploSampleXRD')
 
         # 差错检验
         if len(XRDs) == 0:
@@ -686,9 +686,8 @@ class devShapeSampleSerializer(serializers.ModelSerializer):
     )
     inputDate = serializers.DateTimeField(read_only=True, format='%Y-%m-%d %H:%M')
     featureUrl =serializers.FileField(read_only=True,)
-    maskURL = serializers.FileField(read_only=True, )
+    maskURL = serializers.ImageField(read_only=True, )
     nomUrl = serializers.FileField(read_only=True, )
-    nomResolution = serializers.FileField(read_only=True, )
 
     class Meta:
         model = devShapeSample

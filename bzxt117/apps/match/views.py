@@ -599,8 +599,10 @@ class startMatch(APIView):
                 shapeMatch.devShapeEvi_id = eviFileId
                 shapeMatch.devShapeSample_id = lst[0]
                 shapeMatch.matchDegree = lst[1]
-                shapeMatch.matchSampleCoordi = json.dumps(lst[2:5])
-                shapeMatch.matchEviCoordi = json.dumps(lst[5:])
+                shapeMatch.matchSampleCoordi = json.dumps(lst[2:4])
+                shapeMatch.matchEviCoordi = json.dumps(lst[4:])
+                #在存一条匹配记录的时候直接把图片存到里面去
+                shapeMatch.matchPicURL = "image/devShapeEvi/match/" + str(eviFileId)+"/"+ str(eviFileId) +"_"+ str(lst[0])+ ".jpg"
                 shapeMatch.save()
                 file.close()
         else:

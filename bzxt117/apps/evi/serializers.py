@@ -440,6 +440,7 @@ class LsitExploEviGCMSTestFileSerializer(serializers.Serializer):
             newPath = os.path.join(filePath, name)
             if os.path.exists(prePath) == False:
                 raise APIException("上传的GC_MS文件夹路径被更改，找不到文件夹，无法进行预处理")
+            #移动文件（目录）
             shutil.move(prePath, newPath)
             GCMS2.txtURL = newPath
             GCMS2.save()
@@ -747,10 +748,9 @@ class devShapeEviSerializer(serializers.ModelSerializer):
         default=serializers.CurrentUserDefault()
     )
     inputDate = serializers.DateTimeField(read_only=True, format='%Y-%m-%d %H:%M')
-    maskURL =serializers.FileField(read_only=True,)
+    maskURL =serializers.ImageField(read_only=True,)
     featureUrl =serializers.FileField(read_only=True,)
-    nomUrl = serializers.FileField(read_only=True, )
-    nomResolution = serializers.FileField(read_only=True, )
+    nomUrl = serializers.ImageField(read_only=True, )
 
     class Meta:
         model = devShapeEvi

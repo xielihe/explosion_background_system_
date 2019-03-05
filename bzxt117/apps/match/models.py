@@ -235,6 +235,7 @@ class devShapeMatch(models.Model):
     matchSampleCoordi = models.CharField(max_length=400, null=True, blank=True, verbose_name="匹配的样本位置坐标")
     matchEviCoordi = models.CharField(max_length=400, null=True, blank=True, verbose_name="匹配的物证位置坐标")
     isSure = models.BooleanField(default=False, verbose_name="是否确认")
+    matchPicURL = models.ImageField(max_length=300,null=True, blank=True, upload_to="image/devShapeSample/match/",verbose_name="匹配的图片路径")
     class Meta:
         verbose_name = "爆炸装置案件物证形态匹配结果表"
         verbose_name_plural = verbose_name

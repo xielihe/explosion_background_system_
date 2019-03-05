@@ -43,7 +43,7 @@ path2 = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
                 # exploSyn_Match.expertHandle_id = 2
        #修改得分，同时核准置为False，核准人员为None
         # 会返回201的response，且因为Response是rest_framework的，因此只能最低使用APIView
-class nomPicture(APIView):
+class nomSamplePicture(APIView):
     def post(self,request):
         scaleX1 = int(request.POST["scaleX1"])
         scaleY1 = int(request.POST["scaleY1"])
@@ -113,7 +113,6 @@ class exploSampleFTIRViewset(viewsets.ModelViewSet):
             return exploSampleFTIRDetailSerializer
         return exploSampleFTIRSerializer
 class exploSampleFTIRTestFileViewset(viewsets.ModelViewSet):
-
     queryset = exploSampleFTIRTestFile.objects.all()
     #queryset = exploSample.objects.filter(sname="样本3")
     # serializer_class = LsitExploSampleFTIRTestFileSerializer
@@ -126,8 +125,12 @@ class exploSampleFTIRTestFileViewset(viewsets.ModelViewSet):
         return exploSampleFTIRTestFileSerializer
 
     def perform_destroy(self, instance):
-        # 综合表中的对应的值应该更新，减去这个文件对综合匹配结果的影响，同时都置为未匹配
-        # 样本库的变化会导致报告表的结果不准确，因此报告表清零
+        # 删除的时候txt_handled也要手动删除
+        txtHandledURL = instance.txtHandledURL
+        if os.path.exists(txtHandledURL):
+            os.remove(txtHandledURL)
+        else:
+            raise APIException("想要删除的已处理文件路径不存在")
         instance.delete()
 
 class exploSampleRamanViewset(viewsets.ModelViewSet):
@@ -156,8 +159,12 @@ class exploSampleRamanTestFileViewset(viewsets.ModelViewSet):
         return exploSampleRamanTestFileSerializer
 
     def perform_destroy(self, instance):
-        # 综合表中的对应的值应该更新，减去这个文件对综合匹配结果的影响，同时都置为未匹配
-        # 样本库的变化会导致报告表的结果不准确，因此报告表清零
+        # 删除的时候txt_handled也要手动删除，因为不是文件类型而是字符串类型
+        txtHandledURL = instance.txtHandledURL
+        if os.path.exists(txtHandledURL):
+            os.remove(txtHandledURL)
+        else:
+            raise APIException("想要删除的已处理文件路径不存在")
         instance.delete()
 
 class exploSampleXRDViewset(viewsets.ModelViewSet):
@@ -186,8 +193,12 @@ class exploSampleXRDTestFileViewset(viewsets.ModelViewSet):
         return exploSampleXRDTestFileSerializer
 
     def perform_destroy(self, instance):
-        # 综合表中的对应的值应该更新，减去这个文件对综合匹配结果的影响，同时都置为未匹配
-        # 样本库的变化会导致报告表的结果不准确，因此报告表清零
+        # 删除的时候txt_handled也要手动删除，因为不是文件类型而是字符串类型
+        txtHandledURL = instance.txtHandledURL
+        if os.path.exists(txtHandledURL):
+            os.remove(txtHandledURL)
+        else:
+            raise APIException("想要删除的已处理文件路径不存在")
         instance.delete()
 
 class exploSampleXRFViewset(viewsets.ModelViewSet):
@@ -216,10 +227,13 @@ class exploSampleXRFTestFileViewset(viewsets.ModelViewSet):
         return exploSampleXRFTestFileSerializer
 
     def perform_destroy(self, instance):
-        # 综合表中的对应的值应该更新，减去这个文件对综合匹配结果的影响，同时都置为未匹配
-        # 样本库的变化会导致报告表的结果不准确，因此报告表清零
+        # 删除的时候txt_handled也要手动删除，因为不是文件类型而是字符串类型
+        handledURL = instance.handledURL
+        if os.path.exists(handledURL):
+            os.remove(handledURL)
+        else:
+            raise APIException("想要删除的已处理文件路径不存在")
         instance.delete()
-
 class exploSampleGCMSViewset(viewsets.ModelViewSet):
 
     queryset = exploSampleGCMS.objects.all()
@@ -241,6 +255,15 @@ class exploSampleGCMSFileViewset(viewsets.ModelViewSet):
         # if self.action == "list" :
         #     return exploSampleGCMSDetailSerializer
         return exploSampleGCMSFileSerializer
+
+    def perform_destroy(self, instance):
+        # 删除的时候txt_handled也要手动删除，因为不是文件类型而是字符串类型
+        txtHandledURL = instance.txtHandledURL
+        if os.path.exists(txtHandledURL):
+            os.remove(txtHandledURL)
+        else:
+            raise APIException("想要删除的已处理文件路径不存在")
+        instance.delete()
 class exploSampleGCMSTestFileViewset(viewsets.ModelViewSet):
 
     queryset = exploSampleGCMSTestFile.objects.all()
@@ -318,11 +341,12 @@ class devPartSampleFTIRTestFileViewset(viewsets.ModelViewSet):
         return devPartSampleFTIRTestFileSerializer
 
     def perform_destroy(self, instance):
-        # 综合表中的对应的值应该更新，减去这个文件对综合匹配结果的影响，同时都置为未匹配
-        # 样本库的变化会导致报告表的结果不准确，因此报告表清零
-        # synMatchs = devSynMatch.objects.objects.all()
-        # for synMatch in synMatchs:
-        #     synMatch.delete()
+        # 删除的时候txt_handled也要手动删除，因为不是文件类型而是字符串类型
+        txtHandledURL = instance.txtHandledURL
+        if os.path.exists(txtHandledURL):
+            os.remove(txtHandledURL)
+        else:
+            raise APIException("想要删除的已处理文件路径不存在")
         instance.delete()
 
 class devPartSampleRamanViewset(viewsets.ModelViewSet):
@@ -349,11 +373,12 @@ class devPartSampleRamanTestFileViewset(viewsets.ModelViewSet):
         return devPartSampleRamanTestFileSerializer
 
     def perform_destroy(self, instance):
-        # 综合表中的对应的值应该更新，减去这个文件对综合匹配结果的影响，同时都置为未匹配
-        # 样本库的变化会导致报告表的结果不准确，因此报告表清零
-        # synMatchs = devSynMatch.objects.objects.all()
-        # for synMatch in synMatchs:
-        #     synMatch.delete()
+        # 删除的时候txt_handled也要手动删除，因为不是文件类型而是字符串类型
+        txtHandledURL = instance.txtHandledURL
+        if os.path.exists(txtHandledURL):
+            os.remove(txtHandledURL)
+        else:
+            raise APIException("想要删除的已处理文件路径不存在")
         instance.delete()
 
 class devPartSampleXRFViewset(viewsets.ModelViewSet):
@@ -380,13 +405,12 @@ class devPartSampleXRFTestFileViewset(viewsets.ModelViewSet):
         return devPartSampleXRFTestFileSerializer
 
     def perform_destroy(self, instance):
-        # 综合表中的对应的值应该更新，减去这个文件对综合匹配结果的影响，同时都置为未匹配
-        # 样本库的变化会导致报告表的结果不准确，因此报告表清零
-        # synMatchs = devSynMatch.objects.objects.all()
-        # for synMatch in synMatchs:
-            # synMatch.delete()
-        instance.delete()
-
+        # 删除的时候txt_handled也要手动删除，因为不是文件类型而是字符串类型
+        handledURL = instance.handledURL
+        if os.path.exists(handledURL):
+            os.remove(handledURL)
+        else:
+            raise APIException("想要删除的已处理文件路径不存在")
 class devShapeSampleViewset(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,IsAdmin)
     queryset = devShapeSample.objects.all()
@@ -432,6 +456,17 @@ class devShapeSampleViewset(viewsets.ModelViewSet):
             return sample
         serializer.save()
 
+    def perform_destroy(self, instance):
+        id = instance.id
+        #删掉矩形文件
+        rectURL = os.path.join(MEDIA_ROOT, "image/devShapeSample/rect/")
+        rectUrl = os.path.join(rectURL, str(id) + "_rect.txt")
+        os.remove(rectUrl)
+        #删掉match文件夹中对应的图片
+        matchUrl = os.path.join(MEDIA_ROOT, "image/devShapeEvi/match/" + str(id) + "/" )
+        shutil.rmtree(matchUrl)
+
+        instance.delete()
     # def perform_update(self, serializer):
     #     # sample = serializer.save()
     #     # id =sample.id

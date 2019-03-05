@@ -343,16 +343,11 @@ class exploSynMatchCheckSerializer(serializers.Serializer):
 
 # 用于列表展示或者删除的，创建不用serializer，有专门的接口去创建
 class exploReportMatchSerializer(serializers.ModelSerializer):
-    exploEvi = exploEviSerializer()
-    exploSample = exploSampleSerializer()
-    # 如果允许外键为空，也可以进行序列化
-    checkHandle = UserDetailSerializer()
-    expertHandle = UserDetailSerializer()
 
     class Meta:
         model = exploReportMatch
         #返回id是为了方便删除
-        fields = ("id","exploEvi","exploSample","Score","isCheck","isExpertCheck","checkHandle","expertHandle" )
+        fields = "__all__"
 #        ,"exploSynMatchexpertHandle"
 
 # 炸药报告详情展示
@@ -380,7 +375,7 @@ class exploReportMatchDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = exploReportMatch
         # 返回id是为了方便删除
-        fields = ("id", "devEvi", "exploSynMatchList")
+        fields = ("id", "exploEvi", "exploSynMatchList")
 
 
 # 注意对于爆炸装置物证是不分部分不部分的，而对于样本是要区分部分Part的
@@ -659,11 +654,18 @@ class devShapeMultiMatchCheckSerializer(serializers.Serializer):
 class devShapeMatchDetailSerializer(serializers.ModelSerializer):
     devShapeSample = devShapeSampleSerializer()
     devShapeEvi = devShapeEviSerializer()
+    matchPicURL = serializers.ImageField(read_only=True,)
+    # #由物证图片和样本图片的id去取匹配图像
+    # def get_matchPic(self, obj):
+    #     eviFileId = obj.devShapeEvi.id
+    #     sampleFileId = obj.devShapeSample.id
+    #     matchUrl = os.path.join(MEDIA_ROOT, "image/devShapeEvi/match/" + str(eviFileId) + "/" + str(eviFileId) +"_"+ str(sampleFileId)+ ".jpg")
+    #     return matchUrl
 
     class Meta:
         model = devShapeMatch
         #返回id是为了方便删除
-        fields = ("id","devShapeSample","devShapeEvi","matchDegree","matchSampleCoordi","matchEviCoordi")
+        fields = ("id","devShapeSample","devShapeEvi","matchDegree","matchSampleCoordi","matchEviCoordi","matchPicURL")
 # 形态匹配详情展示
 class devShapeMatchSerializer(serializers.ModelSerializer):
     devSampleName = serializers.SerializerMethodField(read_only=True,)
@@ -711,9 +713,10 @@ class devShapeMultiMatchDetailSerializer(serializers.ModelSerializer):
             # 每次循环，即物证的每张图片，都选出一个与这张物证图片得分最高的属于这个样本的形态匹配记录
             finalQuery = shapeMatchs | finalQuery
         if finalQuery.count() >1:
-            return devShapeMatchSerializer(finalQuery,many=True).data
+            #因为要展示所以用详情的serializer
+            return devShapeMatchDetailSerializer(finalQuery,many=True).data
         else:
-            return devShapeMatchSerializer(finalQuery,).data
+            return devShapeMatchDetailSerializer(finalQuery,).data
 
     class Meta:
         model = devShapeMultiMatch

@@ -8,8 +8,11 @@ from rest_framework import filters
 from rest_framework import viewsets
 import json
 import re
+import shutil
 from rest_framework.response import Response
 from rest_framework import status
+from apps.match.models import *
+from apps.match.views import *
 
 from apps.evi.serializers import *
 from apps.evi.models import *
@@ -28,6 +31,38 @@ from apps.match.views import MyPageNumberPagination
 # 因此要维护好当物证文件一旦变化，匹配结果也要删除
 # 不用了，因为更新现在默认为请求删除，删除后重新上传，那么删除的时候匹配结果也会一并删除
 
+class nomEviPicture(APIView):
+    def post(self,request):
+        scaleX1 = int(request.POST["scaleX1"])
+        scaleY1 = int(request.POST["scaleY1"])
+        scaleX2 = int(request.POST["scaleX2"])
+        scaleY2 = int(request.POST["scaleY2"])
+        rotateX1 = int(request.POST["rotateX1"])
+        rotateY1 = int(request.POST["rotateY1"])
+        rotateX2 = int(request.POST["rotateX2"])
+        rotateY2 = int(request.POST["rotateY2"])
+        PCBImgEviId = int(request.POST["PCBImgEviId"])
+
+        # https://www.jianshu.com/p/5c05eb437e08 fileField保存
+        hudu = math.atan2(rotateY2 - rotateY1, rotateX2 - rotateX1)
+        angle = hudu/ math.pi * 180
+
+        # python的三目运算符
+        deltaX = scaleX1 - scaleX2 if scaleX1 - scaleX2 > 0 else - scaleX1 + scaleX2
+        deltaY = scaleY1 - scaleY2 if scaleY1 - scaleY2 > 0 else  - scaleY1 + scaleY2
+        resolution = deltaX if deltaX > deltaY else deltaY
+
+
+        #将angle和resolution作为参数传入，
+
+        devShapeEvi1 = devShapeEvi.objects.get(id = PCBImgEviId)
+        devShapeEvi1.sResolution = resolution
+        devShapeEvi1.norImgURL = "image/devShapeEvi/correction/" + str(PCBImgEviId) + ".jpg"
+        devShapeEvi1.save()
+
+        return Response({
+            "norImgURL":devShapeEvi1.norImgURL
+        }, status=status.HTTP_201_CREATED)
 
 class exploEviViewset(viewsets.ModelViewSet):
     """
@@ -119,10 +154,12 @@ class exploEviFTIRTestFileViewset(viewsets.ModelViewSet):
 
     # 物证文件删除，由于外键关联，会自动删除关联的FTIR表的匹配信息，但综合表应该更新记录
     def perform_destroy(self, instance):
-        # synMatchs = exploSynMatch.objects.filter(exploEvi = instance.exploEviFTIR.exploEvi )
-        # for synMatch in synMatchs:
-        #     synMatch.delete()
-# 综合表的匹配算法
+        # 删除的时候txt_handled也要手动删除，因为不是文件类型而是字符串类型
+        txtHandledURL = instance.txtHandledURL
+        if os.path.exists(txtHandledURL):
+            os.remove(txtHandledURL)
+        else:
+            raise APIException("想要删除的已处理文件路径不存在")
         instance.delete()
 
 class exploEviRamanViewset(viewsets.ModelViewSet):
@@ -171,10 +208,12 @@ class exploEviRamanTestFileViewset(viewsets.ModelViewSet):
             return [permissions.IsAuthenticated(), IsAdmin()]
 
     def perform_destroy(self, instance):
-        # synMatchs = exploSynMatch.objects.filter(exploEvi = instance.exploEviRaman.exploEvi )
-        # for synMatch in synMatchs:
-        #     synMatch.delete()
- # 综合表的匹配算法
+        # 删除的时候txt_handled也要手动删除，因为不是文件类型而是字符串类型
+        txtHandledURL = instance.txtHandledURL
+        if os.path.exists(txtHandledURL):
+            os.remove(txtHandledURL)
+        else:
+            raise APIException("想要删除的已处理文件路径不存在")
         instance.delete()
 
 class exploEviXRDViewset(viewsets.ModelViewSet):
@@ -225,10 +264,12 @@ class exploEviXRDTestFileViewset(viewsets.ModelViewSet):
 
     # 物证文件删除，由于外键关联，会自动删除关联的FTIR表的匹配信息，但综合表和报告表的也应该手动删除
     def perform_destroy(self, instance):
-        # synMatchs = exploSynMatch.objects.filter(exploEvi = instance.exploEviXRD.exploEvi )
-        # for synMatch in synMatchs:
-        #     synMatch.delete()
-# 综合表的匹配算法
+        # 删除的时候txt_handled也要手动删除，因为不是文件类型而是字符串类型
+        txtHandledURL = instance.txtHandledURL
+        if os.path.exists(txtHandledURL):
+            os.remove(txtHandledURL)
+        else:
+            raise APIException("想要删除的已处理文件路径不存在")
         instance.delete()
 
 class exploEviXRFViewset(viewsets.ModelViewSet):
@@ -277,11 +318,12 @@ class exploEviXRFTestFileViewset(viewsets.ModelViewSet):
             return [permissions.IsAuthenticated(), IsAdmin()]
 
     def perform_destroy(self, instance):
-        # synMatchs = exploSynMatch.objects.filter(exploEvi = instance.exploEviXRF.exploEvi )
-        # for synMatch in synMatchs:
-        #     synMatch.delete()
-# 综合表的匹配算法
-        instance.delete()
+        # 删除的时候txt_handled也要手动删除，因为不是文件类型而是字符串类型
+        handledURL = instance.handledURL
+        if os.path.exists(handledURL):
+            os.remove(handledURL)
+        else:
+            raise APIException("想要删除的已处理文件路径不存在")
 
 class exploEviGCMSViewset(viewsets.ModelViewSet):
     pagination_class = MyPageNumberPagination
@@ -326,6 +368,15 @@ class exploEviGCMSFileViewset(viewsets.ModelViewSet):
         # 但是一旦涉及到删除之类的，就得把普通用户过滤掉
         else:
             return [permissions.IsAuthenticated(), IsAdmin()]
+
+    def perform_destroy(self, instance):
+        # 删除的时候txt_handled也要手动删除，因为不是文件类型而是字符串类型
+        txtHandledURL = instance.txtHandledURL
+        if os.path.exists(txtHandledURL):
+            os.remove(txtHandledURL)
+        else:
+            raise APIException("想要删除的已处理文件路径不存在")
+        instance.delete()
 
 class exploEviGCMSTestFileViewset(viewsets.ModelViewSet):
     pagination_class = MyPageNumberPagination
@@ -438,14 +489,22 @@ class devEviFTIRTestFileViewset(viewsets.ModelViewSet):
         else:
             return [permissions.IsAuthenticated(), IsAdmin()]
 
+#     def perform_destroy(self, instance):
+#         # compMatchs = devCompMatch.objects.filter(devEvi=instance.devEviFTIR.devEvi_id)
+#         # for compMatch in compMatchs:
+#         #     compMatch.delete()
+#         # synMatchs = devSynMatch.objects.filter(devEvi_id=instance.devEviFTIR.devEvi_id)
+#         # for synMatch in synMatchs:
+#         #     synMatch.delete()
+# # 综合表的匹配算法
+#         instance.delete()
     def perform_destroy(self, instance):
-        # compMatchs = devCompMatch.objects.filter(devEvi=instance.devEviFTIR.devEvi_id)
-        # for compMatch in compMatchs:
-        #     compMatch.delete()
-        # synMatchs = devSynMatch.objects.filter(devEvi_id=instance.devEviFTIR.devEvi_id)
-        # for synMatch in synMatchs:
-        #     synMatch.delete()
-# 综合表的匹配算法
+        # 删除的时候txt_handled也要手动删除，因为不是文件类型而是字符串类型
+        txtHandledURL = instance.txtHandledURL
+        if os.path.exists(txtHandledURL):
+            os.remove(txtHandledURL)
+        else:
+            raise APIException("想要删除的已处理文件路径不存在")
         instance.delete()
 
 class devEviRamanViewset(viewsets.ModelViewSet):
@@ -493,13 +552,12 @@ class devEviRamanTestFileViewset(viewsets.ModelViewSet):
             return [permissions.IsAuthenticated(), IsAdmin()]
 
     def perform_destroy(self, instance):
-        # compMatchs = devCompMatch.objects.filter(devEvi=instance.devEviRaman.devEvi_id)
-        # for compMatch in compMatchs:
-        #     compMatch.delete()
-        # synMatchs = devSynMatch.objects.filter(devEvi_id=instance.devEviRaman.devEvi_id)
-        # for synMatch in synMatchs:
-        #     synMatch.delete()
-# 综合表的匹配算法
+        # 删除的时候txt_handled也要手动删除，因为不是文件类型而是字符串类型
+        txtHandledURL = instance.txtHandledURL
+        if os.path.exists(txtHandledURL):
+            os.remove(txtHandledURL)
+        else:
+            raise APIException("想要删除的已处理文件路径不存在")
         instance.delete()
 
 class devEviXRFViewset(viewsets.ModelViewSet):
@@ -547,14 +605,12 @@ class devEviXRFTestFileViewset(viewsets.ModelViewSet):
             return [permissions.IsAuthenticated(), IsAdmin()]
 
     def perform_destroy(self, instance):
-        # compMatchs = devCompMatch.objects.filter(devEvi=instance.devEviXRF.devEvi_id)
-        # for compMatch in compMatchs:
-        #     compMatch.delete()
-        # synMatchs = devSynMatch.objects.filter(devEvi_id=instance.devEviXRF.devEvi_id)
-        # for synMatch in synMatchs:
-        #     synMatch.delete()
-# 综合表的匹配算法
-        instance.delete()
+        # 删除的时候txt_handled也要手动删除，因为不是文件类型而是字符串类型
+        handledURL = instance.handledURL
+        if os.path.exists(handledURL):
+            os.remove(handledURL)
+        else:
+            raise APIException("想要删除的已处理文件路径不存在")
 
 class devShapeEviViewset(viewsets.ModelViewSet):
     # permission_classes = (IsAuthenticated, IsOwnerOrReadOnly)
@@ -562,26 +618,16 @@ class devShapeEviViewset(viewsets.ModelViewSet):
     serializer_class = devShapeEviSerializer
     pagination_class = MyPageNumberPagination
 
-    # def get_permissions(self):
-    #     if self.action == "update" or "partial_update":
-    #     # 这里更新对应的是话矩形框等的操作，因为定期那采用师姐的版本
-    #     #     return [permissions.IsAuthenticated(),IsAdmin()]
-    #     # elif self.action == "update":
-    #         return [permissions.IsAuthenticated(),IsOwnerOrReadOnly()]
-    #     # 创建还是所有人都可以创建
-    #     elif self.action == "create":
-    #         return [permissions.IsAuthenticated(),]
-    #     return [permissions.IsAuthenticated(),IsAdmin(),]
-
     def get_permissions(self):
-        # 物证创建的话应该his谁都可以创建的
-        if self.action == "create":
-            #     return [permissions.IsAuthenticated(),IsAdmin()]
-            # elif self.action == "update":
-            return [permissions.IsAuthenticated()]
-        # 但是一旦涉及到删除之类的，就得把普通用户过滤掉
-        else:
-            return [permissions.IsAuthenticated(), IsAdmin()]
+        if self.action == "update" or "partial_update":
+        # 这里更新对应的是话矩形框等的操作，虽然正常来说物证普通用户是不可以更新的，但是因为矩形框涉及到更新所以这里单独放宽了权限
+        #     return [permissions.IsAuthenticated(),IsAdmin()]
+        # elif self.action == "update":
+            return [permissions.IsAuthenticated(),IsOwnerOrReadOnly()]
+        # 创建还是所有人都可以创建
+        elif self.action == "create":
+            return [permissions.IsAuthenticated(),]
+        return [permissions.IsAuthenticated(),IsAdmin(),]
 
     def perform_create(self, serializer):
         evi = serializer.save()
@@ -590,7 +636,6 @@ class devShapeEviViewset(viewsets.ModelViewSet):
         name = str(evi.originalUrl).split("/")[-1]
         picType = os.path.splitext(name)[1]
         path = os.path.join(MEDIA_ROOT,"image/devShapeEvi/original/")
-        rectURL = os.path.join(MEDIA_ROOT,"image/devShapeEvi/rect/")
         os.rename(os.path.join(MEDIA_ROOT,str(evi.originalUrl)), os.path.join(path, str(id) + picType))
         evi.originalUrl = "image/devShapeEvi/original/" + str(id) + picType
         evi.save()
@@ -640,6 +685,15 @@ class devShapeEviViewset(viewsets.ModelViewSet):
             evi.save()
             return evi
         serializer.save()
+
+    def perform_destroy(self, instance):
+        id = instance.id
+        #删掉矩形文件
+        rectURL = os.path.join(MEDIA_ROOT, "image/devShapeEvi/rect/")
+        rectUrl = os.path.join(rectURL, str(id) + "_rect.txt")
+        os.remove(rectUrl)
+
+        instance.delete()
 
     # def perform_update(self, serializer):
     #     evi = serializer.save()

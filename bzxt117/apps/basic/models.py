@@ -22,7 +22,7 @@ class userProfile(AbstractUser):
     posts = models.EmailField(max_length=40, null=True, blank=True, verbose_name="职务")
     role = models.IntegerField(choices=ROLE_TYPE,default=3, verbose_name="权限标识", help_text="权限标识")
     isDelete =models.BooleanField(default=False,verbose_name="是否逻辑删除")
-    picUrl =models.ImageField(max_length=100,upload_to="image/user/",null=True,blank=True,verbose_name="头像路径")
+    picUrl =models.ImageField(max_length=300,upload_to="image/user/",null=True,blank=True,verbose_name="头像路径")
     note =models.CharField(max_length=200,null=True,blank=True,verbose_name="备注")
 
     class Meta:
