@@ -644,7 +644,10 @@ class devShapeEviViewset(viewsets.ModelViewSet):
         name = str(evi.srcImgURL).split("/")[-1]
         picType = os.path.splitext(name)[1]
         path = os.path.join(MEDIA_ROOT,"image/devShapeEvi/original/")
-        os.rename(os.path.join(MEDIA_ROOT,str(evi.srcImgURL)), os.path.join(path, str(id) + picType))
+        if os.path.exists(os.path.join(MEDIA_ROOT,str(evi.srcImgURL))):
+            os.rename(os.path.join(MEDIA_ROOT,str(evi.srcImgURL)), os.path.join(path, str(id) + picType))
+        else:
+            raise APIException("没上传电路板图片，请上传。")
         evi.srcImgURL = "image/devShapeEvi/original/" + str(id) + picType
         evi.save()
 

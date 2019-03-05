@@ -612,9 +612,23 @@ class startMatch(APIView):
                 file.close()
                 #维护形态综合表
                 #之前的成分综合表是把一个物证和一个样本的五种类型的所有结果的综合
-                #现在的形态综合就是只有一种类型，把这个类型的所有结果中最高的一对取出来放到综合中
-                shapeMatch = devShapeMatch.objects.filter(devShapeEvi_id=eviFileId).order_by("-matchScore")[0]
-                multiMatchs = devShapeMultiMatch.objects.get_or_create(devEvi=eviFile.devEvi)
+                #现在的形态综合就是只有一种类型，把这个类型的所有结果中最高的一对取出来放到综合中,每个物证图片和样本一对，且综合表中每个物证和样本一对
+                #先把这张图片的形态匹配表中的所有记录对应的样本id找出来
+                matchSampleIds = devShapeMatch.objects.filter(devShapeEvi_id=eviFileId).values_list('devShapeSample__devPartSample_id',flat=True)
+                #对于这张图片的每个样本的多张图片的匹配记录中找出最高的那一对作为这个图片和这个样本的记录
+                for matchSampleId in matchSampleIds:
+                    matchs = devShapeMatch.objects.filter(devShapeEvi_id=eviFileId,devShapeSample__devPartSample_id = matchSampleId).order_by('-matchDegree')
+                    # if matchs.count() >1 :
+                    #     match = matchs[0]
+                    # else:
+                    #     match = matchs
+                    match = matchs[0]
+
+                    #将这个图片对应的物证和样本添加到形态综合表中
+                    multiMatchs = devShapeMultiMatch.objects.get_or_create(devEvi=eviFile.devEvi,devPartSample_id = matchSampleId)
+                    multiMatch = multiMatchs[0]
+                    multiMatch.Score = match.matchDegree
+                    multiMatch.save()
             else:
                 raise APIException("匹配文件不存在")
             pager_roles = pg.paginate_queryset(queryset=querysetList, request=request,view=self)
@@ -1030,7 +1044,6 @@ class devShapeMatchViewset(viewsets.ModelViewSet):
         return devShapeMatch.objects.all()
 
     def get_serializer_class(self):
-        # 这里对应的是核准
         if self.action == "retrieve":
             return devShapeMatchDetailSerializer
         return devShapeMatchSerializer

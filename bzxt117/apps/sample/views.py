@@ -432,8 +432,11 @@ class devShapeSampleViewset(viewsets.ModelViewSet):
         #重命名
         name = str(sample.srcImgURL).split("/")[-1]
         picType = os.path.splitext(name)[1]
-        path = os.path.join(MEDIA_ROOT,"imagek/devShapeSample/original/")
-        os.rename(os.path.join(MEDIA_ROOT,str(sample.srcImgURL)), os.path.join(path, str(id) + picType))
+        path = os.path.join(MEDIA_ROOT,"image/devShapeSample/original/")
+        if os.path.exists(os.path.join(MEDIA_ROOT,str(sample.srcImgURL))):
+            os.rename(os.path.join(MEDIA_ROOT,str(sample.srcImgURL)), os.path.join(path, str(id) + picType))
+        else:
+            raise APIException("没上传电路板图片，请上传。")
         sample.srcImgURL = "image/devShapeSample/original/" + str(id) + picType
         #调用归一化函数,另见函数
         sample.save()
