@@ -7,6 +7,8 @@ from rest_framework.validators import UniqueValidator
 import docx
 import numpy as np
 import os
+from rest_framework.exceptions import APIException
+
 
 from apps.basic.models import *
 from bzxt117.settings import MEDIA_ROOT
@@ -29,6 +31,13 @@ class UserRegSerializer(serializers.ModelSerializer):
         style={'input_type': 'password'},help_text="密码", label="密码",# write_only=True,
     )
 
+    # def validate_username(self,username):
+    #     newName =  self.context["request"].user.username
+    #     if userProfile.objects.filter(username = newName).count() >0:
+    #         # raise serializers.ValidationError("该手机已被注册过。")
+    #         raise APIException("该手机已被注册过。")
+    #     else:
+    #         return username
     def validate_role(self, role):
         # 注意参数，self以及字段名
         # 注意函数名写法，validate_ + 字段名字

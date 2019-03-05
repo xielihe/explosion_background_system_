@@ -340,14 +340,15 @@ class devShapeEvi(models.Model):
     devEvi = models.ForeignKey(devEvi, verbose_name="所属物证",related_name="devShapeEvi")
     user = models.ForeignKey(userProfile, verbose_name=u"处理人员")#,on_delete=models.CASCADE)
     inputDate = models.DateTimeField(default=datetime.now, verbose_name=u"录入日期")
+    rectCoordi=models.CharField(max_length=50,null=True, blank=True, verbose_name="矩形框坐标（4个）")
     # sampleSide = models.IntegerField(choices=SIDE_TYPE, default=1, verbose_name="电路板是哪个面（1-2；1为正面）", help_text="电路板是哪个面（1-2；1为正面）")
     maskURL=models.ImageField(max_length=300,null=True, blank=True, upload_to="image/devShapeSample/mask/",verbose_name="PCB区域标记图像文件路径 ")#upload_to="image/devShapeSample/mask/",
     featureUrl=models.FileField(max_length=300,null=True, blank=True, verbose_name="特征文件路径", upload_to="file/devShapeSample/feature")#, upload_to="file/devShapeSample/feature"
     # componentSegURL=models.FileField(max_length=300,null=True, blank=True, verbose_name="元器件分割结果文件路径")# upload_to="file/devShapeSample/result/",
     srcImgURL =models.ImageField(max_length=300,upload_to="image/devShapeEvi/original/",null=True,blank=True,verbose_name="原始图像文件路径")#
-    sResolution=models.IntegerField(null=True, blank=True, verbose_name="原始图像采集分辨率")
+    # sResolution=models.IntegerField(null=True, blank=True, verbose_name="原始图像采集分辨率")
     norImgURL=models.ImageField(max_length=300,upload_to="image/devShapeEvi/correction/",null=True,blank=True,verbose_name="归一化图像文件路径")#
-    nResolution=models.IntegerField(null=True, blank=True, verbose_name="归一化图像分辨率")
+    # nResolution=models.IntegerField(null=True, blank=True, verbose_name="归一化图像分辨率")
     note = models.CharField(max_length=500, null=True, blank=True, verbose_name="备注")
 
    # isDelete = models.BooleanField(default=False, verbose_name="是否逻辑删除")

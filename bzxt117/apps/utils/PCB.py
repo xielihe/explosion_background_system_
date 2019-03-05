@@ -11,7 +11,7 @@ def getPCB(id,type):
 
     path = os.path.join(path2, 'utils/GetPCBFeature.exe')
     # type是"Sample"
-    os.popen(path+r' '+str(id)+r' '+type).read()
+    print(os.popen(path+r' '+str(id)+r' '+type).read())
 
     # os.system(path + str(1.2) + r' ' + "Sample")
 
@@ -27,7 +27,7 @@ def CompMatching(id):
 
 def FeatureMatching(id):
     path = os.path.join(path2, 'utils/FeatureMatching.exe')
-    os.popen(path + r' ' + str(id)).read()
+    print(os.popen(path + r' ' + str(id)).read())
 
 
 

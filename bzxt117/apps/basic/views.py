@@ -190,6 +190,10 @@ class UserViewset(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
+        newName =  request.data["username"]
+        if userProfile.objects.filter(username = newName).count() >0:
+            # raise serializers.ValidationError("该手机已被注册过。")
+            raise APIException("该手机已被注册过。")
         serializer.is_valid(raise_exception=True)
         user = self.perform_create(serializer)
 

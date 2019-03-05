@@ -497,6 +497,7 @@ class devEviSerializer(serializers.ModelSerializer):
         default=serializers.CurrentUserDefault()
     )
     inputDate = serializers.DateTimeField(read_only=True, format='%Y-%m-%d %H:%M')
+    caseName = serializers.CharField(label="案件名称", help_text="案件名称", required=True, allow_blank=False,)
 
     class Meta:
         model = devEvi

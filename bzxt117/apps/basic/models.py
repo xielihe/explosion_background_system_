@@ -13,7 +13,7 @@ class userProfile(AbstractUser):
         (3, "普通用户"),
         (4, "专家"),
     )
-    name = models.CharField(max_length=6,verbose_name="人员姓名")
+    name = models.CharField(max_length=20,verbose_name="人员姓名")
     # mobile = models.CharField(max_length=11,null=True, blank=True,verbose_name="手机（登录）")
     phone = models.CharField(max_length=20,null=True, blank=True,verbose_name="固话（查询）")
     email = models.EmailField(max_length=50, null=True, blank=True, verbose_name="邮箱")

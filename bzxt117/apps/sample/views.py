@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from PIL import Image
 import math
+import numpy
 import os
 
 from apps.sample.serializers import *
@@ -43,32 +44,39 @@ path2 = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
                 # exploSyn_Match.expertHandle_id = 2
        #修改得分，同时核准置为False，核准人员为None
         # 会返回201的response，且因为Response是rest_framework的，因此只能最低使用APIView
+#归一化爆炸装置形态图片
 class nomSamplePicture(APIView):
     def post(self,request):
         scaleX1 = int(request.POST["scaleX1"])
         scaleY1 = int(request.POST["scaleY1"])
         scaleX2 = int(request.POST["scaleX2"])
         scaleY2 = int(request.POST["scaleY2"])
+        PCBImgSampleId = int(request.POST["PCBImgSampleId"])
+
+        deltaX = scaleX1 - scaleX2# if scaleX1 - scaleX2 > 0 else - scaleX1 + scaleX2
+        deltaY = scaleY1 - scaleY2 #if scaleY1 - scaleY2 > 0 else  - scaleY1 + scaleY2
+        resolution = numpy.sqrt(deltaX*deltaX + deltaY * deltaY)
+
+        #用resolution和PCBImgSampleId和"Sample"做参数调用归一化函数
+
+        devShapeSample1 = devShapeSample.objects.get(id = PCBImgSampleId)
+        devShapeSample1.norImgURL = "image/devShapeSample/correction/" + str(PCBImgSampleId) + ".jpg"
+        devShapeSample1.save()
+
+        return Response({
+            "norImgURL":devShapeSample1.norImgURL
+        }, status=status.HTTP_201_CREATED)
+class rotateSamplePicture(APIView):
+    def post(self,request):
         rotateX1 = int(request.POST["rotateX1"])
         rotateY1 = int(request.POST["rotateY1"])
         rotateX2 = int(request.POST["rotateX2"])
         rotateY2 = int(request.POST["rotateY2"])
         PCBImgSampleId = int(request.POST["PCBImgSampleId"])
 
-        # https://www.jianshu.com/p/5c05eb437e08 fileField保存
-        hudu = math.atan2(rotateY2 - rotateY1, rotateX2 - rotateX1)
-        angle = hudu/ math.pi * 180
-
-        # python的三目运算符
-        deltaX = scaleX1 - scaleX2 if scaleX1 - scaleX2 > 0 else - scaleX1 + scaleX2
-        deltaY = scaleY1 - scaleY2 if scaleY1 - scaleY2 > 0 else  - scaleY1 + scaleY2
-        resolution = deltaX if deltaX > deltaY else deltaY
-
-
-        #将angle和resolution作为参数传入，
+        # 用rotateX1等和PCBImgSampleId和"Sample"做参数调用旋转函数
 
         devShapeSample1 = devShapeSample.objects.get(id = PCBImgSampleId)
-        devShapeSample1.sResolution = resolution
         devShapeSample1.norImgURL = "image/devShapeSample/correction/" + str(PCBImgSampleId) + ".jpg"
         devShapeSample1.save()
 
@@ -422,11 +430,11 @@ class devShapeSampleViewset(viewsets.ModelViewSet):
         sample = serializer.save()
         id = sample.id
         #重命名
-        name = str(sample.originalUrl).split("/")[-1]
+        name = str(sample.srcImgURL).split("/")[-1]
         picType = os.path.splitext(name)[1]
         path = os.path.join(MEDIA_ROOT,"imagek/devShapeSample/original/")
-        os.rename(os.path.join(MEDIA_ROOT,str(sample.originalUrl)), os.path.join(path, str(id) + picType))
-        sample.originalUrl = "image/devShapeSample/original/" + str(id) + picType
+        os.rename(os.path.join(MEDIA_ROOT,str(sample.srcImgURL)), os.path.join(path, str(id) + picType))
+        sample.srcImgURL = "image/devShapeSample/original/" + str(id) + picType
         #调用归一化函数,另见函数
         sample.save()
         return sample
@@ -461,11 +469,16 @@ class devShapeSampleViewset(viewsets.ModelViewSet):
         #删掉矩形文件
         rectURL = os.path.join(MEDIA_ROOT, "image/devShapeSample/rect/")
         rectUrl = os.path.join(rectURL, str(id) + "_rect.txt")
-        os.remove(rectUrl)
+        if os.path.exists(rectUrl):
+            os.remove(rectUrl)
+        else:
+            raise APIException("想要删除的矩形文件不存在")
         #删掉match文件夹中对应的图片
         matchUrl = os.path.join(MEDIA_ROOT, "image/devShapeEvi/match/" + str(id) + "/" )
-        shutil.rmtree(matchUrl)
-
+        if os.path.exists(matchUrl):
+            shutil.rmtree(matchUrl)
+        else:
+            raise APIException("想要删除的match文件夹不存在")
         instance.delete()
     # def perform_update(self, serializer):
     #     # sample = serializer.save()

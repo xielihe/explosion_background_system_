@@ -120,8 +120,10 @@ urlpatterns = [
      # 6：devMatchFTIR，7:devMatchRaman,8:devMatchXRF,9:PCBImgMatch,10:oPartImgMatch,11:logoImgMatch
      # 12:devShapeMatch
      url(r'^startMatch/',startMatch.as_view(), name='startMatch'),
-     url(r'^nomEviPicture/', nomEviPicture.as_view(), name='nomEviPicture'),
      url(r'^nomSamplePicture/', nomSamplePicture.as_view(), name='nomSamplePicture'),
+     url(r'^rotateSamplePicture/', rotateSamplePicture.as_view(), name='rotateSamplePicture'),
+     url(r'^nomEviPicture/', nomEviPicture.as_view(), name='nomEviPicture'),
+     url(r'^rotateEviPicture/', rotateEviPicture.as_view(), name='rotateEviPicture'),
      url(r'^createDevReport/', createDevReport.as_view(), name='createDevReport'),
      url(r'^createExploReport/', createExploReport.as_view(), name='createExploReport'),
      url(r'^messageUpdate/',messageUpdate.as_view(),name='messageUpdate'),

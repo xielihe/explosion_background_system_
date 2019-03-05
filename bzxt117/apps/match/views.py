@@ -586,25 +586,40 @@ class startMatch(APIView):
             ser = devMatchXRFSerializer(instance=pager_roles, many=True)
             return pg.get_paginated_response(ser.data)  # 返回上一页或者下一页
         elif type == 9:
+            querysetList = []
+            eviFile = devShapeEvi.objects.get(id=eviFileId)
             # 存储feature文件（暂无）
             # 特征匹配
             FeatureMatching(eviFileId)
             # 特征匹配文件提取
             matchUrl = os.path.join(MEDIA_ROOT, "image/devShapeEvi/match/" + str(eviFileId)+"/"+ str(eviFileId)  + ".txt")
-            file = open(matchUrl)
-            seq = re.compile("\s+")
-            for line in file:
-                lst = seq.split(line.strip())
-                shapeMatch = devShapeMatch()
-                shapeMatch.devShapeEvi_id = eviFileId
-                shapeMatch.devShapeSample_id = lst[0]
-                shapeMatch.matchDegree = lst[1]
-                shapeMatch.matchSampleCoordi = json.dumps(lst[2:4])
-                shapeMatch.matchEviCoordi = json.dumps(lst[4:])
-                #在存一条匹配记录的时候直接把图片存到里面去
-                shapeMatch.matchPicURL = "image/devShapeEvi/match/" + str(eviFileId)+"/"+ str(eviFileId) +"_"+ str(lst[0])+ ".jpg"
-                shapeMatch.save()
+            if os.path.exists(matchUrl):
+                file = open(matchUrl)
+                seq = re.compile("\s+")
+                for line in file:
+                    lst = seq.split(line.strip())
+                    shapeMatch1 = devShapeMatch.objects.get_or_create(devShapeEvi_id = eviFileId,devShapeSample_id = lst[0])
+                    #注意get_or_create结果是tuple，得取出来才能赋值
+                    shapeMatch = shapeMatch1[0]
+                    shapeMatch.matchDegree = lst[1]
+                    shapeMatch.matchSampleCoordi = json.dumps(lst[2:4])
+                    shapeMatch.matchEviCoordi = json.dumps(lst[4:])
+                    # 在存一条匹配记录的时候直接把图片存到里面去
+                    shapeMatch.matchPicURL = "image/devShapeEvi/match/" + str(eviFileId) + "/" + str(
+                        eviFileId) + "_" + str(lst[0]) + ".jpg"
+                    shapeMatch.save()
+                    querysetList.append(shapeMatch)
                 file.close()
+                #维护形态综合表
+                #之前的成分综合表是把一个物证和一个样本的五种类型的所有结果的综合
+                #现在的形态综合就是只有一种类型，把这个类型的所有结果中最高的一对取出来放到综合中
+                shapeMatch = devShapeMatch.objects.filter(devShapeEvi_id=eviFileId).order_by("-matchScore")[0]
+                multiMatchs = devShapeMultiMatch.objects.get_or_create(devEvi=eviFile.devEvi)
+            else:
+                raise APIException("匹配文件不存在")
+            pager_roles = pg.paginate_queryset(queryset=querysetList, request=request,view=self)
+            ser = devShapeMatchSerializer(instance=pager_roles, many=True)
+            return pg.get_paginated_response(ser.data)  # 返回上一页或者下一页
         else:
             return  Response("fail")
 

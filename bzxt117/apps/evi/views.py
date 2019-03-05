@@ -9,6 +9,7 @@ from rest_framework import viewsets
 import json
 import re
 import shutil
+import numpy
 from rest_framework.response import Response
 from rest_framework import status
 from apps.match.models import *
@@ -37,26 +38,33 @@ class nomEviPicture(APIView):
         scaleY1 = int(request.POST["scaleY1"])
         scaleX2 = int(request.POST["scaleX2"])
         scaleY2 = int(request.POST["scaleY2"])
+        PCBImgEviId = int(request.POST["PCBImgEviId"])
+
+        deltaX = scaleX1 - scaleX2  # if scaleX1 - scaleX2 > 0 else - scaleX1 + scaleX2
+        deltaY = scaleY1 - scaleY2  # if scaleY1 - scaleY2 > 0 else  - scaleY1 + scaleY2
+        resolution = numpy.sqrt(deltaX * deltaX + deltaY * deltaY)
+
+        # 用resolution和PCBImgSampleId做参数调用归一化函数
+
+        devShapeEvi1 = devShapeEvi.objects.get(id = PCBImgEviId)
+        devShapeEvi1.norImgURL = "image/devShapeEvi/correction/" + str(PCBImgEviId) + ".jpg"
+        devShapeEvi1.save()
+
+        return Response({
+            "norImgURL":devShapeEvi1.norImgURL
+        }, status=status.HTTP_201_CREATED)
+
+class rotateEviPicture(APIView):
+    def post(self,request):
         rotateX1 = int(request.POST["rotateX1"])
         rotateY1 = int(request.POST["rotateY1"])
         rotateX2 = int(request.POST["rotateX2"])
         rotateY2 = int(request.POST["rotateY2"])
         PCBImgEviId = int(request.POST["PCBImgEviId"])
 
-        # https://www.jianshu.com/p/5c05eb437e08 fileField保存
-        hudu = math.atan2(rotateY2 - rotateY1, rotateX2 - rotateX1)
-        angle = hudu/ math.pi * 180
-
-        # python的三目运算符
-        deltaX = scaleX1 - scaleX2 if scaleX1 - scaleX2 > 0 else - scaleX1 + scaleX2
-        deltaY = scaleY1 - scaleY2 if scaleY1 - scaleY2 > 0 else  - scaleY1 + scaleY2
-        resolution = deltaX if deltaX > deltaY else deltaY
-
-
-        #将angle和resolution作为参数传入，
+        # 用rotateX1等和PCBImgSampleId和"Evi"做参数调用旋转函数
 
         devShapeEvi1 = devShapeEvi.objects.get(id = PCBImgEviId)
-        devShapeEvi1.sResolution = resolution
         devShapeEvi1.norImgURL = "image/devShapeEvi/correction/" + str(PCBImgEviId) + ".jpg"
         devShapeEvi1.save()
 
@@ -633,11 +641,11 @@ class devShapeEviViewset(viewsets.ModelViewSet):
         evi = serializer.save()
         id = evi.id
         #重命名
-        name = str(evi.originalUrl).split("/")[-1]
+        name = str(evi.srcImgURL).split("/")[-1]
         picType = os.path.splitext(name)[1]
         path = os.path.join(MEDIA_ROOT,"image/devShapeEvi/original/")
-        os.rename(os.path.join(MEDIA_ROOT,str(evi.originalUrl)), os.path.join(path, str(id) + picType))
-        evi.originalUrl = "image/devShapeEvi/original/" + str(id) + picType
+        os.rename(os.path.join(MEDIA_ROOT,str(evi.srcImgURL)), os.path.join(path, str(id) + picType))
+        evi.srcImgURL = "image/devShapeEvi/original/" + str(id) + picType
         evi.save()
 
         #调用归一化函数
@@ -691,7 +699,10 @@ class devShapeEviViewset(viewsets.ModelViewSet):
         #删掉矩形文件
         rectURL = os.path.join(MEDIA_ROOT, "image/devShapeEvi/rect/")
         rectUrl = os.path.join(rectURL, str(id) + "_rect.txt")
-        os.remove(rectUrl)
+        if os.path.exists(rectUrl):
+            os.remove(rectUrl)
+        else:
+            raise APIException("想要删除的矩形文件不存在")
 
         instance.delete()
 
