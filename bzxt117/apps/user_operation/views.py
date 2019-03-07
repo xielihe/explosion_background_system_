@@ -13,6 +13,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
 import pytz
+import datetime
 from rest_framework_jwt.serializers import jwt_encode_handler, jwt_payload_handler
 
 
@@ -117,11 +118,13 @@ class messageUpdate(APIView):
     def get(self,request):
         receiver = request.user
         if userMessage.objects.filter(receiveUser = receiver).count()>0:
-            lastMessage = userMessage.objects.filter(receiveUser = receiver).order_by('sendDate')[0].sendDate
+            lastMessage = userMessage.objects.filter(receiveUser = receiver,hasRead = False,hasHandle = False).order_by('-sendDate')[0].sendDate
         else:
             lastMessage = datetime.min.replace(tzinfo=pytz.timezone('Asia/Shanghai'))
+        # tempTime = datetime.now() -timedelta(minutes=3)
 
-        if datetime.now().replace(tzinfo=pytz.timezone('Asia/Shanghai'))<= lastMessage:
+
+        if (datetime.now() -timedelta(minutes=3)).replace(tzinfo=pytz.timezone('Asia/Shanghai'))<= lastMessage:
             isUpdate = True
         else:
             isUpdate = False

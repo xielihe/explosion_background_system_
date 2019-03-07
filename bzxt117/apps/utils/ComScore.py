@@ -24,6 +24,10 @@
 def ComScore(result, score_dict):
     result_one = {}     #仅保留匹配程度最高的样本文件记录
 
+  #xyw加的全局声明，可能出错
+    cur_type = []
+    max_list = []
+
     for key in result:
         if result[key] != []:
             cur_type = result[key]

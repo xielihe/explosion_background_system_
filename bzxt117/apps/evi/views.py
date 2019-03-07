@@ -38,39 +38,47 @@ class nomEviPicture(APIView):
         scaleY1 = int(request.POST["scaleY1"])
         scaleX2 = int(request.POST["scaleX2"])
         scaleY2 = int(request.POST["scaleY2"])
-        PCBImgEviId = int(request.POST["PCBImgEviId"])
-
-        deltaX = scaleX1 - scaleX2  # if scaleX1 - scaleX2 > 0 else - scaleX1 + scaleX2
-        deltaY = scaleY1 - scaleY2  # if scaleY1 - scaleY2 > 0 else  - scaleY1 + scaleY2
-        resolution = numpy.sqrt(deltaX * deltaX + deltaY * deltaY)
-
-        # 用resolution和PCBImgSampleId做参数调用归一化函数
-
-        devShapeEvi1 = devShapeEvi.objects.get(id = PCBImgEviId)
-        devShapeEvi1.norImgURL = "image/devShapeEvi/correction/" + str(PCBImgEviId) + ".jpg"
-        devShapeEvi1.save()
-
-        return Response({
-            "norImgURL":devShapeEvi1.norImgURL
-        }, status=status.HTTP_201_CREATED)
-
-class rotateEviPicture(APIView):
-    def post(self,request):
         rotateX1 = int(request.POST["rotateX1"])
         rotateY1 = int(request.POST["rotateY1"])
         rotateX2 = int(request.POST["rotateX2"])
         rotateY2 = int(request.POST["rotateY2"])
         PCBImgEviId = int(request.POST["PCBImgEviId"])
 
-        # 用rotateX1等和PCBImgSampleId和"Evi"做参数调用旋转函数
+        deltaX = scaleX1 - scaleX2  # if scaleX1 - scaleX2 > 0 else - scaleX1 + scaleX2
+        deltaY = scaleY1 - scaleY2  # if scaleY1 - scaleY2 > 0 else  - scaleY1 + scaleY2
+        resolution = numpy.sqrt(deltaX * deltaX + deltaY * deltaY)
+
+        imageRotation(rotateX1,rotateY1,rotateX2,rotateY2,resolution,PCBImgEviId,'Evi')
+
+        # 用resolution和PCBImgSampleId做参数调用归一化函数，用rotateX1等和"Evi"做参数调用旋转函数
 
         devShapeEvi1 = devShapeEvi.objects.get(id = PCBImgEviId)
         devShapeEvi1.norImgURL = "image/devShapeEvi/correction/" + str(PCBImgEviId) + ".jpg"
         devShapeEvi1.save()
 
-        return Response({
-            "norImgURL":devShapeEvi1.norImgURL
-        }, status=status.HTTP_201_CREATED)
+        serializer = devShapeEviSerializer(devShapeEvi1,)
+        return Response(serializer.data,)
+        # return Response({
+        #     "norImgURL":devShapeEvi1.norImgURL
+        # }, status=status.HTTP_201_CREATED)
+
+# class rotateEviPicture(APIView):
+#     def post(self,request):
+#         rotateX1 = int(request.POST["rotateX1"])
+#         rotateY1 = int(request.POST["rotateY1"])
+#         rotateX2 = int(request.POST["rotateX2"])
+#         rotateY2 = int(request.POST["rotateY2"])
+#         PCBImgEviId = int(request.POST["PCBImgEviId"])
+#
+#         # 用rotateX1等和PCBImgSampleId和"Evi"做参数调用旋转函数
+#
+#         devShapeEvi1 = devShapeEvi.objects.get(id = PCBImgEviId)
+#         devShapeEvi1.norImgURL = "image/devShapeEvi/correction/" + str(PCBImgEviId) + ".jpg"
+#         devShapeEvi1.save()
+#
+#         return Response({
+#             "norImgURL":devShapeEvi1.norImgURL
+#         }, status=status.HTTP_201_CREATED)
 
 class exploEviViewset(viewsets.ModelViewSet):
     """
@@ -89,7 +97,9 @@ class exploEviViewset(viewsets.ModelViewSet):
     # serializer_class = exploEviSerializer
     # permission_classes = (IsAuthenticated,IsAdmin)
     pagination_class = MyPageNumberPagination
-    filter_backends = (filters.SearchFilter, filters.OrderingFilter)
+    filter_backends = (DjangoFilterBackend,filters.SearchFilter, filters.OrderingFilter)
+    #search_fields是模糊搜索，区别于  filter_fields = ('term',)
+    filter_fields = ("caseName",)
     search_fields = ("caseName","evidenceName","note")
     ordering_fields = ("id","inputDate")
 
@@ -433,7 +443,9 @@ class devEviViewset(viewsets.ModelViewSet):
     #queryset = exploSample.objects.filter(sname="样本3")
     # serializer_class = devEviSerializer
     # permission_classes = (IsAuthenticated,IsAdmin)
-    filter_backends = (filters.SearchFilter, filters.OrderingFilter)
+    filter_backends = (DjangoFilterBackend,filters.SearchFilter, filters.OrderingFilter)
+    #search_fields是模糊搜索，区别于  filter_fields = ('term',)
+    filter_fields = ("caseName",)
     search_fields = ("caseName","evidenceName","note","Factory","Model","Logo","Color","Material","Shape","thickness")
     ordering_fields = ("id","inputDate")
 
@@ -682,6 +694,7 @@ class devShapeEviViewset(viewsets.ModelViewSet):
 
             # 写rect文件
             rectUrl = os.path.join(rectURL, str(id) + "_rect.txt")
+
             rect = open(rectUrl, "w")
             rect.write(evi.rectCoordi)
             rect.close()

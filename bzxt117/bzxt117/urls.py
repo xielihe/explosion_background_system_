@@ -105,7 +105,7 @@ router.register(r'devShapeMultiMatchs', devShapeMultiMatchViewset, base_name="de
 router.register(r'devSynMatchs', devSynMatchViewset, base_name="devSynMatchs")
 
 router.register(r'userMessages', userMessageViewset, base_name="userMessages")
-router.register(r'userMessageFilees', userMessageFileViewset, base_name="userMessageFiles")
+router.register(r'userMessageFiles', userMessageFileViewset, base_name="userMessageFiles")
 
 urlpatterns = [
     # url(r'^admin/', admin.site.urls),
@@ -121,9 +121,9 @@ urlpatterns = [
      # 12:devShapeMatch
      url(r'^startMatch/',startMatch.as_view(), name='startMatch'),
      url(r'^nomSamplePicture/', nomSamplePicture.as_view(), name='nomSamplePicture'),
-     url(r'^rotateSamplePicture/', rotateSamplePicture.as_view(), name='rotateSamplePicture'),
+     # url(r'^rotateSamplePicture/', rotateSamplePicture.as_view(), name='rotateSamplePicture'),
      url(r'^nomEviPicture/', nomEviPicture.as_view(), name='nomEviPicture'),
-     url(r'^rotateEviPicture/', rotateEviPicture.as_view(), name='rotateEviPicture'),
+     # url(r'^rotateEviPicture/', rotateEviPicture.as_view(), name='rotateEviPicture'),
      url(r'^createDevReport/', createDevReport.as_view(), name='createDevReport'),
      url(r'^createExploReport/', createExploReport.as_view(), name='createExploReport'),
      url(r'^messageUpdate/',messageUpdate.as_view(),name='messageUpdate'),

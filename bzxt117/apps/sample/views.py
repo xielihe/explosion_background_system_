@@ -51,6 +51,10 @@ class nomSamplePicture(APIView):
         scaleY1 = int(request.POST["scaleY1"])
         scaleX2 = int(request.POST["scaleX2"])
         scaleY2 = int(request.POST["scaleY2"])
+        rotateX1 = int(request.POST["rotateX1"])
+        rotateY1 = int(request.POST["rotateY1"])
+        rotateX2 = int(request.POST["rotateX2"])
+        rotateY2 = int(request.POST["rotateY2"])
         PCBImgSampleId = int(request.POST["PCBImgSampleId"])
 
         deltaX = scaleX1 - scaleX2# if scaleX1 - scaleX2 > 0 else - scaleX1 + scaleX2
@@ -58,31 +62,36 @@ class nomSamplePicture(APIView):
         resolution = numpy.sqrt(deltaX*deltaX + deltaY * deltaY)
 
         #用resolution和PCBImgSampleId和"Sample"做参数调用归一化函数
+        imageRotation(rotateX1,rotateY1,rotateX2,rotateY2,resolution,PCBImgSampleId,'Sample')
+
 
         devShapeSample1 = devShapeSample.objects.get(id = PCBImgSampleId)
         devShapeSample1.norImgURL = "image/devShapeSample/correction/" + str(PCBImgSampleId) + ".jpg"
         devShapeSample1.save()
 
-        return Response({
-            "norImgURL":devShapeSample1.norImgURL
-        }, status=status.HTTP_201_CREATED)
-class rotateSamplePicture(APIView):
-    def post(self,request):
-        rotateX1 = int(request.POST["rotateX1"])
-        rotateY1 = int(request.POST["rotateY1"])
-        rotateX2 = int(request.POST["rotateX2"])
-        rotateY2 = int(request.POST["rotateY2"])
-        PCBImgSampleId = int(request.POST["PCBImgSampleId"])
-
-        # 用rotateX1等和PCBImgSampleId和"Sample"做参数调用旋转函数
-
-        devShapeSample1 = devShapeSample.objects.get(id = PCBImgSampleId)
-        devShapeSample1.norImgURL = "image/devShapeSample/correction/" + str(PCBImgSampleId) + ".jpg"
-        devShapeSample1.save()
-
-        return Response({
-            "norImgURL":devShapeSample1.norImgURL
-        }, status=status.HTTP_201_CREATED)
+        serializer = devShapeSampleSerializer(devShapeSample1,)
+        return Response(serializer.data,)
+        #
+        # return Response({
+        #     "norImgURL":devShapeSample1.norImgURL
+        # }, status=status.HTTP_201_CREATED)
+# class rotateSamplePicture(APIView):
+#     def post(self,request):
+#         rotateX1 = int(request.POST["rotateX1"])
+#         rotateY1 = int(request.POST["rotateY1"])
+#         rotateX2 = int(request.POST["rotateX2"])
+#         rotateY2 = int(request.POST["rotateY2"])
+#         PCBImgSampleId = int(request.POST["PCBImgSampleId"])
+#
+#         # 用rotateX1等和PCBImgSampleId和"Sample"做参数调用旋转函数
+#
+#         devShapeSample1 = devShapeSample.objects.get(id = PCBImgSampleId)
+#         devShapeSample1.norImgURL = "image/devShapeSample/correction/" + str(PCBImgSampleId) + ".jpg"
+#         devShapeSample1.save()
+#
+#         return Response({
+#             "norImgURL":devShapeSample1.norImgURL
+#         }, status=status.HTTP_201_CREATED)
 
 class exploSampleViewset(viewsets.ModelViewSet):
     """

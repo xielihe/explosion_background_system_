@@ -207,10 +207,8 @@ class UserViewset(viewsets.ModelViewSet):
         headers = self.get_success_headers(serializer.data)
         return Response(re_dict, status=status.HTTP_201_CREATED, headers=headers)
 
-
     def perform_create(self, serializer):
         return serializer.save()
-
 
     def perform_update(self, serializer):
         if ('password' in serializer.validated_data.keys()):
@@ -241,6 +239,16 @@ class methodDetectViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mixins
     def perform_create(self, serializer):
         return serializer.save()
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        method = request.data["method"]
+        if methodDetect.objects.filter(method = method).count() >0:
+            raise APIException("该检测方法已被录入过。")
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
 class devDetectViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin,
                      mixins.DestroyModelMixin, viewsets.GenericViewSet):
     """
@@ -254,3 +262,16 @@ class devDetectViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.Re
 
     def get_serializer_class(self):
         return devDetectSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        deviceName =  request.data["deviceName"]
+        deviceVersion = request.data["deviceVersion"]
+
+        if devDetect.objects.filter(deviceName = deviceName,deviceVersion = deviceVersion).count() >0:
+            # raise serializers.ValidationError("该手机已被注册过。")
+            raise APIException("该检测设备已被录入过。")
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
