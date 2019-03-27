@@ -553,8 +553,3 @@ class devShapeSampleViewset(viewsets.ModelViewSet):
     #     #     sample.save()
     #     return sample
 
-    def perform_destroy(self, instance):
-        # originalUrl= os.path.join(MEDIA_ROOT,str( instance.originalUrl))
-        # if os.path.exists(originalUrl):
-        #     os.remove(originalUrl)
-        instance.delete()

@@ -654,7 +654,6 @@ class devShapeMultiMatchCheckSerializer(serializers.Serializer):
 class devShapeMatchDetailSerializer(serializers.ModelSerializer):
     devShapeSample = devShapeSampleSerializer()
     devShapeEvi = devShapeEviSerializer()
-    matchPicURL = serializers.ImageField(read_only=True,)
     # #由物证图片和样本图片的id去取匹配图像
     # def get_matchPic(self, obj):
     #     eviFileId = obj.devShapeEvi.id
@@ -665,7 +664,7 @@ class devShapeMatchDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = devShapeMatch
         #返回id是为了方便删除
-        fields = ("id","devShapeSample","devShapeEvi","matchDegree","matchSampleCoordi","matchEviCoordi","matchPicURL")
+        fields = ("id","devShapeSample","devShapeEvi","matchDegree","matchSampleCoordi","matchEviCoordi","matchRadius")
 # 形态匹配详情展示
 class devShapeMatchSerializer(serializers.ModelSerializer):
     devSampleName = serializers.SerializerMethodField(read_only=True,)

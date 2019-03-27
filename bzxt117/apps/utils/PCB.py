@@ -49,10 +49,11 @@ def CompMatching(id):
 def FeatureMatching(id):
     path = os.path.join(path2, 'utils/FeatureMatching.exe')
     result = os.popen(path + r' ' + str(id)).read()
-    errorMessage = result.split('\n')[1]
-    if errorMessage != '':
-        raise APIException(errorMessage)
-    # print(result)
+    # errorMessage = result.split('\n')[1]
+    # if errorMessage != '':
+    #     raise APIException(errorMessage)
+    if result != '':
+        raise APIException(result)
 
 
 

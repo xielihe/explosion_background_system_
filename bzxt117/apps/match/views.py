@@ -601,12 +601,17 @@ class startMatch(APIView):
                     shapeMatch1 = devShapeMatch.objects.get_or_create(devShapeEvi_id = eviFileId,devShapeSample_id = lst[0])
                     #注意get_or_create结果是tuple，得取出来才能赋值
                     shapeMatch = shapeMatch1[0]
+                    # 存得分
                     shapeMatch.matchDegree = lst[1]
+                    # 存样本坐标
                     shapeMatch.matchSampleCoordi = json.dumps(lst[2:4])
-                    shapeMatch.matchEviCoordi = json.dumps(lst[4:])
+                    # 存物证坐标
+                    shapeMatch.matchEviCoordi = json.dumps(lst[4:6])
+                    # 存半径
+                    shapeMatch.matchEviCoordi = json.dumps(lst[6])
                     # 在存一条匹配记录的时候直接把图片存到里面去
-                    shapeMatch.matchPicURL = "image/devShapeEvi/match/" + str(eviFileId) + "/" + str(
-                        eviFileId) + "_" + str(lst[0]) + ".jpg"
+                    # shapeMatch.matchPicURL = "image/devShapeEvi/match/" + str(eviFileId) + "/" + str(
+                    #     eviFileId) + "_" + str(lst[0]) + ".jpg"
                     shapeMatch.save()
                     querysetList.append(shapeMatch)
                 file.close()
