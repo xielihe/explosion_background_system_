@@ -92,22 +92,23 @@
 # im_rotate.show()
 # im_rotate.save(r"C:\Users\Administrator\Pictures\101.png")
 
-import subprocess
-import os
-
-from bzxt117.settings import MEDIA_ROOT,BASE_DIR
-
-path2 = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-main = os.path.join(path2, 'utils/test.exe')
-# main = "E:\QQPCmgr\Documents\Visual Studio 2015\Projects\test\Debug\test.exe"
-if os.path.exists(main):
-    # id是最后的return的int值，即0
-    # out是执行过程中cout的所有值，比如这里是’6\n100 200 300 400'
-    id,out= subprocess.getstatusoutput(main + r' '+"ok" + r' ' + "1"+r" "+"2"+r' '+"ok" + r' ' + "1"+r" "+"2"+r' '+"ok" + r' ' + "1"+r" "+"2"+r' '+"ok" + r' ' + "1"+r" "+"2"+r' '+"ok" + r' ' + "1"+r" "+"2"+r' '+"ok" + r' ' + "1"+r" "+"2"+r' '+"ok" + r' ' + "1"+r" "+"2"+r' '+"ok" + r' ' + "1"+r" "+"2"+r' '+"ok" + r' ' + "1"+r" "+"2"+r' '+"ok" + r' ' + "1"+r" "+"2"+r' '+"ok" + r' ' + "1"+r" "+"2"+r' '+"ok" + r' ' + "1"+r" "+"2"+r' '+"ok" + r' ' + "1"+r" "+"2")
-    print (id)
-    # print ('*'*10)
-    # print(situation)
-    print ('*'*10)
-    print (out)
-else:
-    print("0")
+# import subprocess
+# import os
+#
+# from bzxt117.settings import MEDIA_ROOT,BASE_DIR
+#
+# path2 = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# main = os.path.join(path2, 'utils/test.exe')
+# # main = "E:\QQPCmgr\Documents\Visual Studio 2015\Projects\test\Debug\test.exe"
+# if os.path.exists(main):
+#     # id是最后的return的int值，即0
+#     # out是执行过程中cout的所有值，比如这里是’6\n100 200 300 400'
+#     id,out= subprocess.getstatusoutput(main + r' '+"ok" + r' ' + "1"+r" "+"2"+r' '+"ok" + r' ' + "1"+r" "+"2"+r' '+"ok" + r' ' + "1"+r" "+"2"+r' '+"ok" + r' ' + "1"+r" "+"2"+r' '+"ok" + r' ' + "1"+r" "+"2"+r' '+"ok" + r' ' + "1"+r" "+"2"+r' '+"ok" + r' ' + "1"+r" "+"2"+r' '+"ok" + r' ' + "1"+r" "+"2"+r' '+"ok" + r' ' + "1"+r" "+"2"+r' '+"ok" + r' ' + "1"+r" "+"2"+r' '+"ok" + r' ' + "1"+r" "+"2"+r' '+"ok" + r' ' + "1"+r" "+"2"+r' '+"ok" + r' ' + "1"+r" "+"2")
+#     print (id)
+#     # print ('*'*10)
+#     # print(situation)
+#     print ('*'*10)
+#     print (out)
+# else:
+#     print("0")
+print ('*'*10)

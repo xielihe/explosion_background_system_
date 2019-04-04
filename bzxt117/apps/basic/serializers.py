@@ -25,12 +25,10 @@ class UserDetailSerializer(serializers.ModelSerializer):
 class UserRegSerializer(serializers.ModelSerializer):
     # username=mobile
     username = serializers.CharField(label="手机", help_text="手机", required=True, allow_blank=False,
-                                     validators=[UniqueValidator(queryset=userProfile.objects.all(), message="该手机已被注册过")])
-
+                                     validators=[UniqueValidator(queryset=userProfile.objects.filter(isDelete = False), message="该手机已被注册过")])
     password = serializers.CharField(
         style={'input_type': 'password'},help_text="密码", label="密码",# write_only=True,
-    )
-
+)
     # def validate_username(self,username):
     #     newName =  self.context["request"].user.username
     #     if userProfile.objects.filter(username = newName).count() >0:

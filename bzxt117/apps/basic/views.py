@@ -168,7 +168,7 @@ class UserViewset(viewsets.ModelViewSet):
     """
     # 更新也用这个Serilizer，保证了更新时用户名，即手机号的唯一性
     # serializer_class = UserRegSerializer
-    queryset = userProfile.objects.all()
+    queryset = userProfile.objects.filter(isDelete = False)
     pagination_class = MyPageNumberPagination
     # 查看详情时不是id而是用户名
     lookup_field = "username"
@@ -231,7 +231,7 @@ class methodDetectViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mixins
     permission_classes = (IsAuthenticated, IsAdmin)
     pagination_class = MyPageNumberPagination
     def get_queryset(self):
-        return methodDetect.objects.all()
+        return methodDetect.objects.filter(isDelete = False)
 
     def get_serializer_class(self):
         return methodDetectSerializer
@@ -249,6 +249,10 @@ class methodDetectViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mixins
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
+    def perform_destroy(self, instance):
+        instance.isDelete = True
+        instance.save()
+
 class devDetectViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin,
                      mixins.DestroyModelMixin, viewsets.GenericViewSet):
     """
@@ -258,7 +262,7 @@ class devDetectViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.Re
     permission_classes = (IsAuthenticated, IsAdmin)
     pagination_class = MyPageNumberPagination
     def get_queryset(self):
-        return devDetect.objects.all()
+        return devDetect.objects.filter(isDelete = False)
 
     def get_serializer_class(self):
         return devDetectSerializer
@@ -275,3 +279,7 @@ class devDetectViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.Re
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def perform_destroy(self, instance):
+        instance.isDelete = True
+        instance.save()

@@ -608,7 +608,7 @@ class startMatch(APIView):
                     # 存物证坐标
                     shapeMatch.matchEviCoordi = json.dumps(lst[4:6])
                     # 存半径
-                    shapeMatch.matchEviCoordi = json.dumps(lst[6])
+                    shapeMatch.matchRadius = json.dumps(lst[6])
                     # 在存一条匹配记录的时候直接把图片存到里面去
                     # shapeMatch.matchPicURL = "image/devShapeEvi/match/" + str(eviFileId) + "/" + str(
                     #     eviFileId) + "_" + str(lst[0]) + ".jpg"

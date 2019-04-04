@@ -28,9 +28,11 @@ def getPCB(id,type):
     path = os.path.join(path2, 'utils/GetPCBFeature.exe')
     # type是"Sample"
     result = os.popen(path+r' '+str(id)+r' '+type).read()
-    errorMessage = result.split('\n')[1]
-    if errorMessage != '':
-        raise APIException(errorMessage)
+    print(result)
+
+    # errorMessage = result.split('\n')[1]
+    # if errorMessage != '':
+    #     raise APIException(errorMessage)
 
 
 

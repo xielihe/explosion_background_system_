@@ -40,6 +40,8 @@ class methodDetect(models.Model):
     method = models.CharField(max_length=100, null=True, blank=True, verbose_name="方法")
     txtURL = models.FileField(max_length=300, upload_to="file/methodDetect/", null=True, blank=True,
                               verbose_name="检测方法信息文档路径")
+    isDelete =models.BooleanField(default=False,verbose_name="是否逻辑删除")
+
 
     class Meta:
         verbose_name = "检测方法信息表 "
@@ -56,6 +58,8 @@ class devDetect(models.Model):
     deviceVersion = models.CharField(max_length=30, null=True, blank=True, verbose_name="检测设备型号")
     detectMrfs = models.CharField(max_length=100, null=True, blank=True, verbose_name="仪器厂家")
     note = models.CharField(max_length=400, null=True, blank=True, verbose_name="备注")
+    isDelete =models.BooleanField(default=False,verbose_name="是否逻辑删除")
+
     class Meta:
         verbose_name = "检测设备信息表"
         verbose_name_plural = verbose_name

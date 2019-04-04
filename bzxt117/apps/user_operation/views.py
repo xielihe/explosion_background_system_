@@ -36,7 +36,7 @@ class userMessageViewset(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.
     filter_fields = ("sendUser","receiveUser")
     pagination_class = MyPageNumberPagination
     # filter_backends = (filters.SearchFilter)
-    # search_fields = ("title","message",)
+    search_fields = ("title","message",)
 
     # 只能对收件人为自己的信息进行操作   不可以，因为如果这样就无法查看自己发出的消息
     # 因此在前端带着过滤字段来请求，sendUser和receiveUser等于请求用户来查看自己收到的和自己发送的

@@ -47,9 +47,9 @@ class userMessageDetailSerializer(serializers.ModelSerializer):
     sendUser = UserDetailSerializer()
     receiveUser = UserDetailSerializer()
     # 这么设置sendDate不会随着调用Serializer而更新，且会限制格式
-    handleUer = UserDetailSerializer()
+    handleUser = UserDetailSerializer()
     sendDate = serializers.DateTimeField(read_only=True, format='%Y-%m-%d %H:%M')
-    MessageFiles = userMessageFileSerializer(many=True)
+    MessageFiles = userMessageFileSerializer(read_only=True,many=True)
 
     class Meta:
         model = userMessage
